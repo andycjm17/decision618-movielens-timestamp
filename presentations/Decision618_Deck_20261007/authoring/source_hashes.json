@@ -1,0 +1,10 @@
+{
+  "results/model_metrics.csv": "5d2d9cbc690dff1b2538eb377b37ea055580ca42604a156e8481605809424c2e",
+  "results/timestamp_experiment.json": "5b6611e481459fcf287a977f845dd4d5df5d986682c0191d4ecaf230da70f6f3",
+  "results/timestamp_eda.json": "791a273892b3751c50d732a80535e8522ee65f9bfdb95d9f328f543325b71bef",
+  "results/temporal_split.json": "1c32f60e8cc786f638334222a33cf241150d36bb499c28d9e2b382fae967dbcb",
+  "results/temporal_population.csv": "deba82ed6ca8a0926217439491baf16adf597d828360931fe222e300b8395708",
+  "results/fresh_cv_metrics.csv": "384ef05fc8f0e7ca182ffb0195807c7111750313ad2981465afed02c228dda26",
+  "results/cache_audit.json": "df799b91d670871eeb666de0d127599a2043ace29b597f57d35fe3b219ca7cad",
+  "Methods_and_findings_EN.md": "167b9a2be4a421a84561c835e0b10286994bff65b7484631adfacb00a633d5fc"
+}

@@ -1,6 +1,6 @@
 # Decision 618: MovieLens replication and timestamp analysis
 
-This private repository contains the complete October 7, 2026 MovieLens course rebuild: reviewed course sources, raw data, training code, fitted models, prediction results, an executed notebook and a Chinese methods report. Two large prediction caches and the compact review ZIP are stored in the repository's [Release](https://github.com/andycjm17/decision618-movielens-timestamp/releases/tag/v2026.10.07). Their original paths and SHA-256 hashes are recorded in [release_assets.json](release_assets.json).
+This repository contains the complete October 7, 2026 MovieLens course rebuild: reviewed course sources, raw data, training code, fitted models, prediction results, an executed notebook and a Chinese methods report. Two large prediction caches and the compact review ZIP are stored in the repository's [Release](https://github.com/andycjm17/decision618-movielens-timestamp/releases/tag/v2026.10.07). Their original paths and SHA-256 hashes are recorded in [release_assets.json](release_assets.json).
 
 ## Read the results
 
@@ -23,11 +23,11 @@ The timestamp increment is measured against the static ensemble on the same hold
 
 ## Presentation
 
-The [October 6 presentation](presentations/Decision618_D3_20261006/README.md) includes the editable [PowerPoint](presentations/Decision618_D3_20261006/Presentation_EN_v3.pptx), [PDF](presentations/Decision618_D3_20261006/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. This existing deck covers the NextItNet ranking experiment. Its results and evaluation protocol differ from the October 7 star-rating analysis above.
+The current [October 7 presentation](presentations/Decision618_Deck_20261007/README.md) includes an editable [PowerPoint](presentations/Decision618_Deck_20261007/Presentation_EN_20261007_v3.pptx), [PDF](presentations/Decision618_Deck_20261007/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. Its seven slides cover the course replication, random and global time splits, and the metadata/timestamp RMSE comparisons reported above. It follows the approved cinema design and has a planned running time of five minutes. The October 6 NextItNet deck remains in its dated folder for reference.
 
 ## Restore the complete local project
 
-Clone the repository, then restore the private Release assets using an authenticated GitHub CLI:
+Clone the repository, then restore the Release assets using an authenticated GitHub CLI:
 
 ```bash
 git clone https://github.com/andycjm17/decision618-movielens-timestamp.git
@@ -67,8 +67,9 @@ Refitting also requires R and softImpute. The recorded run used R 4.0.2 / softIm
 | `course_rebuild_20261007/results/` | Predictions, metrics, validation choices, training logs and audit records |
 | `course_rebuild_20261007/figures/` | Eight analytical charts |
 | `course_rebuild_20261007/output/pdf/` | Seven-page Chinese methods companion |
-| `presentations/Decision618_D3_20261006/` | Existing English deck in PPTX, PDF and HTML, with scripts and fonts |
+| `presentations/Decision618_Deck_20261007/` | Current English course-replication/timestamp deck, bilingual notes, scripts, fonts and authoring sources |
+| `presentations/Decision618_D3_20261006/` | Archived October 6 NextItNet presentation |
 | `release_assets.json` | Download names, original paths, sizes and hashes for large files |
 | `UPLOAD_MANIFEST.json` | Inventory of the copied project files and excluded temporary caches |
 
-Course sources and data retain their original authorship and terms. The MovieLens terms and citation are preserved in [README_MovieLens.txt](course_rebuild_20261007/sources/README_MovieLens.txt). This is a private coursework repository; no repository-wide open-source license is applied to third-party course material or data.
+Course sources and data retain their original authorship and terms. The MovieLens terms and citation are preserved in [README_MovieLens.txt](course_rebuild_20261007/sources/README_MovieLens.txt). This is a coursework repository; no repository-wide open-source license is applied to third-party course material or data.

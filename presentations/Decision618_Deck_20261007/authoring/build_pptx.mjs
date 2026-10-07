@@ -11,8 +11,8 @@ const BUILD=path.resolve(process.env.BUILD_DIR||path.join(ROOT,'tmp/d3_20261007_
 const SKILL=process.env.PRESENTATIONS_SKILL_DIR||'/Users/cuijiaming/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations';
 const PY=process.env.RUNTIME_PYTHON||'/Users/cuijiaming/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3';
 process.env.RUNTIME_NODE_MODULES ||= '/Users/cuijiaming/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules';
-const SOURCE_DIR=process.env.SOURCE_DECK_DIR||path.join(ROOT,'output/Decision618_D3_20261006');
-const SOURCE=path.join(SOURCE_DIR,'Presentation_EN_v3.pptx');
+const SOURCE_DIR=process.env.SOURCE_DECK_DIR||path.join(ROOT,'presentations/Decision618_Deck_20261007');
+const SOURCE=path.join(SOURCE_DIR,'Presentation_EN_20261007_v4.pptx');
 const {finalizePresentation,applyPresentationChartFont}=await import(path.join(SKILL,'container_tools/artifact_tool_utils.mjs'));
 const artifactRequire=createRequire(import.meta.resolve('@oai/artifact-tool'));
 const {FontLibrary}=artifactRequire('skia-canvas');
@@ -25,10 +25,8 @@ await fs.mkdir(BUILD,{recursive:true});
 const P=JSON.parse(await fs.readFile(path.join(OUT,'authoring/content.json'),'utf8'));
 const p=await PresentationFile.importPptx(await FileBlob.load(SOURCE));
 await fs.writeFile(path.join(BUILD,'source-inspection.ndjson'),(await p.inspect({kind:'slide,textbox,shape,chart,layout',maxChars:50000})).ndjson);
-if(p.slides.items.length!==7)throw Error('Source must have seven slides');
-// Reuse source slides and their native framing for the added comparisons.
-p.slides.items[6].duplicate().moveTo(6);
-p.slides.items[5].duplicate().moveTo(7);
+// Reuse the current nine-slide deck and its native framing.
+if(p.slides.items.length!==9)throw Error('Source must have nine slides');
 if(p.slides.items.length!==P.slides.length)throw Error('Content and slide counts differ');
 const C={dark:'#171714',paper:'#F1E8D5',accent:'#E46242',ink:'#24231e',mutedDark:'#BDB8AD',mutedLight:'#656258'};
 const html=[];
@@ -81,14 +79,12 @@ for(let i=0;i<P.slides.length;i++){
  if(i>0)ht(P.slides[i].title,75,115,1130,103,64,{color:s.ink,font:display});
  ht(String(i+1).padStart(2,'0'),1182,669,50,29,17,{color:s.muted});
  if(i===0){
-  const replacements=[['THE NEXT MOVIE','MOVIE'],['RECOMMENDATION','RECOMMENDATIONS'],['MovieLens 1M and adapted NextItNet','Course methods, timestamps and adapted NextItNet']];
-  for(const shape of s.shapes.items)for(const [old,next] of replacements)shape.text.replace(old,next);
   s.shapes.items[1].text='DECISION 618 / MOVIE RECOMMENDATIONS';
   ht('MOVIE',75,152,1080,166,130,{font:display});
   ht('RECOMMENDATIONS',75,313,1090,170,130,{font:display,color:C.accent});
   ht('Course methods, timestamps and adapted NextItNet',77,475,1095,62,28,{color:s.muted});
   ht('Jiaming Cui, Joonse Lim, Tung Jerateepkulmeth',77,617,1100,47,19,{color:s.muted});
-  text(s,'MovieLens 1M / October 7, 2026',77,551,1080,45,22,{color:s.muted});
+  ht('MovieLens 1M / October 7, 2026',77,551,1080,45,22,{color:s.muted});
  }else if(i===1){
   // Import loses the workbook relationship. Rebuild this native chart from the
   // audited literal data and original chart styling, then embed its workbook.

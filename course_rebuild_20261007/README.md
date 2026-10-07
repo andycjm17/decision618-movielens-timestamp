@@ -1,6 +1,6 @@
 # Decision 618 - MovieLens course rebuild
 
-This directory contains the instructor benchmark, a freshly recomputed 400-fit cross-validation experiment, and a timestamp extension. It was built on 2026-10-07 from the currently published Canvas materials for course 4169. The original D3 files under `output/Decision618_D3_20261006` are separate historical artifacts.
+This directory contains the instructor benchmark, a freshly recomputed 400-fit cross-validation experiment, and a timestamp extension. It was built on 2026-10-07 from the currently published Canvas materials for course 4169. The presentation is in `presentations/Decision618_Deck_20261007` relative to the repository root.
 
 Start with `MovieLens_course_rebuild.ipynb` (executed, English with Chinese explanations), `Course_split_guide_CN.md`, or `Methods_and_findings_EN.md`. The Chinese PDF is a research companion, not the final double-spaced D3 submission.
 

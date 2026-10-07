@@ -23,7 +23,7 @@ The timestamp increment is measured against the static ensemble on the same hold
 
 ## Presentation
 
-The current [October 7 presentation](presentations/Decision618_Deck_20261007/README.md) includes an editable [PowerPoint](presentations/Decision618_Deck_20261007/Presentation_EN_20261007_v4.pptx), [PDF](presentations/Decision618_Deck_20261007/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. Its nine slides combine the course replication and metadata/timestamp RMSE comparisons with the completed adapted NextItNet ranking experiment. The English script has 557 words and a planned running time of five minutes. The October 6 deck and October 7 rating-only v3 remain in dated folders.
+The [October 7 presentation](presentations/Decision618_Deck_20261007/README.md) includes an editable [PowerPoint](presentations/Decision618_Deck_20261007/Presentation_EN_20261007_v4.pptx), [PDF](presentations/Decision618_Deck_20261007/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. Its nine slides combine the course replication and metadata/timestamp RMSE comparisons with the completed adapted NextItNet ranking experiment. The English script has 557 words and a planned running time of five minutes. This is the only presentation version in the current repository files.
 
 | Ranking model | Full sample HR@10 | Full sample NDCG@10 | Later-test subset HR@10 | Later-test subset NDCG@10 |
 |---|---:|---:|---:|---:|
@@ -77,8 +77,6 @@ Refitting also requires R and softImpute. The recorded run used R 4.0.2 / softIm
 | `course_rebuild_20261007/figures/` | Eight analytical charts |
 | `course_rebuild_20261007/output/pdf/` | Seven-page Chinese methods companion |
 | `presentations/Decision618_Deck_20261007/` | Current v4 English deck with rating and NextItNet comparisons, bilingual notes, scripts, fonts and authoring sources |
-| `presentations/Decision618_Deck_20261007_rating_only_v3/` | Archived October 7 rating-only presentation |
-| `presentations/Decision618_D3_20261006/` | Archived October 6 NextItNet presentation |
 | `final_project/nextitnet/` | Recorded ranking metrics, per-user ranks, exact split and original experiment source |
 | `release_assets.json` | Download names, original paths, sizes and hashes for large files |
 | `UPLOAD_MANIFEST.json` | Inventory of the copied project files and excluded temporary caches |

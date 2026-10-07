@@ -1,6 +1,6 @@
 # MovieLens rating prediction and NextItNet, October 7, 2026
 
-The nine-slide English deck combines the October 7 course replication and timestamp experiment with the completed adapted NextItNet ranking experiment. It includes Chinese explanations and bilingual PowerPoint speaker notes. The speaking script has 557 words and slide budgets total five minutes. The cinema palette and typography follow the October 6 presentation.
+The nine-slide English deck combines the October 7 course replication and timestamp experiment with the completed adapted NextItNet ranking experiment. It includes Chinese explanations and bilingual PowerPoint speaker notes. The speaking script has 557 words and slide budgets total five minutes. It uses the approved cinema palette and typography.
 
 | File | Use |
 |---|---|
@@ -36,8 +36,8 @@ Use the PDF for display. Install Bebas Neue and DM Sans from `fonts/` before edi
 
 `prepare_content.py` reads both recorded experiments and recomputes HR@10/NDCG@10 from saved per-user ranks for the full and later-test cohorts. It regenerates the content, English script, Chinese explanations and comparison evidence. It does not train a model.
 
-`build_pptx.mjs` imports the October 6 PPTX, preserves its masters and framing, and duplicates two source slides for the comparisons. It rebuilds the rating-gap chart from the recorded literal values and generates the HTML. `render_html.mjs` exports the PDF.
+`build_pptx.mjs` uses this nine-slide v4 PPTX as its template and preserves its masters and framing. It rebuilds the rating-gap chart from the recorded literal values and generates the HTML. `render_html.mjs` exports the PDF.
 
-The builders require the Codex bundled Node runtime, `@oai/artifact-tool`, Playwright, Python with NumPy/pandas, and presentation finalization helpers. Configure `WORKSPACE_ROOT`, `OUTPUT_DIR`, `BUILD_DIR`, `SOURCE_DECK_DIR`, `PRESENTATIONS_SKILL_DIR`, `RUNTIME_PYTHON` and `RUNTIME_NODE_MODULES` for the host. In this repository, set `SOURCE_DECK_DIR` to `presentations/Decision618_D3_20261006` and choose fresh output and build directories. The finalizer refuses to overwrite an existing final PowerPoint. No native Microsoft PowerPoint application test is claimed.
+The builders require the Codex bundled Node runtime, `@oai/artifact-tool`, Playwright, Python with NumPy/pandas, and presentation finalization helpers. Configure `WORKSPACE_ROOT`, `OUTPUT_DIR`, `BUILD_DIR`, `SOURCE_DECK_DIR`, `PRESENTATIONS_SKILL_DIR`, `RUNTIME_PYTHON` and `RUNTIME_NODE_MODULES` for the host. The default `SOURCE_DECK_DIR` is `presentations/Decision618_Deck_20261007` under the repository root. Choose fresh output and build directories. The finalizer refuses to overwrite an existing final PowerPoint. No native Microsoft PowerPoint application test is claimed.
 
 Uploading these files to GitHub does not submit them to Canvas. Course material and MovieLens data retain their authorship and terms.

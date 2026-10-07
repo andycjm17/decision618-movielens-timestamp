@@ -1,0 +1,82 @@
+{
+  "original_run_utc": "2026-09-12T03:38:08.111559+00:00",
+  "protocol": "Per-user final item test, penultimate validation. Equal timestamps ordered by seeded random keys. Final refit includes validation items. Full fitted catalog, seen items removed. Target is next rated movie regardless of stars.",
+  "adaptation": "Official Recommenders NextItNet causal residual encoder with item-only 32d embeddings and full-softmax output; replaces item/category candidate-MLP wrapper. Training uses nonoverlapping teacher-forced chunks; state resets at chunk boundaries.",
+  "selection": {
+    "nextitnet": {
+      "window": 10,
+      "epoch": 8,
+      "NDCG@10": 0.10758510853602563,
+      "training_seconds": 136.11423320999998,
+      "parameters": 250712
+    },
+    "itemknn_k": 40,
+    "svd_factors": 100
+  },
+  "final_catalog": 3704,
+  "users": 6038,
+  "strict_users": 3494,
+  "ranking": [
+    {
+      "model": "Popularity",
+      "users": 6038,
+      "strict_users": 3494,
+      "HR@10": 0.04090758529314342,
+      "strict_HR@10": 0.038065254722381224,
+      "NDCG@10": 0.0205690705768243,
+      "strict_NDCG@10": 0.019080358094258697
+    },
+    {
+      "model": "item-kNN",
+      "users": 6038,
+      "strict_users": 3494,
+      "HR@10": 0.07403113613779397,
+      "strict_HR@10": 0.059530623926731537,
+      "NDCG@10": 0.03893778660526552,
+      "strict_NDCG@10": 0.0310960183223581
+    },
+    {
+      "model": "SVD",
+      "users": 6038,
+      "strict_users": 3494,
+      "HR@10": 0.01209009605829745,
+      "strict_HR@10": 0.013451631368059531,
+      "NDCG@10": 0.005499727403079952,
+      "strict_NDCG@10": 0.006578743013666862
+    },
+    {
+      "model": "NextItNet",
+      "users": 6038,
+      "strict_users": 3494,
+      "HR@10": 0.19940377608479629,
+      "strict_HR@10": 0.14310246136233543,
+      "NDCG@10": 0.10490061013544169,
+      "strict_NDCG@10": 0.07578070953330591
+    }
+  ],
+  "hr_gain_vs_itemknn": 0.12537263994700232,
+  "paired_ndcg_intervals": {
+    "Popularity": {
+      "difference": 0.08433153955861739,
+      "ci95": [
+        0.07774839251762282,
+        0.09045532925371232
+      ]
+    },
+    "item-kNN": {
+      "difference": 0.06596282353017616,
+      "ci95": [
+        0.05980872877611116,
+        0.07224413496631575
+      ]
+    },
+    "SVD": {
+      "difference": 0.09940088273236171,
+      "ci95": [
+        0.09348086745162838,
+        0.1052011890797378
+      ]
+    }
+  },
+  "verification": "Recomputed HR@10 and NDCG@10 from saved per-user ranks. Both cohorts match saved aggregate metrics. No retraining."
+}

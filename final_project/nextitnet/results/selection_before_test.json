@@ -1,0 +1,64 @@
+{
+  "seed": 42,
+  "run_utc": "2026-09-12T03:38:08.111559+00:00",
+  "tensorflow": "2.15.1",
+  "protocol": "Per-user final item test, penultimate validation. Equal timestamps ordered by seeded random keys. Final refit includes validation items. Full fitted catalog, seen items removed. Target is next rated movie regardless of stars.",
+  "adaptation": "Official Recommenders NextItNet causal residual encoder with item-only 32d embeddings and full-softmax output; replaces item/category candidate-MLP wrapper. Training uses nonoverlapping teacher-forced chunks; state resets at chunk boundaries.",
+  "grid": {
+    "windows": [
+      10,
+      20,
+      50
+    ],
+    "max_epochs": 8,
+    "patience": 3,
+    "embedding": 32,
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "kernel_size": 3,
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "itemknn_k": [
+      40,
+      80
+    ],
+    "svd_factors": [
+      50,
+      100
+    ],
+    "svd_regularization": 0.1,
+    "svd_epochs": 30
+  },
+  "selection": {
+    "nextitnet": {
+      "window": 10,
+      "epoch": 8,
+      "NDCG@10": 0.10758510853602563,
+      "training_seconds": 136.11423320999998,
+      "parameters": 250712
+    },
+    "itemknn_k": 40,
+    "svd_factors": 100
+  },
+  "data": {
+    "ratings": 1000209,
+    "users": 6040,
+    "catalog_movies": 3883,
+    "rated_movies": 3706,
+    "train_ratings": 988129,
+    "validation_ratings": 6040,
+    "test_ratings": 6040,
+    "training_transitions": 982089,
+    "equal_timestamp_fraction": 0.5321489605891956,
+    "within_60s_fraction": 0.8871560066749214,
+    "strict_test_users": 3496,
+    "test_target_tied_with_predecessor": 2544,
+    "mean_rating": 3.581564453029317,
+    "sparsity": 0.9573532020200125
+  }
+}

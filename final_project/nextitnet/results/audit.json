@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "unique_user_item_pairs": true,
+    "one_val_one_test_per_user": true,
+    "full_partition": true,
+    "target_after_history_in_defined_order": true,
+    "same_eligible_users": true,
+    "same_full_catalog": true,
+    "oov_exclusions_match": true,
+    "sklearn_ndcg_100_cases": true,
+    "summary_matches_per_user": true,
+    "zero_previously_rated_recommendations": true,
+    "ten_unique_recommendations": true,
+    "causal_encoder_future_perturbation": true,
+    "checkpoint_demo_reproduces_top10": true,
+    "cold_user_fallback": true
+  },
+  "all_passed": true,
+  "raw_sha256": {
+    "movies.dat": "0140fc2356357c1a851d0f52e893a1e4d3696df632c4141cea8d5bc3d621f0b9",
+    "ratings.dat": "506d64ca44484487c11dc2d9a28de5c54948213e6b96285e298afe28d6ea4e0f",
+    "README": "2d5ddce86ccbd247207456165827b4b9ddf27282bca93807d4c763e28414f133",
+    "users.dat": "1dc3a95300cb19f7c10e027daf29b8cdf1d908dab65b5edfb45950aa389a10a3"
+  },
+  "python": "3.9.6",
+  "platform": "macOS-26.5-arm64-arm-64bit",
+  "cpu": "arm"
+}

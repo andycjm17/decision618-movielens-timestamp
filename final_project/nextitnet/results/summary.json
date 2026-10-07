@@ -1,0 +1,203 @@
+{
+  "seed": 42,
+  "run_utc": "2026-09-12T03:38:08.111559+00:00",
+  "tensorflow": "2.15.1",
+  "protocol": "Per-user final item test, penultimate validation. Equal timestamps ordered by seeded random keys. Final refit includes validation items. Full fitted catalog, seen items removed. Target is next rated movie regardless of stars.",
+  "adaptation": "Official Recommenders NextItNet causal residual encoder with item-only 32d embeddings and full-softmax output; replaces item/category candidate-MLP wrapper. Training uses nonoverlapping teacher-forced chunks; state resets at chunk boundaries.",
+  "grid": {
+    "windows": [
+      10,
+      20,
+      50
+    ],
+    "max_epochs": 8,
+    "patience": 3,
+    "embedding": 32,
+    "dilations": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "kernel_size": 3,
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "itemknn_k": [
+      40,
+      80
+    ],
+    "svd_factors": [
+      50,
+      100
+    ],
+    "svd_regularization": 0.1,
+    "svd_epochs": 30
+  },
+  "selection": {
+    "nextitnet": {
+      "window": 10,
+      "epoch": 8,
+      "NDCG@10": 0.10758510853602563,
+      "training_seconds": 136.11423320999998,
+      "parameters": 250712
+    },
+    "itemknn_k": 40,
+    "svd_factors": 100
+  },
+  "data": {
+    "ratings": 1000209,
+    "users": 6040,
+    "catalog_movies": 3883,
+    "rated_movies": 3706,
+    "train_ratings": 988129,
+    "validation_ratings": 6040,
+    "test_ratings": 6040,
+    "training_transitions": 982089,
+    "equal_timestamp_fraction": 0.5321489605891956,
+    "within_60s_fraction": 0.8871560066749214,
+    "strict_test_users": 3496,
+    "test_target_tied_with_predecessor": 2544,
+    "mean_rating": 3.581564453029317,
+    "sparsity": 0.9573532020200125
+  },
+  "final_catalog": 3704,
+  "unseen_test_targets": 2,
+  "metrics": [
+    {
+      "model": "Popularity",
+      "HR@10": 0.04090758529314342,
+      "NDCG@10": 0.0205690705768243,
+      "MRR": 0.02185371965394486,
+      "users": 6038,
+      "catalog_coverage": 0.05372570194384449
+    },
+    {
+      "model": "item-kNN",
+      "HR@10": 0.07403113613779397,
+      "NDCG@10": 0.03893778660526552,
+      "MRR": 0.038050246870439425,
+      "users": 6038,
+      "catalog_coverage": 0.1587473002159827
+    },
+    {
+      "model": "SVD",
+      "HR@10": 0.01209009605829745,
+      "NDCG@10": 0.005499727403079953,
+      "MRR": 0.007192801087175279,
+      "users": 6038,
+      "catalog_coverage": 0.03644708423326134
+    },
+    {
+      "model": "NextItNet",
+      "HR@10": 0.19940377608479629,
+      "NDCG@10": 0.10490061013544169,
+      "MRR": 0.09116051936452216,
+      "users": 6038,
+      "catalog_coverage": 0.4217062634989201
+    }
+  ],
+  "fit_and_score_seconds": {
+    "Popularity": 0.03502574999993158,
+    "item-kNN": 1.7236437919999616,
+    "SVD": 5.525929166000083,
+    "NextItNet": 118.55949554099993
+  },
+  "refit": "All models refitted using train + validation items. No test labels included. Popularity/item-kNN treat every rating as an interaction; SVD retains star values.",
+  "strict_metrics": [
+    {
+      "model": "NextItNet",
+      "HR@10": 0.14310246136233543,
+      "NDCG@10": 0.07578070953330591,
+      "MRR": 0.06805091365074148,
+      "users": 3494
+    },
+    {
+      "model": "Popularity",
+      "HR@10": 0.038065254722381224,
+      "NDCG@10": 0.019080358094258697,
+      "MRR": 0.020494404591488484,
+      "users": 3494
+    },
+    {
+      "model": "SVD",
+      "HR@10": 0.013451631368059531,
+      "NDCG@10": 0.006578743013666862,
+      "MRR": 0.007979011482272086,
+      "users": 3494
+    },
+    {
+      "model": "item-kNN",
+      "HR@10": 0.059530623926731537,
+      "NDCG@10": 0.031096018322358105,
+      "MRR": 0.030560060431931536,
+      "users": 3494
+    }
+  ],
+  "paired_ndcg_intervals": {
+    "Popularity": {
+      "difference": 0.08433153955861739,
+      "ci95": [
+        0.07774839251762282,
+        0.09045532925371232
+      ]
+    },
+    "item-kNN": {
+      "difference": 0.06596282353017616,
+      "ci95": [
+        0.05980872877611116,
+        0.07224413496631575
+      ]
+    },
+    "SVD": {
+      "difference": 0.09940088273236171,
+      "ci95": [
+        0.09348086745162838,
+        0.1052011890797378
+      ]
+    }
+  },
+  "demo_user": 1,
+  "sensitivity": [
+    {
+      "model": "context_10",
+      "HR@10": 0.19940377608479629,
+      "NDCG@10": 0.10490061013544169,
+      "MRR": 0.09116051936452216,
+      "users": 6038,
+      "catalog_coverage": 0.4217062634989201
+    },
+    {
+      "model": "context_20",
+      "HR@10": 0.1916197416363034,
+      "NDCG@10": 0.10017739502743093,
+      "MRR": 0.08722658757034472,
+      "users": 6038,
+      "catalog_coverage": 0.4187365010799136
+    },
+    {
+      "model": "context_50",
+      "HR@10": 0.18681682676382907,
+      "NDCG@10": 0.09781451955415214,
+      "MRR": 0.08585168063658065,
+      "users": 6038,
+      "catalog_coverage": 0.42035637149028077
+    },
+    {
+      "model": "reshuffled_timestamp_ties",
+      "HR@10": 0.19923815833057304,
+      "NDCG@10": 0.10553479938729556,
+      "MRR": 0.09200467983558856,
+      "users": 6038,
+      "catalog_coverage": 0.4249460043196544
+    },
+    {
+      "model": "shuffled_recent_order",
+      "HR@10": 0.1432593574031136,
+      "NDCG@10": 0.0727157523336305,
+      "MRR": 0.06485980384725243,
+      "users": 6038,
+      "catalog_coverage": 0.43115550755939525
+    }
+  ]
+}

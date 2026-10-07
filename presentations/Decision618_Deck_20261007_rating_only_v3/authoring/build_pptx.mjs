@@ -6,8 +6,8 @@ import {PresentationFile,FileBlob} from '@oai/artifact-tool';
 import {GlobalFonts} from '@napi-rs/canvas';
 
 const ROOT=path.resolve(process.env.WORKSPACE_ROOT||'.');
-const OUT=path.resolve(process.env.OUTPUT_DIR||path.join(ROOT,'output/Decision618_Deck_20261007_NextItNet'));
-const BUILD=path.resolve(process.env.BUILD_DIR||path.join(ROOT,'tmp/d3_20261007_nextitnet'));
+const OUT=path.resolve(process.env.OUTPUT_DIR||path.join(ROOT,'output/Decision618_Deck_20261007'));
+const BUILD=path.join(ROOT,'tmp/d3_20261007');
 const SKILL=process.env.PRESENTATIONS_SKILL_DIR||'/Users/cuijiaming/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations';
 const PY=process.env.RUNTIME_PYTHON||'/Users/cuijiaming/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3';
 process.env.RUNTIME_NODE_MODULES ||= '/Users/cuijiaming/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules';
@@ -26,10 +26,6 @@ const P=JSON.parse(await fs.readFile(path.join(OUT,'authoring/content.json'),'ut
 const p=await PresentationFile.importPptx(await FileBlob.load(SOURCE));
 await fs.writeFile(path.join(BUILD,'source-inspection.ndjson'),(await p.inspect({kind:'slide,textbox,shape,chart,layout',maxChars:50000})).ndjson);
 if(p.slides.items.length!==7)throw Error('Source must have seven slides');
-// Reuse source slides and their native framing for the added comparisons.
-p.slides.items[6].duplicate().moveTo(6);
-p.slides.items[5].duplicate().moveTo(7);
-if(p.slides.items.length!==P.slides.length)throw Error('Content and slide counts differ');
 const C={dark:'#171714',paper:'#F1E8D5',accent:'#E46242',ink:'#24231e',mutedDark:'#BDB8AD',mutedLight:'#656258'};
 const html=[];
 const esc=v=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -50,7 +46,6 @@ function clearBody(s,i){
  const keep=new Set(s.shapes.items.slice(0,6).map(x=>x.id));
  for(const shape of [...s.shapes.items])if(!keep.has(shape.id))s.shapes.deleteById(shape.id);
  for(const chart of [...s.charts.items])s.charts.deleteById(chart.id);
- for(const t of [...s.tables.items])s.tables.deleteById(t.id);
  s.shapes.items[4].text=P.slides[i].title;
  s.shapes.items[4].text.style={typeface:display,fontSize:64,color:s.ink,autoFit:'none'};
 }
@@ -72,21 +67,20 @@ function table(s,values,x,y,widths,heights,{size=25,highlightRow=-1}={}){
 }
 const originalHtml=await fs.readFile(path.join(SOURCE_DIR,'Presentation_EN.html'),'utf8');
 const originalSections=[...originalHtml.matchAll(/<section class="slide[\s\S]*?<\/section>/g)].map(m=>m[0]);
-for(let i=0;i<P.slides.length;i++){
- const s=p.slides.items[i];s.light=[1,2,4,6,8].includes(i);s.ink=s.light?C.ink:C.paper;s.muted=s.light?C.mutedLight:C.mutedDark;s.bg=s.light?C.paper:C.dark;
+for(let i=0;i<7;i++){
+ const s=p.slides.items[i];s.light=[1,2,4,6].includes(i);s.ink=s.light?C.ink:C.paper;s.muted=s.light?C.mutedLight:C.mutedDark;s.bg=s.light?C.paper:C.dark;
  // Existing header and numbering remain in their original positions.
  s.shapes.items[2].text=P.slides[i].label.toUpperCase();
- if(i>0)s.shapes.items[5].text=String(i+1).padStart(2,'0');
  frag=[`<div class="rule"></div><div class="topline"><span>DECISION 618 / Movie recommendations</span><span>${esc(P.slides[i].label)}</span></div>`];
  if(i>0)ht(P.slides[i].title,75,115,1130,103,64,{color:s.ink,font:display});
  ht(String(i+1).padStart(2,'0'),1182,669,50,29,17,{color:s.muted});
  if(i===0){
-  const replacements=[['THE NEXT MOVIE','MOVIE'],['RECOMMENDATION','RECOMMENDATIONS'],['MovieLens 1M and adapted NextItNet','Course methods, timestamps and adapted NextItNet']];
+  const replacements=[['THE NEXT MOVIE','MOVIE RATING'],['RECOMMENDATION','PREDICTION'],['MovieLens 1M and adapted NextItNet','Course replication and a timestamp extension']];
   for(const shape of s.shapes.items)for(const [old,next] of replacements)shape.text.replace(old,next);
   s.shapes.items[1].text='DECISION 618 / MOVIE RECOMMENDATIONS';
-  ht('MOVIE',75,152,1080,166,130,{font:display});
-  ht('RECOMMENDATIONS',75,313,1090,170,130,{font:display,color:C.accent});
-  ht('Course methods, timestamps and adapted NextItNet',77,475,1095,62,28,{color:s.muted});
+  ht('MOVIE RATING',75,152,1080,166,130,{font:display});
+  ht('PREDICTION',75,313,1090,170,130,{font:display,color:C.accent});
+  ht('Course replication and a timestamp extension',77,475,1095,62,28,{color:s.muted});
   ht('Jiaming Cui, Joonse Lim, Tung Jerateepkulmeth',77,617,1100,47,19,{color:s.muted});
   text(s,'MovieLens 1M / October 7, 2026',77,551,1080,45,22,{color:s.muted});
  }else if(i===1){
@@ -100,7 +94,7 @@ for(let i=0;i<P.slides.length;i++){
    yAxis:{min:0,max:.65,numberFormatCode:'0.0%',textStyle:{typeface:body,fontSize:18,fill:s.muted},majorGridlines:{fill:'#dfd5c3',width:.5}},
    dataLabels:{showValue:true,position:'outEnd',textStyle:{typeface:body,fontSize:23,bold:true,fill:s.ink}},chartFill:s.bg,plotAreaFill:s.bg});
   applyPresentationChartFont(ch,{fontFamily:body});
-  html.push(originalSections[i].replace(/data-seconds="\d+"/,`data-seconds="${P.slides[i].seconds}"`));
+  html.push(originalSections[i].replace('data-seconds="40"','data-seconds="35"'));
  }else{
   clearBody(s,i);
   if(i===2){
@@ -129,27 +123,11 @@ for(let i=0;i<P.slides.length;i++){
    table(s,[['Timestamp vs. metadata','RMSE reduction','Paired 95% interval'],['Random',P.gains[0].improvement_RMSE.toFixed(4),ci(P.gains[0])],['Future',P.gains[1].improvement_RMSE.toFixed(4),ci(P.gains[1])]],75,371,[455,275,400],[58,62,62],{size:25});
    text(s,'Warm ratings: 23.84% in validation / 95.70% in final test.\nThis cohort change limits transfer of selected parameters.',75,579,1130,80,25,{color:s.muted});
    foot(s,'Intervals condition on this split and selection. Future CF is worse than training mean.');
-  }else if(i===6){
-   text(s,'Full sample: 6,038 users. Strictly later test rating: 3,494 users.',75,223,1130,47,24,{color:s.muted});
-   const values=[['Model','Full sample\nHR@10','Full sample\nNDCG@10','Later test\nHR@10','Later test\nNDCG@10'],
-    ...P.nextitnet.ranking.map(r=>[r.model==='NextItNet'?'Adapted NextItNet':r.model,
-     (100*r['HR@10']).toFixed(2)+'%',r['NDCG@10'].toFixed(4),
-     (100*r['strict_HR@10']).toFixed(2)+'%',r['strict_NDCG@10'].toFixed(4)])];
-   table(s,values,75,282,[340,190,200,200,200],[74,58,58,58,58],{size:24,highlightRow:4});
-   text(s,'NextItNet vs. item-kNN: +12.54 percentage points in full-sample HR@10',75,611,1130,43,25);
-   foot(s,'Saved experiment, September 12 UTC. Later-test subset removes boundary ties, not global future data.');
-  }else if(i===7){
-   text(s,'Separate objectives and holdouts require separate comparisons.',75,228,1130,48,25,{color:s.muted});
-   table(s,[['','Rating prediction','Next-item ranking'],
-    ['Target','1-5 star rating','Next rated movie'],
-    ['Holdout','Random 99/1 or\nglobal time 80/10/10','Last test / previous validation\nfor each user'],
-    ['Metric','RMSE: lower is better','HR@10, NDCG@10: higher']],75,292,[220,430,480],[58,64,105,70],{size:24});
-   text(s,'Per-user holdouts can include other users\' later ratings.\nSVD here optimizes stars. A shared global-time ranking test remains.',75,611,1100,79,23,{color:s.muted});
   }else{
    text(s,'MOVIE',75,240,500,115,84,{font:display,color:C.accent});
    text(s,'STARTS',75,343,500,115,84,{font:display,color:C.accent});
    text(s,'Proposed pilot measure:\nrecommendation-led starts\nper exposed user.',75,462,555,120,27);
-   for(const [y,title,copy] of [[241,'Before a pilot','Compare rankings on shared time windows.'],[365,'Candidate systems','Timestamp ensemble and adapted\nNextItNet, with cold-user fallbacks.'],[489,'Guardrails','Completion, catalog concentration,\nlatency and privacy.']]){
+   for(const [y,title,copy] of [[241,'Before a pilot','Evaluate Top-N ranking and cold users.'],[365,'Candidate system','CF + metadata + timestamp,\nwith cold-user fallback.'],[489,'Guardrails','Completion, catalog concentration,\nlatency and privacy.']]){
     text(s,title,707,y,490,45,24,{bold:true});text(s,copy,707,y+46,490,72,24);
    }
    text(s,'Repeat evaluation across time windows before a limited randomized pilot.\nMovieLens has no exposure, revenue or cost data to establish ROI.',75,611,1115,51,20,{color:s.muted});
@@ -158,31 +136,31 @@ for(let i=0;i<P.slides.length;i++){
  if(i!==1)html.push(`<section class="slide ${s.light?'light ':''}${i===0?'active visible':''}" data-seconds="${P.slides[i].seconds}">${frag.join('')}</section>`);
  s.speakerNotes.textFrame.setText(P.slides[i].script+'\n\n中文讲解\n'+P.slides[i].chinese+'\n\nPlanned time: '+P.slides[i].seconds+' seconds\n\nSources\n'+P.slides[i].sources.join('\n')+'\nCourse page references use PDF positions. Exact Canvas file IDs/hashes: course_rebuild_20261007/sources/course_manifest.json.\nMovieLens: https://grouplens.org/datasets/movielens/1m/');
 }
-let web=originalHtml.replace(/<title>[\s\S]*?<\/title>/,'<title>Decision 618: Rating prediction and NextItNet, October 7</title>');
+let web=originalHtml.replace(/<title>[\s\S]*?<\/title>/,'<title>Decision 618: MovieLens rating prediction, October 7</title>');
 web=web.replace(/<main class="deck-stage" id="deckStage">[\s\S]*?<\/main>/,`<main class="deck-stage" id="deckStage">${html.join('')}</main>`);
 web=web.replace(/const SLIDE_NOTES=[\s\S]*?;\nclass SlidePresentation/,`const SLIDE_NOTES=${JSON.stringify(P.slides)};\nclass SlidePresentation`);
-web=web.replaceAll('decision618-d3-cinema-edits','decision618-oct7-rating-nextitnet-v4-edits');
+web=web.replaceAll('decision618-d3-cinema-edits','decision618-oct7-rating-cinema-edits');
 web=web.replaceAll('Decision618_Presentation_EN.html','Decision618_Presentation_EN_20261007.html');
 web=web.replace('Sources: GroupLens MovieLens 1M; Yuan et al. (2019); Recommenders 1.2.1; DECISION 618 lecture 7; local experiment summary and per-user metrics.','Sources: ${s.sources.join("; ")}');
 web=web.replace('</style>','.evidence-table{table-layout:fixed;border-collapse:collapse;font-family:"DM Sans";line-height:1.2}.evidence-table td{border:1px solid;border-color:inherit;padding:15px 18px;vertical-align:middle;text-align:left}\n</style>');
 await fs.writeFile(path.join(OUT,'Presentation_EN.html'),web);
 const candidate=path.join(BUILD,'candidate.pptx');
 await(await PresentationFile.exportPptx(p)).save(candidate);
-const final=path.join(OUT,'Presentation_EN_20261007_v4.pptx');
+const final=path.join(OUT,'Presentation_EN_20261007_v3.pptx');
 const sourceSha=crypto.createHash('sha256').update(await fs.readFile(SOURCE)).digest('hex');
 const result=await finalizePresentation({workspaceDir:ROOT,candidatePath:candidate,finalPath:final,pythonExecutable:PY,
  integrityValidatorPath:path.join(SKILL,'container_tools/inspect_presentation_package_integrity.py'),
  layoutValidatorPath:path.join(SKILL,'container_tools/inspect_presentation_layout_geometry.py'),
- layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-bullet-geometry','--validate-heading-fit',...['3','4','5','6','7','8'].flatMap(n=>['--require-native-table-slide',n])],
- explicitTotalSlideCount:P.slides.length,requiredNativeChartOwnerSlides:[2],requiredNativeTableOwnerSlides:[3,4,5,6,7,8],
+ layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-bullet-geometry','--validate-heading-fit',...['3','4','5','6'].flatMap(n=>['--require-native-table-slide',n])],
+ explicitTotalSlideCount:7,requiredNativeChartOwnerSlides:[2],requiredNativeTableOwnerSlides:[3,4,5,6],
  materializeLiteralChartWorkbooks:true,
  fontPolicy:{basis:'reference',families:[display,body],referencePath:SOURCE,referenceSha256:sourceSha},
- verifyArtifactToolImport:true,receiptPath:path.join(BUILD,'pptx-validation-v4.json')});
+ verifyArtifactToolImport:true,receiptPath:path.join(BUILD,'pptx-validation-v3.json')});
 console.log('Finalized',JSON.stringify(result));
 const verified=await PresentationFile.importPptx(await FileBlob.load(final));
-for(let i=0;i<P.slides.length;i++){
+for(let i=0;i<7;i++){
  const slide=verified.slides.items[i];const png=await verified.export({slide,format:'png',scale:1});
  await fs.writeFile(path.join(BUILD,`pptx-slide-${i+1}.png`),new Uint8Array(await png.arrayBuffer()));
  const layout=await slide.export({format:'layout'});await fs.writeFile(path.join(BUILD,`pptx-slide-${i+1}.layout.json`),await layout.text());
 }
-console.log('Rendered',P.slides.length,'updated slides');
+console.log('Rendered seven updated slides');

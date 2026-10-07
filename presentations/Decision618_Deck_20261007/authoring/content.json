@@ -2,87 +2,111 @@
   "date": "2026-10-07",
   "slides": [
     {
-      "title": "Movie rating prediction",
+      "title": "Movie recommendations",
       "label": "Business problem",
       "seconds": 25,
-      "script": "Our project belongs to Media and Entertainment. We ask whether a movie platform can predict a returning user's preferences more accurately. This October seventh version starts with the method taught in class and adds timestamp features. The immediate task is predicting a one-to-five star rating. Recommendation quality and business impact still need separate tests.",
-      "chinese": "行业是 Media & Entertainment。10 月 7 日版本先复现老师的矩阵分解，再加入 metadata 和 timestamp。当前预测目标是 1 至 5 星评分，不再把 NextItNet 的下一物品 HR@10 当作这一版的结果。评分准确度、Top-N 推荐质量和商业收益是三个需要分别验证的问题。",
+      "script": "Our project asks how a movie platform can recommend more relevant films to returning users. This October seventh deck brings together the course's rating prediction method and our completed NextItNet experiment. We compare models within each task. Rating errors and recommendation ranks answer different questions.",
+      "chinese": "行业是 Media & Entertainment。10 月 7 日版合并两项已完成工作：老师的评分预测方法及 timestamp 扩展，以及此前适配版 NextItNet 的下一部被评分电影排序实验。评分任务内用 RMSE 对比，排序任务内用 HR@10/NDCG@10 对比。它们支持不同用途，不能直接据不同指标宣布一个总冠军。",
       "sources": [
         "GroupLens MovieLens 1M README; course_rebuild_20261007/Methods_and_findings_EN.md"
       ],
-      "words": 54
+      "words": 45
     },
     {
       "title": "MovieLens and rating activity",
       "label": "Data understanding",
-      "seconds": 35,
-      "script": "MovieLens contains about one million ratings from six thousand users. We checked the source tables, IDs and rating values, and kept missing user-movie pairs unobserved. Timing is useful but easy to misread. Fifty-three percent of adjacent ratings share the same second, and almost eighty-nine percent arrive within a minute. These timestamps describe when someone entered ratings. They cannot establish the order in which that person watched the movies.",
+      "seconds": 25,
+      "script": "MovieLens has about one million ratings from six thousand users. We kept missing ratings unobserved. Timing needs care: fifty-three percent of adjacent ratings share the same second, and almost eighty-nine percent arrive within a minute. These are rating-entry timestamps. They cannot establish movie viewing order.",
       "chinese": "MovieLens 1M 有 1,000,209 条评分、6,040 名用户、3,706 部实际被评分的电影，电影目录共有 3,883 部。未评分不等于不喜欢。994,169 对用户内相邻评分中，53.21% 同秒，88.72% 间隔不超过 60 秒，说明大量批量录入；timestamp 是评分录入时间，不是观看时间。95.74% 稀疏度以完整 3,883 部目录为分母。",
       "sources": [
         "course_rebuild_20261007/results/preparation.json; results/timestamp_eda.json",
         "GroupLens MovieLens 1M README"
       ],
-      "words": 68
+      "words": 45
     },
     {
       "title": "Course baseline and fresh replication",
       "label": "Course replication",
-      "seconds": 50,
-      "script": "The instructor uses softImpute matrix factorization to predict missing ratings. We reproduced the exact random split and all twenty cross-validation folds, using the classroom NumPy seed of one forty-four. Rescoring the instructor's cache selects rank eight. Four hundred fresh R fits select rank nine, with rank eight close behind. We retain rank eight for the classroom comparison and report the fresh choice separately. Its test RMSE is point nine one nine eight, close to the instructor's point nine one nine. R initialization and package differences prevent a claim of identical numerical results.",
+      "seconds": 35,
+      "script": "The instructor uses softImpute matrix factorization. We reproduced the exact random split and twenty cross-validation folds with seed one forty-four. The instructor's cache selects rank eight. Four hundred fresh R fits select rank nine, with rank eight close behind. We retain rank eight for the classroom comparison. Its test RMSE is point nine one nine eight. The instructor did not record the R seed or package version, so this is a procedural replication.",
       "chinese": "复现的是 ColFil_dist.ipynb 的 softImpute：NumPy seed=144、990,206 条训练、10,003 条测试、20-fold CV，rank=1 至 20。老师缓存重新评分选 rank 8。400 次全新 R 拟合选 rank 9，CV RMSE=0.918274；rank 8 为 0.918956。为忠实课堂对比，主表沿用 rank 8，fresh-selected refit 另存。老师没有记录 R seed/版本；本次 R 4.0.2、softImpute 1.4-1，因此是流程复现，不能声称数值完全一致。表内 OSR² 以训练均值作为基准预测。",
       "sources": [
         "Decision 618 Lecture 7, PDF pp.45, 47, 52, 55-59; ColFil_dist.ipynb cells 5-15 and 17-23 (zero-based)",
         "course_rebuild_20261007/results/cache_audit.json; fresh_cv_metrics.csv; teacher_rank8_fit.csv"
       ],
-      "words": 92
+      "words": 73
     },
     {
       "title": "Random completion and future prediction",
       "label": "Evaluation protocol",
-      "seconds": 45,
-      "script": "The split follows the question. The course's ninety-nine-to-one random split tests whether we can fill missing ratings. To test future ratings, we added a global chronological split of roughly eighty, ten and ten percent, keeping equal timestamps together. Validation chooses parameters, and the final fit uses training plus validation before the untouched test period. The ensemble learns from out-of-fold predictions. History features use only earlier fitted entries. Every comparison within a column uses the same holdout. The two columns cover different people and periods.",
+      "seconds": 35,
+      "script": "The course's ninety-nine-to-one random split tests completion of missing ratings. We also use a global chronological split to predict future ratings, keeping equal timestamps together. Validation chooses parameters. The final fit adds validation before the untouched test period. Ensemble training uses out-of-fold predictions, and history features use only earlier fitted entries. Models within each column share a holdout. The columns cover different people and periods.",
       "chinese": "Lecture 2 区分无时间依赖的随机分割与预测未来的按时间分割。保留老师的 99/1 随机评分补全；另做全局 80/10/10 时间分割，行数为 800,164 / 100,024 / 100,021，同秒评分不跨边界。参数只在训练/CV/验证选择，最终以 900,188 条 train+validation 重拟合，测试标签不参与。时间 ensemble 用 expanding-time out-of-fold CF 预测，不能用训练内拟合值替代；history 只取冻结的 fit history，query 之后及同秒事件排除。两列目标相同但人群、时间窗、参数选择不同。",
       "sources": [
         "Decision 618 Lecture 2, PDF pp.65, 87-89; Lecture 7, PDF p.45",
         "course_rebuild_20261007/results/temporal_split.json; timestamp_experiment.json; analysis_audit.json"
       ],
-      "words": 84
+      "words": 65
     },
     {
-      "title": "Metadata and time improve rating accuracy",
+      "title": "Rating prediction results",
       "label": "Results",
-      "seconds": 65,
-      "script": "Ridge combines CF predictions with movie and user metadata. We compare it with and without time features. Lower RMSE means smaller star-rating errors. On the random test, collaborative filtering scores point nine one nine eight. Metadata lowers that to point eight nine nine zero, and timestamp features lower it again to point eight nine four zero. On the future test, the timestamp ensemble scores one point zero zero zero one, compared with one point zero three zero three for the static ensemble. The controlled timestamp increments are about point zero zero five and point zero three zero two rating points. The future collaborative-filtering model performs worse than the training mean. We kept that result because it matters. These comparisons support the timestamp ensemble on these holdouts. They do not prove better viewing engagement.",
+      "seconds": 45,
+      "script": "Lower RMSE means smaller rating errors. On the random test, CF scores point nine one nine eight. Metadata improves it to point eight nine nine zero, then timestamps to point eight nine four zero. On the future test, timestamps improve the static ensemble from one point zero three zero three to one point zero zero zero one. Future CF performs worse than the training mean. We keep that result because it matters.",
       "chinese": "Ridge ensemble 将 CF 预测与电影类型、上映年份和用户人口统计类别组合；timestamp 版再加入时间特征，正则化参数 alpha 只在验证中选择。结果来自 model_metrics.csv 的 scope=all，包含冷启动行。Random RMSE：训练均值 1.1237、CF 0.9198、CF+metadata 0.8990、CF+metadata+timestamp 0.8940。Future RMSE：1.0893、1.2246、1.0303、1.0001。timestamp 的增量须与同一列静态 ensemble 相减，得到 0.005022 与 0.030223，不是百分点，也不是点击率。Future CF 1.2246 比均值 1.0893 更差，已独立核对因子点积、行号及 fallback 后保留。不能用两列差异断言全部是时间带来的损失。",
       "sources": [
         "course_rebuild_20261007/results/model_metrics.csv (scope=all); timestamp_experiment.json",
         "course_rebuild_20261007/results/independent_r_audit.csv; analysis_audit.json"
       ],
-      "words": 133
+      "words": 72
     },
     {
       "title": "Timestamp features and evaluation limits",
       "label": "Robustness",
-      "seconds": 45,
-      "script": "The course already discusses date and time. We test their incremental value alongside counts and gaps from strictly earlier ratings. Equal-second entries contribute no prior history. User-level paired bootstrap intervals remain above zero for both timestamp increments. Those intervals are conditional on this split and selection procedure. A limitation appears in the future evaluation: only twenty-four percent of validation ratings are warm, compared with ninety-six percent in the final test. The validation choice therefore transfers between very different cohorts. We need repeated time windows before treating this as a stable deployment result.",
+      "seconds": 35,
+      "script": "The course already discusses date and time. We measure their increment with calendar features and counts and gaps from earlier ratings. Both paired bootstrap intervals stay above zero. These intervals depend on this split and model selection. Another limit is the future cohort: warm ratings account for twenty-four percent of validation but ninety-six percent of final test. We need repeated time windows to check stability.",
       "chinese": "老师 Lecture 7 的 ensemble 已涉及日期和时间；本次贡献是可复现的组合模型、timestamp 增量比较与全局时间评估。Calendar 采用 UTC，用户本地时区未知。时间特征包括 UTC 日历、elapsed days、严格早于 query 的历史计数和间隔；同秒排除，漂移变量限制在 meta-fit 范围内。2,000 次按用户配对 bootstrap，统计量是 event-weighted RMSE：Random 增量 95% CI=[0.0031,0.0069]，Future=[0.0111,0.0504]。它们只反映固定分割、既定选模过程下的不确定性，不能当作因果效应。Warm 定义为用户及电影都在当时的 fit 数据中出现：validation warm=23.84%，test warm=95.70%，且 test fit 已加入 validation。这个人群变化限制参数迁移，需重复时间窗验证。",
       "sources": [
         "course_rebuild_20261007/results/timestamp_experiment.json; temporal_population.csv",
         "Decision 618 Lecture 7, PDF pp.55-59; course_rebuild_20261007/code/evaluate_timestamp.py"
       ],
-      "words": 92
+      "words": 65
+    },
+    {
+      "title": "NextItNet ranking results",
+      "label": "Next-item ranking",
+      "chinese": "本页重用已经完成的适配版 NextItNet 实验，原运行记录为 2026-09-12 03:38:08 UTC（本地 9 月 11 日），不是 10 月 7 日重新训练。主样本为所有方法相同的 6,038 名可评估用户，最终目录为 3,704 部电影，移除用户此前评分过的电影，目标是下一部被评分电影，评分高低都包括。Popularity / item-kNN / SVD / NextItNet 的 HR@10 分别为 4.09% / 7.40% / 1.21% / 19.94%，NDCG@10 为 0.0206 / 0.0389 / 0.0055 / 0.1049。NextItNet 比 item-kNN 高 12.54 个百分点。测试目标时间严格晚于前一条评分的子样本有 3,496 人，剔除 2 个目录外目标后共同评估 3,494 人，HR@10 为 3.81% / 5.95% / 1.35% / 14.31%，NDCG 为 0.0191 / 0.0311 / 0.0066 / 0.0758。这个子样本避免测试边界同秒排序，但仍不是全局未来期测试。NextItNet 相对 item-kNN 的配对 NDCG 差值为 0.065963，95% bootstrap CI=[0.059809,0.072244]，该区间针对 NDCG，不是 HR。",
+      "sources": [
+        "final_project/nextitnet/results/test_metrics.csv; strict_timestamp_metrics.csv; test_per_user.csv",
+        "final_project/nextitnet/results/summary.json; selection_before_test.json; protocol_before_training.json"
+      ],
+      "script": "For next-item ranking, adapted NextItNet puts the held-out movie in its top ten for nineteen point nine four percent of users. Item-kNN achieves seven point four zero percent, a gap of twelve point five four percentage points. NextItNet also leads on NDCG. On the subset whose test rating comes strictly later, its hit rate is fourteen point three one percent versus five point nine five for item-kNN. This reuses our completed experiment. We have not retrained it for October seventh.",
+      "seconds": 45,
+      "words": 80
+    },
+    {
+      "title": "Rating prediction and next-item ranking",
+      "label": "Comparing the tasks",
+      "chinese": "评分预测问用户会给一部电影几星，目标为 1 至 5 星，以 RMSE 越低越好衡量；排序问哪部电影会成为下一条评分，以 HR@10 和 NDCG@10 越高越好衡量。softImpute 与 SVD 都属矩阵分解，但它们是不同实现和实验，不能混为一个基线。NextItNet 按每名用户的时间序列留最后一条为 test、倒数第二条为 validation，相同 timestamp 用 seed=42 的随机键排序。训练 988,129 条评分减去每人第一条无前序位置 6,040，得到 982,089 个训练转移。它沿用官方 Recommenders 的因果残差卷积 encoder，适配为仅电影的 32 维 embedding 与 full-softmax，替代原 item/category candidate-MLP 包装。非重叠 teacher-forced chunk 的边界重置状态。validation 从窗口 10/20/50 中选 10，epoch=8，item-kNN K=40，SVD factors=100。最终各模型加入 validation 重拟合、排除 test 标签，共有 2 个目录外 test 目标，所有模型统一剔除。SVD 优化星级预测，这次低 HR 不能推广到所有矩阵分解或排名优化的 MF。每用户时间留出仍允许其他用户较晚评分进入 fit；需要统一全局时间窗后才能与 timestamp ensemble 作同任务排序比较。",
+      "sources": [
+        "final_project/nextitnet/results/summary.json; protocol_before_training.json; selection_before_test.json",
+        "final_project/nextitnet/code/experiment.py; course_rebuild_20261007/Methods_and_findings_EN.md"
+      ],
+      "script": "The ranking test holds out each user's last rating for test and the previous one for validation. We select a ten-item context using validation, refit on training plus validation, and remove previously rated movies from candidates. Equal timestamps use seeded tie-breaking. This split can still include other users' later ratings. SVD here optimizes star ratings, so its weak ranking score does not establish that every matrix-factorization method is weak.",
+      "seconds": 35,
+      "words": 69
     },
     {
       "title": "Further checks before a business pilot",
       "label": "Business application",
-      "seconds": 35,
-      "script": "The next step is to evaluate Top-N ranking and cold users across additional time windows. If those checks hold, a limited randomized pilot could test recommendation-led movie starts per exposed user, with completion, catalog concentration and latency as guardrails. That is a proposed business test. MovieLens has no exposure logs, revenues or operating costs, so we cannot calculate ROI from these ratings. The current evidence supports further offline testing of the timestamp ensemble.",
-      "chinese": "下一步先增加多个全局时间窗、Top-N 推荐指标和冷启动评估，再考虑有限随机对照试验。商业指标可设为每名曝光用户由推荐带来的开播次数，配套完播、目录集中度、延迟及隐私保护。这些是待执行方案，不是已取得的商业效果。MovieLens 没有曝光、收入、运营成本，不能计算或编造 ROI，也不能从较低 RMSE 推出更高留存。",
+      "seconds": 20,
+      "script": "Both approaches warrant further offline testing. Compare ranking models on shared global time windows and test cold-user fallbacks. A later randomized pilot could measure movie starts per exposed user. MovieLens has no exposure, revenue or cost data to establish engagement gains or ROI.",
+      "chinese": "已有评分 RMSE 与每用户留出排序结果。下一步在多个共享全局时间窗下比较排名模型，并测试冷启动 fallback，再考虑有限随机试验。可用每名曝光用户由推荐带来的开播次数衡量商业结果，配套完播、目录集中度和延迟指标。MovieLens 没有曝光、收入和运营成本，这些是待执行方案，不能把离线准确度当作实际参与度或 ROI。",
       "sources": [
         "course_rebuild_20261007/Methods_and_findings_EN.md; GroupLens MovieLens 1M README",
         "Business pilot and guardrails are proposed, not measured outcomes"
       ],
-      "words": 73
+      "words": 43
     }
   ],
   "models": [
@@ -172,6 +196,88 @@
       }
     ],
     "target": "Explicit 1-5 rating, unchanged from the course"
+  },
+  "nextitnet": {
+    "original_run_utc": "2026-09-12T03:38:08.111559+00:00",
+    "protocol": "Per-user final item test, penultimate validation. Equal timestamps ordered by seeded random keys. Final refit includes validation items. Full fitted catalog, seen items removed. Target is next rated movie regardless of stars.",
+    "adaptation": "Official Recommenders NextItNet causal residual encoder with item-only 32d embeddings and full-softmax output; replaces item/category candidate-MLP wrapper. Training uses nonoverlapping teacher-forced chunks; state resets at chunk boundaries.",
+    "selection": {
+      "nextitnet": {
+        "window": 10,
+        "epoch": 8,
+        "NDCG@10": 0.10758510853602563,
+        "training_seconds": 136.11423320999998,
+        "parameters": 250712
+      },
+      "itemknn_k": 40,
+      "svd_factors": 100
+    },
+    "final_catalog": 3704,
+    "users": 6038,
+    "strict_users": 3494,
+    "ranking": [
+      {
+        "model": "Popularity",
+        "users": 6038,
+        "strict_users": 3494,
+        "HR@10": 0.04090758529314342,
+        "strict_HR@10": 0.038065254722381224,
+        "NDCG@10": 0.0205690705768243,
+        "strict_NDCG@10": 0.019080358094258697
+      },
+      {
+        "model": "item-kNN",
+        "users": 6038,
+        "strict_users": 3494,
+        "HR@10": 0.07403113613779397,
+        "strict_HR@10": 0.059530623926731537,
+        "NDCG@10": 0.03893778660526552,
+        "strict_NDCG@10": 0.0310960183223581
+      },
+      {
+        "model": "SVD",
+        "users": 6038,
+        "strict_users": 3494,
+        "HR@10": 0.01209009605829745,
+        "strict_HR@10": 0.013451631368059531,
+        "NDCG@10": 0.005499727403079952,
+        "strict_NDCG@10": 0.006578743013666862
+      },
+      {
+        "model": "NextItNet",
+        "users": 6038,
+        "strict_users": 3494,
+        "HR@10": 0.19940377608479629,
+        "strict_HR@10": 0.14310246136233543,
+        "NDCG@10": 0.10490061013544169,
+        "strict_NDCG@10": 0.07578070953330591
+      }
+    ],
+    "hr_gain_vs_itemknn": 0.12537263994700232,
+    "paired_ndcg_intervals": {
+      "Popularity": {
+        "difference": 0.08433153955861739,
+        "ci95": [
+          0.07774839251762282,
+          0.09045532925371232
+        ]
+      },
+      "item-kNN": {
+        "difference": 0.06596282353017616,
+        "ci95": [
+          0.05980872877611116,
+          0.07224413496631575
+        ]
+      },
+      "SVD": {
+        "difference": 0.09940088273236171,
+        "ci95": [
+          0.09348086745162838,
+          0.1052011890797378
+        ]
+      }
+    },
+    "verification": "Recomputed HR@10 and NDCG@10 from saved per-user ranks. Both cohorts match saved aggregate metrics. No retraining."
   },
   "sources": {
     "methods": "course_rebuild_20261007/Methods_and_findings_EN.md",

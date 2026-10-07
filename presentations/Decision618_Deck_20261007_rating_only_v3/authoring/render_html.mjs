@@ -2,8 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
-const root=path.resolve(process.env.OUTPUT_DIR||'output/Decision618_Deck_20261007_NextItNet');
-const build=path.resolve(process.env.BUILD_DIR||'tmp/d3_20261007_nextitnet');
+const root=path.resolve(process.env.OUTPUT_DIR||'output/Decision618_Deck_20261007');
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1920,height:1080}});
 const errors=[];page.on('pageerror',e=>errors.push(String(e)));
@@ -11,8 +10,7 @@ await page.goto(pathToFileURL(path.join(root,'Presentation_EN.html')).href);
 await page.evaluate(()=>document.fonts.ready);
 await page.addStyleTag({content:'.reveal{transition:none!important;opacity:1!important;transform:none!important}.deck-controls,.edit-hotzone,.edit-toggle,.notes-overlay{visibility:hidden!important}'});
 const checks=[];
-const count=await page.locator('.slide').count();
-for(let i=0;i<count;i++){
+for(let i=0;i<7;i++){
  await page.evaluate(i=>window.deck.showSlide(i),i);
  checks.push(await page.evaluate(()=>{
   const s=document.querySelector('.slide.active'); const r=s.getBoundingClientRect();
@@ -21,7 +19,7 @@ for(let i=0;i<count;i++){
   const overflow=nodes.filter(e=>e.scrollWidth>e.clientWidth+2||e.scrollHeight>e.clientHeight+2).map(e=>({text:e.textContent.trim(),scrollHeight:e.scrollHeight,clientHeight:e.clientHeight}));
   return {slide:window.deck.index+1,activeCount:document.querySelectorAll('.slide.active').length,outside,overflow,stageRatio:r.width/r.height};
  }));
- await page.screenshot({path:path.join(build,`html-slide-${i+1}.png`)});
+ await page.screenshot({path:`tmp/d3_20261007/html-slide-${i+1}.png`});
 }
 await page.keyboard.press('Home');await page.keyboard.press('ArrowRight');
 if(await page.evaluate(()=>deck.index)!==1)throw Error('Keyboard navigation failed');
@@ -31,11 +29,11 @@ await page.keyboard.press('t');if(!await page.evaluate(()=>deck.started))throw E
 for(const viewport of [{width:1280,height:720},{width:390,height:844}]){
  await page.setViewportSize(viewport);await page.evaluate(()=>deck.showSlide(4));
  const ratio=await page.locator('.slide.active').boundingBox();if(Math.abs(ratio.width/ratio.height-16/9)>1e-5)throw Error('Stage ratio changed');
- await page.screenshot({path:path.join(build,`html-${viewport.width}.png`)});
+ await page.screenshot({path:`tmp/d3_20261007/html-${viewport.width}.png`});
 }
 await page.setViewportSize({width:1920,height:1080});
 await page.pdf({path:path.join(root,'Presentation_EN.pdf'),width:'1920px',height:'1080px',printBackground:true,preferCSSPageSize:true});
 await browser.close();
-await fs.writeFile(path.join(build,'html-validation.json'),JSON.stringify({checks,errors,keyboard:true,editing:true,notes:true,timer:true,viewports:['1920x1080','1280x720','390x844']},null,2));
+await fs.writeFile('tmp/d3_20261007/html-validation.json',JSON.stringify({checks,errors,keyboard:true,editing:true,notes:true,timer:true,viewports:['1920x1080','1280x720','390x844']},null,2));
 console.log(JSON.stringify({checks,errors}));
 if(errors.length||checks.some(c=>c.outside.length||c.overflow.length))process.exitCode=1;

@@ -1,10 +1,18 @@
 {
-  "results/model_metrics.csv": "5d2d9cbc690dff1b2538eb377b37ea055580ca42604a156e8481605809424c2e",
-  "results/timestamp_experiment.json": "5b6611e481459fcf287a977f845dd4d5df5d986682c0191d4ecaf230da70f6f3",
-  "results/timestamp_eda.json": "791a273892b3751c50d732a80535e8522ee65f9bfdb95d9f328f543325b71bef",
-  "results/temporal_split.json": "1c32f60e8cc786f638334222a33cf241150d36bb499c28d9e2b382fae967dbcb",
-  "results/temporal_population.csv": "deba82ed6ca8a0926217439491baf16adf597d828360931fe222e300b8395708",
-  "results/fresh_cv_metrics.csv": "384ef05fc8f0e7ca182ffb0195807c7111750313ad2981465afed02c228dda26",
-  "results/cache_audit.json": "df799b91d670871eeb666de0d127599a2043ace29b597f57d35fe3b219ca7cad",
-  "Methods_and_findings_EN.md": "167b9a2be4a421a84561c835e0b10286994bff65b7484631adfacb00a633d5fc"
+  "course_rebuild_20261007/results/model_metrics.csv": "5d2d9cbc690dff1b2538eb377b37ea055580ca42604a156e8481605809424c2e",
+  "course_rebuild_20261007/results/timestamp_experiment.json": "5b6611e481459fcf287a977f845dd4d5df5d986682c0191d4ecaf230da70f6f3",
+  "course_rebuild_20261007/results/timestamp_eda.json": "791a273892b3751c50d732a80535e8522ee65f9bfdb95d9f328f543325b71bef",
+  "course_rebuild_20261007/results/temporal_split.json": "1c32f60e8cc786f638334222a33cf241150d36bb499c28d9e2b382fae967dbcb",
+  "course_rebuild_20261007/results/temporal_population.csv": "deba82ed6ca8a0926217439491baf16adf597d828360931fe222e300b8395708",
+  "course_rebuild_20261007/results/fresh_cv_metrics.csv": "384ef05fc8f0e7ca182ffb0195807c7111750313ad2981465afed02c228dda26",
+  "course_rebuild_20261007/results/cache_audit.json": "df799b91d670871eeb666de0d127599a2043ace29b597f57d35fe3b219ca7cad",
+  "course_rebuild_20261007/Methods_and_findings_EN.md": "167b9a2be4a421a84561c835e0b10286994bff65b7484631adfacb00a633d5fc",
+  "final_project/nextitnet/results/test_metrics.csv": "9be69c4e1bb4437e01185b548cac1c68365dd3d9c038f9b133317cd4ce074096",
+  "final_project/nextitnet/results/strict_timestamp_metrics.csv": "3c7e7858bfb3db73a60d486a44f02aae51b4c8ff9709437681335e31d17a444a",
+  "final_project/nextitnet/results/test_per_user.csv": "f339b71ddeef94fa61e645b6ba5968b59bd338eacbd3bb735ddf07f89f46972a",
+  "final_project/nextitnet/results/sequence_split.csv.gz": "9aafd82811978e2ca581996d1db86033ed0321cf824febb10031a4b19bf1c4d3",
+  "final_project/nextitnet/results/summary.json": "3fd759ee19574b722d43b831a3675898101ed144c8ef1b1432ed4eefa83e3de8",
+  "final_project/nextitnet/results/audit.json": "b5bdfd8fab2e1f796a867909b0fce3bab58c3d42c595eb94ceb95b26f41b52c2",
+  "final_project/nextitnet/results/selection_before_test.json": "1a27e39042e88cc1959a70224567d132d2e94f82e1709b56b5f84728522bf999",
+  "final_project/nextitnet/results/protocol_before_training.json": "d0bcee30d302d9582e9ce5cb15c38fce5c60dce6251d559b6f356b94ba88487c"
 }

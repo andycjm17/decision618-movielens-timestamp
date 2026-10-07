@@ -23,7 +23,16 @@ The timestamp increment is measured against the static ensemble on the same hold
 
 ## Presentation
 
-The current [October 7 presentation](presentations/Decision618_Deck_20261007/README.md) includes an editable [PowerPoint](presentations/Decision618_Deck_20261007/Presentation_EN_20261007_v3.pptx), [PDF](presentations/Decision618_Deck_20261007/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. Its seven slides cover the course replication, random and global time splits, and the metadata/timestamp RMSE comparisons reported above. It follows the approved cinema design and has a planned running time of five minutes. The October 6 NextItNet deck remains in its dated folder for reference.
+The current [October 7 presentation](presentations/Decision618_Deck_20261007/README.md) includes an editable [PowerPoint](presentations/Decision618_Deck_20261007/Presentation_EN_20261007_v4.pptx), [PDF](presentations/Decision618_Deck_20261007/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. Its nine slides combine the course replication and metadata/timestamp RMSE comparisons with the completed adapted NextItNet ranking experiment. The English script has 557 words and a planned running time of five minutes. The October 6 deck and October 7 rating-only v3 remain in dated folders.
+
+| Ranking model | Full sample HR@10 | Full sample NDCG@10 | Later-test subset HR@10 | Later-test subset NDCG@10 |
+|---|---:|---:|---:|---:|
+| Popularity | 4.09% | 0.0206 | 3.81% | 0.0191 |
+| item-kNN | 7.40% | 0.0389 | 5.95% | 0.0311 |
+| SVD | 1.21% | 0.0055 | 1.35% | 0.0066 |
+| Adapted NextItNet | **19.94%** | **0.1049** | **14.31%** | **0.0758** |
+
+The recorded NextItNet run began on September 12, 2026 UTC. These results reuse that experiment and do not claim October 7 retraining. Every ranking method uses the same 6,038 eligible users and fitted catalog, filtering previously rated movies. The later-test subset contains 3,494 eligible users whose test rating arrives strictly after the previous rating. It still uses a per-user holdout and can include other users' later ratings in the fitted data. SVD here optimizes star ratings. RMSE and ranking scores measure different targets and should be compared within their own experiments. [Recorded ranking evidence](final_project/nextitnet/README.md) includes saved per-user ranks and exact split membership for re-scoring.
 
 ## Restore the complete local project
 
@@ -67,8 +76,10 @@ Refitting also requires R and softImpute. The recorded run used R 4.0.2 / softIm
 | `course_rebuild_20261007/results/` | Predictions, metrics, validation choices, training logs and audit records |
 | `course_rebuild_20261007/figures/` | Eight analytical charts |
 | `course_rebuild_20261007/output/pdf/` | Seven-page Chinese methods companion |
-| `presentations/Decision618_Deck_20261007/` | Current English course-replication/timestamp deck, bilingual notes, scripts, fonts and authoring sources |
+| `presentations/Decision618_Deck_20261007/` | Current v4 English deck with rating and NextItNet comparisons, bilingual notes, scripts, fonts and authoring sources |
+| `presentations/Decision618_Deck_20261007_rating_only_v3/` | Archived October 7 rating-only presentation |
 | `presentations/Decision618_D3_20261006/` | Archived October 6 NextItNet presentation |
+| `final_project/nextitnet/` | Recorded ranking metrics, per-user ranks, exact split and original experiment source |
 | `release_assets.json` | Download names, original paths, sizes and hashes for large files |
 | `UPLOAD_MANIFEST.json` | Inventory of the copied project files and excluded temporary caches |
 

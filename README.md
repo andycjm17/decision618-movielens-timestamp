@@ -21,6 +21,10 @@ We reviewed the nine currently published technical lecture decks and 23 notebook
 
 The timestamp increment is measured against the static ensemble on the same holdout. The two evaluation columns contain different populations and answer different questions. Timestamps record rating entry, and 53.21% of adjacent within-user entries share one second. The results therefore do not establish viewing order, next-item ranking performance or a business outcome.
 
+## Presentation
+
+The [October 6 presentation](presentations/Decision618_D3_20261006/README.md) includes the editable [PowerPoint](presentations/Decision618_D3_20261006/Presentation_EN_v3.pptx), [PDF](presentations/Decision618_D3_20261006/Presentation_EN.pdf), offline HTML, English script, Chinese explanations and fonts. This existing deck covers the NextItNet ranking experiment. Its results and evaluation protocol differ from the October 7 star-rating analysis above.
+
 ## Restore the complete local project
 
 Clone the repository, then restore the private Release assets using an authenticated GitHub CLI:
@@ -63,6 +67,7 @@ Refitting also requires R and softImpute. The recorded run used R 4.0.2 / softIm
 | `course_rebuild_20261007/results/` | Predictions, metrics, validation choices, training logs and audit records |
 | `course_rebuild_20261007/figures/` | Eight analytical charts |
 | `course_rebuild_20261007/output/pdf/` | Seven-page Chinese methods companion |
+| `presentations/Decision618_D3_20261006/` | Existing English deck in PPTX, PDF and HTML, with scripts and fonts |
 | `release_assets.json` | Download names, original paths, sizes and hashes for large files |
 | `UPLOAD_MANIFEST.json` | Inventory of the copied project files and excluded temporary caches |
 

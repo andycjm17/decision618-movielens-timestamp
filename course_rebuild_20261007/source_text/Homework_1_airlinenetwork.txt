@@ -1,0 +1,463 @@
+CELL 0 code
+import pandas as pd
+import networkx as nx
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+os.makedirs("./output", exist_ok=True)
+import geopandas as gpd
+import requests, zipfile, io
+
+# --- Load data ---
+edges = pd.read_csv("flights.csv")
+nodes = pd.read_csv("airports.csv")
+
+edges = edges.merge(
+    nodes[["iata", "lat", "lon"]],
+    left_on="source_airport", right_on="iata", how="left"
+).rename(columns={"lat": "lat_from", "lon": "lon_from"})
+
+edges = edges.merge(
+    nodes[["iata", "lat", "lon"]],
+    left_on="destination_airport", right_on="iata", how="left"
+).rename(columns={"lat": "lat_to", "lon": "lon_to"})
+
+edges = edges.dropna(subset=["lat_from", "lon_from", "lat_to", "lon_to"])
+
+# --- Load US shapefile ---
+url = "https://www2.census.gov/geo/tiger/GENZ2022/shp/cb_2022_us_state_500k.zip"
+r = requests.get(url)
+z = zipfile.ZipFile(io.BytesIO(r.content))
+z.extractall("us_states")
+states = gpd.read_file("us_states/cb_2022_us_state_500k.shp")
+
+# --- Plot ---
+fig, ax = plt.subplots(figsize=(14, 8))
+states.boundary.plot(ax=ax, color="gray", linewidth=0.5)
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+
+for _, row in edges.iterrows():
+    ax.plot([row["lon_from"], row["lon_to"]],
+            [row["lat_from"], row["lat_to"]],
+            color="royalblue", alpha=0.3, linewidth=0.5)
+
+ax.scatter(nodes["lon"], nodes["lat"], color="red", s=10, alpha=0.8, zorder=5)
+
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+plt.tight_layout()
+
+plt.savefig("./output/p17.svg", format="svg", dpi=300, bbox_inches="tight")
+plt.show()
+
+
+CELL 1 markdown
+# Centrality
+
+CELL 2 markdown
+## Degree Centrality
+
+CELL 3 code
+# --- Final Flight Route Map over US ---
+import pandas as pd
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import requests, zipfile, io
+import os
+
+# --- Load data ---
+edges = pd.read_csv("flights.csv")
+nodes = pd.read_csv("airports.csv")
+
+# Merge flight edges with airport coordinates
+edges = edges.merge(
+    nodes[["iata", "lat", "lon"]],
+    left_on="source_airport", right_on="iata", how="left"
+).rename(columns={"lat": "lat_from", "lon": "lon_from"})
+
+edges = edges.merge(
+    nodes[["iata", "lat", "lon"]],
+    left_on="destination_airport", right_on="iata", how="left"
+).rename(columns={"lat": "lat_to", "lon": "lon_to"})
+
+# Remove any invalid rows
+edges = edges.dropna(subset=["lat_from", "lon_from", "lat_to", "lon_to"])
+
+# --- Download & load U.S. shapefile if not already downloaded ---
+os.makedirs("us_states", exist_ok=True)
+if not any(fname.endswith(".shp") for fname in os.listdir("us_states")):
+    url = "https://www2.census.gov/geo/tiger/GENZ2022/shp/cb_2022_us_state_500k.zip"
+    r = requests.get(url)
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    z.extractall("us_states")
+
+states = gpd.read_file("us_states/cb_2022_us_state_500k.shp")
+
+# --- Plot the network ---
+fig, ax = plt.subplots(figsize=(14, 8))
+
+# Draw the base map
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+states.boundary.plot(ax=ax, color="gray", linewidth=0.5)
+
+
+
+# Plot airport nodes
+ax.scatter(nodes["lon"], nodes["lat"], color="red", s=10, alpha=0.8, zorder=5)
+
+# Clean up plot area
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+
+# Save and show
+plt.tight_layout()
+plt.savefig("./output/p23.svg", format="svg", dpi=300, bbox_inches="tight")
+plt.show()
+
+
+CELL 4 code
+import networkx as nx
+import numpy as np
+
+# --- Build graph from existing edges ---
+GA = nx.from_pandas_edgelist(edges, source="source_airport", target="destination_airport", create_using=nx.Graph())
+
+# --- Compute degree (number of connections) ---
+degree_dict = dict(GA.degree())
+degree_df = pd.DataFrame(list(degree_dict.items()), columns=["iata", "degree"])
+
+# Merge degree info back to airport data
+nodes = nodes.merge(degree_df, on="iata", how="left").fillna({"degree": 0})
+
+# --- Plot ---
+fig, ax = plt.subplots(figsize=(10, 8))
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+
+# Plot airports, scaled by degree
+sizes = nodes["degree"] / nodes["degree"].max() * 300
+ax.scatter(nodes["lon"], nodes["lat"], s=sizes, color="red", alpha=0.6, zorder=5)
+
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+plt.tight_layout()
+
+plt.savefig("./output/p24.svg", format="svg", dpi=300, bbox_inches="tight")
+plt.show()
+
+# --- Top 10 busiest airports ---
+top10 = nodes.sort_values("degree", ascending=False)[["iata", "name", "degree"]].head(10)
+print("Top 10 busiest airports by degree:")
+print(top10.to_string(index=False))
+
+# --- Bottom 10 least busy airports ---
+bottom10 = nodes.sort_values("degree", ascending=True)[["iata", "name", "degree"]].head(10)
+print("\nBottom 10 least busy airports by degree:")
+print(bottom10.to_string(index=False))
+
+CELL 5 code
+# find rdu airport info
+rdu_info = nodes[nodes["iata"] == "RDU"][["iata", "name", "degree"]]
+rdu_info
+
+CELL 6 markdown
+## Closeness Centrality 
+
+CELL 7 code
+from matplotlib import cm
+
+def compute_avg_distance(G, node):
+    lengths = nx.shortest_path_length(G, source=node)
+    dists = list(lengths.values())
+
+    # remove self-distance (0)
+    reachable = [d for d in dists if d > 0]
+
+    # if isolated or no reachable nodes
+    if len(reachable) == 0:
+        return float("inf")
+
+    return np.mean(reachable)
+
+CELL 8 code
+# --- Compute closeness again safely ---
+closeness_dict = nx.closeness_centrality(GA)
+closeness_df = pd.DataFrame(list(closeness_dict.items()), columns=["iata", "closeness"])
+
+# # Remove existing 'closeness' if it already exists to prevent conflict
+# if "closeness" in nodes.columns:
+#     nodes = nodes.drop(columns=["closeness"])
+
+# Merge with airport data
+nodes = nodes.merge(closeness_df, on="iata", how="left").fillna({"closeness": 0})
+
+# --- Plot ---
+fig, ax = plt.subplots(figsize=(10, 8))
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+
+# Scale bubble size by closeness centrality
+c = nodes["closeness"]
+sizes = 30 + 300 * (c - c.min()) / (c.max() - c.min() + 1e-9)
+# sizes = nodes["closeness"] / nodes["closeness"].max() * 300
+ax.scatter(nodes["lon"], nodes["lat"], s=sizes, color="red", alpha=0.6, zorder=5)
+
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+plt.tight_layout()
+
+plt.savefig("./output/p28.svg", format="svg", dpi=300, bbox_inches="tight")
+plt.show()
+
+# --- Top 10 airports by closeness ---
+top10_close = nodes.sort_values("closeness", ascending=False)[["iata", "name", "closeness"]].head(10)
+print("Top 10 airports by closeness centrality:")
+print(top10_close.to_string(index=False))
+
+# --- Bottom 10 airports by closeness ---
+bottom10_close = nodes.sort_values("closeness", ascending=True)[["iata", "name", "closeness"]].head(10)
+print("\nBottom 10 airports by closeness centrality:")
+print(bottom10_close.to_string(index=False))
+
+
+CELL 9 code
+# SHOW RDU
+rdu_info = nodes[nodes["iata"] == "RDU"][["iata", "name", "closeness"]]
+rdu_info
+
+CELL 10 markdown
+## Betweenness Centrality
+
+CELL 11 code
+# --- Compute betweenness centrality ---
+betweenness_dict = nx.betweenness_centrality(GA, normalized=False)
+betweenness_df = pd.DataFrame(list(betweenness_dict.items()), columns=["iata", "betweenness"])
+
+# Remove existing column if already present
+if "betweenness" in nodes.columns:
+    nodes = nodes.drop(columns=["betweenness"])
+
+# Merge with airport data
+nodes = nodes.merge(betweenness_df, on="iata", how="left").fillna({"betweenness": 0})
+
+# --- Plot ---
+fig, ax = plt.subplots(figsize=(10, 8))
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+
+# Scale bubble size by betweenness centrality, sqare root
+# sizes = np.sqrt(nodes["betweenness"] / nodes["betweenness"].max()) * 600  # larger scaling for visibility
+c = nodes["betweenness"]
+sizes = 30 + 300 * (c - c.min()) / (c.max() - c.min() + 1e-9)
+ax.scatter(nodes["lon"], nodes["lat"], s=sizes, color="red", alpha=0.7, zorder=5)
+
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+plt.tight_layout()
+
+plt.savefig("./output/p35.svg", format="svg", dpi=300, bbox_inches="tight")
+plt.show()
+
+# --- Top 10 airports by betweenness ---
+top10_between = nodes.sort_values("betweenness", ascending=False)[["iata", "name", "betweenness"]].head(10)
+print("Top 10 airports by betweenness centrality:")
+print(top10_between.to_string(index=False))
+
+# --- Bottom 10 airports by betweenness ---
+bottom10_between = nodes.sort_values("betweenness", ascending=True)[["iata", "name", "betweenness"]].head(10)
+print("\nBottom 10 airports by betweenness centrality:")
+print(bottom10_between.to_string(index=False))
+
+
+CELL 12 code
+# rdu
+rdu_info = nodes[nodes["iata"] == "RDU"][["iata", "name", "betweenness"]]
+rdu_info
+
+CELL 13 markdown
+## PageRank
+
+CELL 14 code
+# --- Compute PageRank centrality ---
+pagerank_dict = nx.pagerank(GA, alpha=0.85)
+pagerank_df = pd.DataFrame(list(pagerank_dict.items()), columns=["iata", "pagerank"])
+
+# Remove existing column if already present
+if "pagerank" in nodes.columns:
+    nodes = nodes.drop(columns=["pagerank"])
+
+# Merge with airport data
+nodes = nodes.merge(pagerank_df, on="iata", how="left").fillna({"pagerank": 0})
+
+# --- Plot ---
+fig, ax = plt.subplots(figsize=(10, 8))
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+
+# Scale bubble size by PageRank (use sqrt for balanced visual scale)
+c = nodes["pagerank"]
+sizes = 30 + 300 * (c - c.min()) / (c.max() - c.min() + 1e-9)
+ax.scatter(nodes["lon"], nodes["lat"], s=sizes, color="red", alpha=0.7, zorder=5)
+
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+plt.tight_layout()
+
+plt.savefig("./output/p39.svg", format="svg", dpi=300, bbox_inches="tight")
+plt.show()
+
+# --- Top 10 airports by PageRank ---
+top10_pr = nodes.sort_values("pagerank", ascending=False)[["iata", "name", "pagerank"]].head(10)
+print("Top 10 airports by PageRank centrality:")
+print(top10_pr.to_string(index=False))
+
+# --- Bottom 10 airports by PageRank ---
+bottom10_pr = nodes.sort_values("pagerank", ascending=True)[["iata", "name", "pagerank"]].head(10)
+print("\nBottom 10 airports by PageRank centrality:")
+print(bottom10_pr.to_string(index=False))
+
+
+CELL 15 code
+# rdu
+rdu_info = nodes[nodes["iata"] == "RDU"][["iata", "name", "pagerank"]]
+rdu_info
+
+
+CELL 16 markdown
+# Community
+
+CELL 17 code
+import networkx as nx
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from community import community_louvain
+
+# --- Final Flight Route Map over US ---
+import pandas as pd
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import requests, zipfile, io
+import os
+
+# --- Load data ---
+edges = pd.read_csv("flights.csv")
+nodes = pd.read_csv("airports.csv")
+
+# Merge flight edges with airport coordinates
+edges = edges.merge(
+    nodes[["iata", "lat", "lon"]],
+    left_on="source_airport", right_on="iata", how="left"
+).rename(columns={"lat": "lat_from", "lon": "lon_from"})
+
+edges = edges.merge(
+    nodes[["iata", "lat", "lon"]],
+    left_on="destination_airport", right_on="iata", how="left"
+).rename(columns={"lat": "lat_to", "lon": "lon_to"})
+
+# Remove any invalid rows
+edges = edges.dropna(subset=["lat_from", "lon_from", "lat_to", "lon_to"])
+
+import networkx as nx
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from community import community_louvain
+
+# ======================================================
+# 1. Build airport graph GA
+# ======================================================
+GA = nx.from_pandas_edgelist(
+    edges,
+    source="source_airport",
+    target="destination_airport",
+    create_using=nx.Graph()
+)
+
+print("Nodes:", GA.number_of_nodes(), "Edges:", GA.number_of_edges())
+
+# ======================================================
+# 2. Compute degree (airport connectivity)
+# ======================================================
+degree_dict = dict(GA.degree())
+degree_df = pd.DataFrame(list(degree_dict.items()), columns=["iata", "degree"])
+
+nodes = nodes.merge(degree_df, on="iata", how="left").fillna({"degree": 0})
+
+# ======================================================
+# 3. Louvain community detection
+# ======================================================
+# seed
+partition = community_louvain.best_partition(GA, random_state=144)
+
+partition_df = pd.DataFrame({
+    "iata": list(partition.keys()),
+    "community": list(partition.values())
+})
+
+nodes = nodes.merge(partition_df, on="iata", how="left")
+
+num_comms = nodes["community"].nunique()
+print(f"Detected {num_comms} Louvain communities")
+
+# ======================================================
+# 4. Colors (consistent community palette)
+# ======================================================
+palette = sns.color_palette("tab20", num_comms)
+color_map = {comm: palette[i] for i, comm in enumerate(sorted(nodes["community"].unique()))}
+nodes["color"] = nodes["community"].map(color_map)
+
+# ======================================================
+# 5. Node sizes = scaled degree (same style as your earlier plot)
+# ======================================================
+max_degree = nodes["degree"].max()
+nodes["size"] = (nodes["degree"] / max_degree) * 300   # 0–300 radius
+
+# ======================================================
+# 6. Plot
+# ======================================================
+fig, ax = plt.subplots(figsize=(10, 8))
+
+# Draw states
+states.plot(ax=ax, color="whitesmoke", edgecolor="gray", linewidth=0.5)
+
+# Draw airports with community color + degree size
+ax.scatter(
+    nodes["lon"], nodes["lat"],
+    s=nodes["size"],
+    c=nodes["color"],
+    alpha=0.8,
+    edgecolors="black",
+    linewidth=0.3,
+    zorder=5
+)
+
+ax.set_xlim(-130, -60)
+ax.set_ylim(20, 55)
+ax.set_aspect("equal", adjustable="box")
+ax.axis("off")
+
+plt.tight_layout()
+plt.savefig("./output/p55.svg", dpi=300, format="svg", bbox_inches="tight")
+plt.show()
+
+# ======================================================
+# 7. Print largest communities
+# ======================================================
+comm_sizes = (
+    nodes.groupby("community")["iata"]
+         .count()
+         .reset_index(name="count")
+         .sort_values("count", ascending=False)
+)
+
+print("\nLargest Louvain communities:")
+print(comm_sizes.to_string(index=False))

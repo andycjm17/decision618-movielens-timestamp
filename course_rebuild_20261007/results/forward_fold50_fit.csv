@@ -1,0 +1,2 @@
+"mode","rank","lambda","rows","warm","RMSE","MAE","OSR2","seconds","warnings","package_version","R_version"
+"temporal_crossfit",4,0,150035,3723,0.99091230271498,0.790286597435716,0.201983117847603,1.261,"","1.4.1","R version 4.0.2 (2020-06-22)"

@@ -1,0 +1,10 @@
+{
+  "adjacent_pairs": 994169,
+  "equal_second_pairs": 529046,
+  "equal_second_fraction": 0.5321489605891956,
+  "within_60_seconds_fraction": 0.8871560066749214,
+  "within_30_minutes_fraction": 0.9807648397807616,
+  "median_gap_seconds": 0.0,
+  "timestamp_meaning": "Time a rating was entered, not time a movie was viewed",
+  "calendar_timezone": "UTC; user local time not available"
+}

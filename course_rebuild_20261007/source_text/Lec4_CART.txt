@@ -1,0 +1,2648 @@
+PDF PAGE 1
+CART FOR REGRESSION
+AND CLASSIFICATION
+Decision 618 Data Analytics for Business
+Predicting Medical Costs and Parole Violations
+Professor Peng Sun
+
+
+PDF PAGE 2
+Review of  Classification
+Decision 618--Lecture 3: Logistic Regression 6
+Reality Probabilities
+Vary Cutoff
+ROC Curve 
+AUC Score
+
+
+PDF PAGE 3
+Area Under the ROC Curve (AUC)
+Decision 618--Lecture 3: Logistic Regression 7
+• AUC of  perfect prediction is  1.0
+• AUC of  our Logistic Regression model is  0.841
+• AUC of  the (very) naïve baseline model that predicts randomly is  0.50
+• If  the AUC of  your model is not much larger than 0.50, then your model is not much 
+better than the (very) naïve baseline model -- which itself  is “blind” to the data
+
+
+PDF PAGE 4
+How to use AUC-ROC?
+Data Analytics for Business — CART 8
+• AUC
+• A cutoff-free metric of  model
+• ROC
+• Instead of  a single number (AUC), ROC is the whole curve.
+• Pick a point on ROC = Select a cutoff  threshold
+• Tradeoffs between RPR and FPR
+• Value(Profit/Cost)-based cutoff
+• Profit/cost for each cell in the confusion matrix
+• Evaluate which cutoff  to use based on profit/cost evaluation
+
+PDF PAGE 5
+Value-based approach
+Data Analytics for Business — CART 9
+Model
+Reality
+Low-churn risk
+Pr(𝒀𝒊 = 𝟏) < 𝟎. 𝟑𝟑𝟑
+High-churn risk
+Pr(𝒀𝒊 = 𝟏) > 𝟎. 𝟑𝟑𝟑
+No Churn (𝒀𝒊 =  𝟎) 1,217 332
+Churn (𝒀𝒊 =  𝟏) 147 414
+Cost Model
+Reality
+Low-churn Risk High-churn Risk
+No Churn (𝒀𝒊 =  𝟎) $0 $200
+Churn (𝒀𝒊 =  𝟏) $400 $0
+
+PDF PAGE 6
+PREDICTING HEALTHCARE 
+COSTS
+An Introduction to CART for Regression
+
+
+PDF PAGE 7
+Healthcare Claims Data
+Data Analytics for Business — CART 11
+
+PDF PAGE 8
+Outline
+Data Analytics for Business — CART 12
+• Motivating Dataset: Predicting Healthcare Costs 
+• Introduction to Classification and Regression Tree (CART)
+1. What is CART and how it makes predictions
+2. How to construct a model from data 
+3. Parameters that one can control, and the trade-offs induced
+• Cross Validation
+• Use cross validation to select parameters without using test set
+• Results on Healthcare Dataset
+• Comparing CART and Linear Regression
+
+PDF PAGE 9
+Predicting Healthcare Costs
+Data Analytics for Business — CART 13
+• Predicting healthcare future annual cost of patients
+• Cost: Lower cost for the healthcare system.
+• Historical medical cost data can be used as a proxy for 
+worsening health conditions.
+• Health Outcomes: “An ounce of  prevention is worth a 
+pound of  cure”
+• How might we predict patient medical costs?
+
+PDF PAGE 10
+Pre-Analytics Approach
+Data Analytics for Business — CART 14
+• Limited access to high-quality data
+• Unstructured data—from doctors’ and nurses’ notes
+• Unavailable data—hard to transfer data across technology platforms
+• Inaccessible—strong privacy laws concerning healthcare data sharing
+→ Medical knowledge primarily developed 
+through human judgment and clinical trials
+• MDs and other trained staff  manually 
+analyzed patient histories
+→ Costly, inefficient, and not so accurate
+
+PDF PAGE 11
+Analytics-based Approach
+Data Analytics for Business — CART 15
+• D2Hawkeye: Healthcare analytics company founded by C. Kryder 
+and R. Pandey, sold to Verisk Health in 2009 (HBS case)
+• Advanced healthcare analytics including risk analysis tools and 
+predictive modeling to identify high-risk patients for intervention.
+• Combines medical management tools (e.g., databases) with analytics to 
+improve patient care and reduce cost.
+• Analyzed 20M patients monthly 
+• Our public dataset (akin to what D2Hawkeye used)
+• Claims Data: Requests for Medicare reimbursement submitted to 
+insurance from doctors, hospitals, and pharmacies. Aggregated.
+• Data on yearly cost, health risk assessments, as well as non-medical 
+data (e.g., demographic)
+
+PDF PAGE 12
+Healthcare Claims Data
+Data Analytics for Business — CART 16
+
+PDF PAGE 13
+Healthcare Claims Data
+𝒌: # of independent variables (𝒌 = 𝟐𝟕); 𝒏: # of observations (𝒏 = 𝟏, 𝟎𝟐𝟑, 𝟗𝟓𝟐)
+Data Analytics for Business — CART 17
+𝒏 = 𝟏, 𝟎𝟐𝟑, 𝟗𝟓𝟐
+
+
+PDF PAGE 14
+Healthcare Claims Data
+Data Analytics for Business — CART 18
+• Data: 1,023,952 patients who had medical expenses in 2008–10
+• Dependent Variable:
+Total amount of  expenditures (Medicare reimbursements) in 2010 (log)
+• Independent Variables
+• Expenditures in 2008, 2009 (log)
+• Demographics: age, gender, race
+• Diseases contracted during the two previous years: Arthritis, Cancer, 
+Depression, Diabetes, Osteoporosis, etc.
+• Number of  inpatient/outpatient claims during the previous two years
+• Office visits, eye exams, EKGs, X-rays, CT scans, physical therapy, 
+ambulance use, cost trend, and acuity* (measures monthly cost spikes)
+* Acuity measures the extent to which annual costs are concentrated in 
+one particular month
+
+PDF PAGE 15
+Histogram of  Dependent Variable
+Data Analytics for Business — CART
+19
+• Highly skewed to the right (expected)
+• Log Transformation is common when the dependent variable has 
+values with different orders of  magnitude.
+• Reimbursements → Log10 (1 + Reimbursements)
+• E.g., $0 → 0, $100 → 2, $100,000 → 5
+
+
+PDF PAGE 16
+Training Set / Test Set
+Data Analytics for Business — CART 20
+Full Dataset (𝒏 = 𝟏, 𝟎𝟐𝟑, 𝟗𝟓𝟐) 70% Training Set (𝒏 = 𝟕𝟏𝟔, 𝟗𝟖𝟑)
+30% Testing Set (𝒏 = 𝟑𝟎𝟔, 𝟗𝟔𝟗)
+
+
+PDF PAGE 17
+Linear regression
+Data Analytics for Business — CART 21
+• Linear regression model using the training set:
+ log10_reimb2010 =   0
+    +   1  log10_reimb2008
+    +    
+    +   29  costTrend
+• Then let us look at the linear regression 𝑅2 and 𝑂𝑆𝑅2 
+
+PDF PAGE 18
+Linear Regression Model
+Data Analytics for Business — CART 22
+Linear regression performance:
+• training set: 𝑅2 = 0.604
+• test set: 𝑂𝑆𝑅2 = 0.602
+• 21/29 significant variables
+
+
+PDF PAGE 19
+Classification and Regression Tree 
+(CART)
+Data Analytics for Business — CART 23
+1. What is CART and how does it make predictions 
+2. How to construct a model from data 
+3. What are the parameter that you can control, and 
+what are the trade-offs induced?
+
+PDF PAGE 20
+What is a CART Model?
+Data Analytics for Business — CART 24
+• CART is a “tree”-based model used to make predictions.
+• Given the observed values of  the independent variables, just “follow the splits” 
+to the final node
+• At the split, go left if  “yes” and go right if  “no”
+• Follow the splits to the end/bottom of  the tree and read off  the value.  That’s it!
+Splits
+Leaves (Buckets)
+
+
+PDF PAGE 21
+How to Make Predictions
+Data Analytics for Business — CART 25
+Consider David
+• 83 years old, $379 reimbursements in 2009 ( = 2.58 after log transformation), 
+diabetes, …, 5 office visits, $290 reimbursements in 2008 ( = 2.46 after log 
+transformation), What are David’s expected healthcare costs in 2010?
+• Answer: 102.998 – 1 = $994
+
+PDF PAGE 22
+Classification and Regression Tree (CART)
+26
+• A CART model is a tree that makes predictions by “following the splits” to 
+the final node.
+• CART models can be applied to predict either:
+• a numerical outcome – called a regression tree
+• a classification outcome – called a classification tree
+• Each split is defined by a single variable
+• Numerical Variables: Variable < Threshold or Variable > Threshold
+• Categorical Variables: Variable takes a certain value or not
+• Remaining Questions: How does CART build a tree?
+• How does CART choose each split? (Answer: Minimize SSE greedily)
+• How does CART choose when to stop splitting? (Answer: You decide through the 
+parameters! But there are tradeoffs…)
+Data Analytics for Business — CART
+
+PDF PAGE 23
+Building a CART Model 
+How to Choose Each Split
+Data Analytics for Business — CART 27
+
+PDF PAGE 24
+High-Level Ideas
+Data Analytics for Business — CART 28
+• CART builds up a decision tree step-by-step from a tree
+stump
+• In each step, a leaf is branched (becomes a split) and create
+two new leaves:
+• Which leaf is chosen to be split?
+• How to define the condition of the split?
+• For a newly-created leaf, it defines a bucket of data points. How to
+set the predicted values?
+
+PDF PAGE 25
+Two Toy Examples
+Data Analytics for Business — CART 29
+• Toy Example in 1-Dimension (1 Feature)
+• Predicting Solar Radiation with only Hour
+• Toy Example in 2-Dimensions (2 Features)
+• Predicting Hourly Salary with GPA and Years of  Experience
+
+PDF PAGE 26
+Toy Example 1
+Data Analytics for Business — CART 30
+Hour Actual Solar 
+Radiation
+8 0.1
+9 0.3
+10 0.4
+11 0.6
+12 0.9
+13 1.0
+14 0.8
+15 0.5
+16 0.3
+17 0.1
+
+
+PDF PAGE 27
+Tree 1
+Data Analytics for Business — CART 31
+Tree 1
+
+
+PDF PAGE 28
+Tree 2
+Data Analytics for Business — CART 32
+Tree 2
+
+
+PDF PAGE 29
+Tree 3
+Data Analytics for Business — CART
+33
+Tree 3
+
+
+PDF PAGE 30
+Tree 4
+Data Analytics for Business — CART 34
+Tree 4
+
+
+PDF PAGE 31
+Tree 5
+Data Analytics for Business — CART 35
+Tree 5
+
+
+PDF PAGE 32
+Tree 6
+Data Analytics for Business — CART 36
+Tree 6
+
+
+PDF PAGE 33
+Each Split Decreases SSE and Increases R2
+Data Analytics for Business — CART 37
+• How is the value at leaf  chosen?
+• CART predicts the mean of  the data points in that leaf  node
+• How is the split chosen?
+• At each step, a new split is chosen to minimize SSE and equivalently maximize in-sample R2
+• Splits are chosen in a greedy (myopic) fashion. 
+Tree Number 
+of  Splits
+Number 
+of  Leaves SSE In-Sample 
+R2
+Tree 1 0 1 0.920 0.000
+Tree 2 1 2 0.687 0.254
+Tree 3 3 3 0.214 0.767
+Tree 4 6 7 0.042 0.957
+Tree 5 8 9 0.005 0.995
+Tree 6 9 10 0.000 1.000
+Tree 1
+Tree 2
+Tree 3
+Tree 4
+
+
+PDF PAGE 34
+Toy Example 2: Predicting Salaries
+𝒌: # of independent variables (𝒌 = 𝟐); 𝒏: # of observations (𝒏 = 𝟐𝟓)
+𝒏 = 𝟐𝟓
+Data Analytics for Business — CART 38
+…
+
+
+PDF PAGE 35
+Visualizing the Example Data
+Data Analytics for Business — CART 39
+
+
+PDF PAGE 36
+Visualizing the Example Data
+Data Analytics for Business — CART 40
+
+
+PDF PAGE 37
+Predicting Salary with CART model
+Data Analytics for Business — CART 41
+42.576
+
+
+PDF PAGE 38
+Predicting Salary with CART model
+Data Analytics for Business — CART 42
+22.940
+60.701
+
+
+PDF PAGE 39
+Predicting Salary with CART model, continued
+Data Analytics for Business — CART 43
+31.175
+58.987
+6.470
+
+
+PDF PAGE 40
+High-Level Ideas
+Data Analytics for Business — CART 44
+• CART builds up a decision tree step-by-step from a tree
+stump
+• In each step, a leaf is branched (becomes a split) and create
+two new leaves:
+• Which leaf is chosen to be split?
+• How to define the condition of the split?
+• For a newly-created leaf, it defines a bucket of data points. How to
+set the predicted values?
+
+PDF PAGE 41
+How does CART build a regression tree?
+Data Analytics for Business — CART 45
+• In general, the splitting criteria (i.e., independent variable 
+and the threshold) is determined by a particular measure of  
+purity 
+• For regression tree problems, purity refers to a bucket that contains a 
+narrow range of  values.
+• For classification problems, purity refers to a bucket that contains mostly
+1s or mostly 0s. 
+• CART will select the split that reduces the impurity the 
+most. 
+• Across all variables and thresholds.
+
+PDF PAGE 42
+Predicting Salary with CART model
+Data Analytics for Business — CART 46
+High impurity
+
+PDF PAGE 43
+Predicting Salary with CART model
+Data Analytics for Business — CART 47
+Low impurity
+High impurity
+
+PDF PAGE 44
+Predicting Salary with CART model, continued
+Data Analytics for Business — CART 48
+Low impurity
+Low impurityLow impurity
+
+PDF PAGE 45
+Benefits of  CART
+Data Analytics for Business — CART 49
+• Decision rule is highly transparent
+• Follows a series of  if/else statements; it is even simpler than linear regression!
+• CART can be better explained to non-experts
+• Admits graphical displays through dendrograms (tree diagrams)
+• CART may more closely mirror human thought and human decision-
+making processes (does not rely on linear additive rules)
+• CART can uncover/learn nonlinear relationships
+• CART can uncover interactions between variables without explicitly 
+incorporating interaction terms
+• CART selects the (most relevant) variables for us
+• no need to try adding/removing variables 
+• no need to compute significance tests
+
+PDF PAGE 46
+CART Can Be Incredibly Interpretable
+Data Analytics for Business — CART 50
+• Model predicts that an employee will 
+receive a salary of  $60.701/hour if  they 
+has at least 2.710 years of  experience
+• For someone with less than 2.710 years 
+of  experience, if  they had a GPA of  3.47 
+or less, they would earn $6.47/hour.
+• Otherwise, if  they have a GPA of  more 
+than 3.47, they will earn $31.175/hour
+
+
+PDF PAGE 47
+CART vs. Regression
+Data Analytics for Business — CART 51
+
+
+PDF PAGE 48
+Flexibility of  CART
+Data Analytics for Business — CART 52
+
+
+PDF PAGE 49
+Building a CART Model 
+When to Stop? Controlling Model Complexity
+Data Analytics for Business — CART 53
+
+PDF PAGE 50
+Parameters We Control
+Data Analytics for Business — CART 54
+• When we build a CART model, we can specify some parameters which 
+control the complexity of  the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2 Yes
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1 Yes
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None No
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0 Yes
+
+PDF PAGE 51
+min_samples_leaf and min_samples_split
+Data Analytics for Business — CART 55
+{8, 9, 10}
+3 Data Points
+{11, 12, 13, 14}
+4 Data Points
+{15, 16, 17}
+3 Data Points
+• Suppose 
+min_samples_leaf = 2 and 
+min_samples_split = 4
+• Do not consider splitting {8, 9, 10} 
+or {15, 16, 17} because they have 
+fewer than 4 data points.
+• Only consider splits of  {11, 12, 13, 
+14,} where each resulting bucket has 
+at least 2 data points. 
+• E.g., do not consider the split (hour < 
+11.5) which would give {11} and {12, 
+13, 14, 15}
+
+PDF PAGE 52
+max_depth
+Data Analytics for Business — CART 56
+• Depth of  a tree is the length of  the longest path from the root to a leaf.
+• Splits are only considered if  the resulting tree has depth no more than 
+maxdepth.
+Depth = 2Depth = 1 Depth = 3
+
+
+PDF PAGE 53
+ccp_alpha (cost-complexity pruning)
+Data Analytics for Business — CART 57
+• CART removes a branch if  it reduces impurity (MSE) by less than 
+ccp_alpha × (its number of  leaves – 1). 
+Tree A: ccp_alpha = 0.059
+Impurity = MSE = 0.00867
+Here, if  ccp_alpha is larger than 0.06, then this split would be removed (since 
+number of  leaves - 1 = 1).
+Tree B: ccp_alpha = 0.061
+Impurity = MSE = 0.01467
+
+PDF PAGE 54
+Parameters We Control
+Data Analytics for Business — CART 58
+• When we build a CART model, we can specify some parameters which 
+control the complexity of  the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0
+
+PDF PAGE 55
+Parameters We Control
+Data Analytics for Business — CART 59
+• When we build a CART model, we can specify some parameters which 
+control the complexity of  the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2 Yes
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0
+
+PDF PAGE 56
+Parameters We Control
+Data Analytics for Business — CART 60
+• When we build a CART model, we can specify some parameters which 
+control the complexity of  the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2 Yes
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1 Yes
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0
+
+PDF PAGE 57
+Parameters We Control
+Data Analytics for Business — CART 61
+• When we build a CART model, we can specify some parameters which 
+control the complexity of  the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2 Yes
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1 Yes
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None No
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0
+
+PDF PAGE 58
+Parameters We Control
+Data Analytics for Business — CART 62
+• When we build a CART model, we can specify some parameters which 
+control the complexity of  the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2 Yes
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1 Yes
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None No
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0 Yes
+
+PDF PAGE 59
+Python Code for CART
+Data Analytics for Business — CART 63
+model = tree.DecisionTreeRegressor(
+    ccp_alpha = 0.01,
+    min_samples_leaf = 2,
+    min_samples_split = 5
+)
+To create a CART model:
+To plot a CART tree:
+plot_tree(model)
+To predict with a CART tree:
+model.predict(X_test)
+To fit a CART model:
+model.fit(X_train, y_train)
+
+PDF PAGE 60
+Data Analytics for Business — CART 64
+CART model tree:
+ In Python, using sklearn:
+Python Code for CART
+
+PDF PAGE 61
+Back to the Healthcare Claims Dataset
+Data Analytics for Business — CART 65
+
+PDF PAGE 62
+Back to the Healthcare Claims Data 
+Training Set
+Data Analytics for Business — CART 66
+𝒌: # of independent variables (𝒌 = 𝟐𝟕); 𝒏: # of observations (𝒏 = 𝟕𝟏𝟔, 𝟗𝟖𝟑)
+𝒏 = 𝟕𝟏𝟔, 𝟗𝟖𝟑
+…
+
+PDF PAGE 63
+CART Model Parameters for 
+Predicting 2010 Healthcare Costs
+Data Analytics for Business — CART 67
+• Here is a CART model using:
+• min_samples_leaf = 25
+• ccp_alpha = 0.002
+• Only use 5/27 variables and 11 leaves
+Model Performance
+• Training set: 𝑅2 = 0.599
+• Test set: 𝑂𝑆𝑅2 = 0.597
+
+
+PDF PAGE 64
+Impact of  ccp_alpha value on the tree size
+Data Analytics for Business — CART 68
+ccp=0.001
+ccp=0.002 ccp=0.005
+15 leaves
+11 leaves 7 leaves
+
+PDF PAGE 65
+Model Parameters
+Data Analytics for Business — CART 69
+• Model parameters control how the model fit to the data
+• A setting chosen by us (the human), not the model itself.
+• Parameters often control some kind of  trade-off, like model 
+complexity.
+• CART
+• ccp_alpha, min_samples_leaf, 
+min_samples_split, max_depth are “parameters”
+• Dictate how CART decides when to split and when to stop 
+splitting
+• How to decide these parameter values?
+
+PDF PAGE 66
+How to decide parameter values?
+Data Analytics for Business — CART 70
+• Ideally, choose parameters that deliver best performance for 
+the model
+• In CART for regression, performance metric is 𝑅2.
+• Directly choosing the parameters that give us the best in-
+sample 𝑅2 ?
+• The “best” may be due to randomness in the training set.
+• We do not want to touch the test set when choosing the best 
+parameters.
+• Further splitting the training set?
+
+PDF PAGE 67
+Cross-Validation
+Data Analytics for Business — CART 71
+• General methodology for finding the “best” parameters for out-
+of-sample performance without looking at the test set. 
+• Idea: Give yourself  a “practice test”, called a validation set.
+• Issue: If  you only take one practice test, there is variation. 
+• Solution: K-Fold Cross Validation. For each choice of  parameter, run K 
+practice tests. 
+Testing 
+Data
+Training Set
+(Fit Model)
+Validation Data 
+(Practice Test)
+All Training Data
+
+PDF PAGE 68
+5-Fold Cross Validation
+Data Analytics for Business — CART 72
+
+
+PDF PAGE 69
+5-Fold Cross-Validation
+Data Analytics for Business — CART 73
+• Repeat procedure for each value of  the 
+(hyper-)parameter (ccp_alpha).
+• Choose the hyper-parameter value that 
+maximizes the average R2
+Fold 1 Fold 2 Fold 3 Fold 5
+Fold 1 Fold 2 Fold 4 Fold 5
+Fold 1 Fold 3 Fold 4 Fold 5
+Fold 2 Fold 3 Fold 4 Fold 5
+Fold 1 Fold 2 Fold 3 Fold 4 Fold 5
+Fold 4
+Fold 3
+Fold 2
+Fold 1
+R2Prediction
+Prediction
+Prediction
+Prediction
+Prediction
+R2
+R2
+R2
+R2
+compute 
+average R2
+
+PDF PAGE 70
+k-fold Cross-Validation 
+Data Analytics for Business — CART 74
+• Divide the training set into 𝑘 pieces (“folds”)
+Training setFold 1 Fold 2 Fold 3 Fold 4 Fold 5
+• For each candidate parameter value…
+• Use 𝑘 − 1 folds to construct a model
+• Test that model on the remaining fold
+• Repeat for each of  the 𝑘 folds
+Divide
+Train / Test
+Average
+• For each candidate parameter value…
+• compute the average loss over the 𝑘 folds 
+Select
+• Finally, select the parameter value that maximizes the 
+average R2
+→ Uses the entire training set but nothing from the test set
+
+PDF PAGE 71
+Python Code
+Data Analytics for Business — CART 75
+
+
+PDF PAGE 72
+Comparison of  Models
+Data Analytics for Business — CART 76
+Model Linear 
+Regression
+CART
+(ccp=0.002)
+CART
+(ccp=0.00001)
+“Smart baseline”
+(just use 2009 costs)
+Fit  (𝑹𝟐) 0.604 0.599 0.631 0.410
+Predictive 
+Performance
+(𝑶𝑺𝑹𝟐)
+0.602 0.597 0.610 0.411
+Interpretabilit
+y
+Linear 
+equation
+11 intuitive 
+rules
+Too many 
+rules
+very simple
+[simplistic!]
+Simplicity/
+Complexity
+21 
+significant 
+variables
+5 variables Too many  
+variables 1 variable
+
+
+
+
+
+
+
+
+CART tree with
+min_samples_leaf = 50
+ccp_alpha = 0.00001
+
+
+PDF PAGE 73
+Comparison of  Models
+Data Analytics for Business — CART 77
+Model Linear 
+Regression
+CART
+(ccp=0.002)
+CART
+(ccp=0.00001)
+From Cross Validation
+(ccp=0.00003, 
+min_samples_leaf=45)
+Fit  (𝑹𝟐) 0.604 0.599 0.631 0.619
+Predictive 
+Performance
+(𝑶𝑺𝑹𝟐)
+0.602 0.597 0.610 0.613
+Interpretabilit
+y
+Linear 
+equation
+11 intuitive 
+rules
+Too many 
+rules Too many rules
+Simplicity/
+Complexity
+21 
+significant 
+variables
+5 variables Too many  
+variables Too many  variables
+
+
+
+
+
+ 
+
+PDF PAGE 74
+Trade off
+Data Analytics for Business — CART 78
+• Performance (OSR2) and Interpretability
+
+
+PDF PAGE 75
+CART for Solar Radiation Prediction 
+79Data Analytics for Business — CART
+
+PDF PAGE 76
+CART for Solar Radiation Prediction
+Data Analytics for Business — CART
+80
+𝒌: # of independent variables (𝒌 = 𝟖); 𝒏: # of observations (𝒏 = 𝟖𝟒𝟔𝟏)
+𝒏 = 𝟖𝟒𝟔𝟏
+
+
+PDF PAGE 77
+CART for Solar Radiation Prediction
+Data Analytics for Business — CART
+81
+• Here is a CART model using:
+• min_samples_leaf = 25
+• ccp_alpha = 0.001
+
+PDF PAGE 78
+CART for Solar Power Prediction
+Data Analytics for Business — CART
+82
+• Here is a CART model using:
+• min_samples_leaf = 25
+• ccp_alpha = 0.00001
+
+
+PDF PAGE 79
+CART vs. Linear Regression 
+for Solar Power Prediction
+Data Analytics for Business — CART 83
+Model Linear 
+Regression
+CART
+(ccp=0.001)
+CART
+(ccp=0.00001)
+Fit  (𝑹𝟐) 0.73 0.70 0.81
+Predictive Performance
+(𝑶𝑺𝑹𝟐) 0.73 0.69 0.77
+Interpretability Linear 
+regression Tree Huge Tree
+Simplicity/
+Complexity
+8 
+significant variables
+3 
+variables in all
+~
+
+
+
+~
+
+
+
+
+
+~
+
+
+PDF PAGE 80
+CART Model Limitations
+Data Analytics for Business — CART 84
+• CART predictions can be “jumpy”
+• Consider a patient with log10_reimb2009 = 2.6 and OfficeVisit = 2
+• If  log10_reimb2008 = 1.98, then we predict log10_reimb2010 = 1.655
+• If  log10_reimb2008 = 1.99, then we predict log10_reimb2010 = 2.572
+• Oh, and if  log10_reimb2009 = 2.4, then all this would not matter anyway, 
+and we would predict 1.270 or 2.077 based on “acuity”.
+• A CART model can exhibit instability
+• Fitting a CART model on two similar non-identical datasets may lead to 
+different types of  splits and cutoff  values
+• A CART model (or any model for that matter) may not necessarily lead 
+to the strongest out-of-sample predictive performance—depending on 
+the structure of  the data and the problem context
+
+PDF PAGE 81
+Conclusion on CART for Regression
+Data Analytics for Business — CART 85
+• Impact on Predicting Healthcare Costs
+• Using CART, D2Hawkeye substantially improved their ability to 
+predict healthcare costs in a wide variety of  settings
+• Analytics gave D2Hawkeye a critical edge over competitors who 
+were using more traditional methods
+• Benefits of  CART: predictive power, interpretability and 
+flexibility to balance performance and simplicity
+• Basis for ensemble models (next class)
+
+PDF PAGE 82
+PREDICTING PAROLE 
+VIOLATIONS
+CART for Classification
+
+
+PDF PAGE 83
+Lecture Outline
+Data Analytics for Business — CART 87
+1. Parole and Parole Decisions 
+• What is parole and how can analytics help make decisions?
+• What is a loss matrix?
+2. CART for Classification 
+• How is CART for classification different than CART for 
+regression?
+3. Overfitting and Cross Validation 
+• Why are complex trees more likely to overfit?
+• Use cross validation to select “optimal” cp values without looking 
+at the test set.
+
+PDF PAGE 84
+What is parole and how can analytics help make decisions?
+What is a loss matrix?
+1. Parole and Parole Decisions
+Data Analytics for Business — CART 88
+
+PDF PAGE 85
+What is Parole?
+Data Analytics for Business — CART 89
+Parole: release of  a prison inmate before the completion of  their 
+sentence, on the promise/anticipation of  good behavior
+• Provides flexibility in the criminal justice system to enhance justice, 
+ensure equity, incentivize good behaviors, and empower parolees to 
+contribute to society
+• Manage prison populations 
+due to overcrowding
+• Saves money in the prison 
+system
+Source: Public Policy Institute of  California Prison costs in California
+
+PDF PAGE 86
+Parole Decisions
+Data Analytics for Business — CART 90
+• What are the factors underlying parole decisions?
+• Grant parole to inmates who are likely to adhere to parole terms
+• Do not grant parole to inmates who are likely to violate parole terms
+• Two types of  possible errors in parole decisions:
+Y = 1 is if  the person will violate parole. If  prediction = 1, do not grant parole.
+• Granting parole to an inmate who will violate the terms of  parole —“false 
+negative”
+• Not granting parole to an inmate who would have adhered to the terms of  
+parole —“false positive”
+• What are the implications of  these two possible errors?
+• So …  how to make parole decisions?
+
+PDF PAGE 87
+Differential Losses of  Parole Decision 
+“Errors”
+Data Analytics for Business — CART 91
+• Using the California data as a guide, let us set $50,000 to be the cost of  
+not granting parole to an inmate who would have adhered to the terms 
+of  parole (“false positive”)
+• Let us set $1,000,000 to be the cost of  granting parole to an inmate who 
+will violate the terms of  parole (“false negative”)
+• Rather than consider these as actual “cost” numbers, let us simply assert 
+that the “losses” of  a false negative decision are 20 times the “losses” of  
+a false positive decision
+
+
+PDF PAGE 88
+The Loss Matrix
+Data Analytics for Business — CART 92
+• $1,000,000 denotes the losses associated with a false 
+negative
+• $50,000 denotes the losses associated with a false positive 
+Prediction/Decision
+No Violation
+(Grant Parole)
+Violation
+(Deny Parole)
+Reality
+No Violation 0 $𝟓𝟎, 𝟎𝟎𝟎
+Violation $𝟏, 𝟎𝟎𝟎, 𝟎𝟎𝟎 0
+
+PDF PAGE 89
+The Loss Matrix, continued
+Data Analytics for Business — CART 93
+• 20 denotes the losses associated with a false negative
+• 1 denotes the losses associated with a false positive
+Prediction/Decision
+No Violation
+(Grant Parole)
+Violation
+(Deny Parole)
+Reality
+No Violation 0 𝟏
+Violation 𝟐𝟎 0
+
+PDF PAGE 90
+The Loss Matrix, continued
+Data Analytics for Business — CART 94
+• 𝑳𝑭𝑵 denotes the losses associated with a false negative 
+• 𝑳𝑭𝑷 denotes the losses associated with a false positive 
+Prediction/Decision
+No Violation
+(Grant Parole)
+Violation
+(Deny Parole)
+Reality No Violation 0 𝑳𝑭𝑷
+Violation 𝑳𝑭𝑵 0
+
+PDF PAGE 91
+Loss Matrices in Log. Reg. vs. CART
+Data Analytics for Business — CART 95
+• A logistic regression model generates probabilities. Based on your cost 
+matrix, you can choose the appropriate cutoff  to predict Churn / No Churn. 
+• The model itself  is unaware of  the cost matrix. 
+• In CART, we specify a cost matrix when we train the model. The model’s 
+splits are chosen specifically for that cost matrix. We’ll see this shortly…
+Logistic 
+Regression
+ Probabilities
+Yes / No 
+prediction or 
+decision
+CART 
+Model
+Training 
+Dataset
+$0 $200
+$400 $0
+$0 $200
+$400 $0
+Loss Matrix
+Loss Matrix
+
+PDF PAGE 92
+Analytics in Parole Decisions
+Data Analytics for Business — CART 96
+• Parole decisions are made by a 
+Parole Board
+• Typical factors in a parole 
+decision
+• Conduct in prison
+• Inmate interview
+• Psychological exam
+• Increasing use of  analytics for 
+parole decisions
+• More objective decisions
+• More consistent outcomes
+• More fair decisions?
+
+
+PDF PAGE 93
+Parole Violation Data
+Data Analytics for Business — CART 97
+
+PDF PAGE 94
+Parole Violation Data
+Data Analytics for Business — CART 98
+• 6,102 parolees from New York state from 2012-2015
+• Dependent Variable:
+• Whether parole was revoked (1 if  revoked, 0 if  not revoked)
+• Independent Variables:
+• Gender (1 if  male, 0 if  female)
+• Age of  the parolee
+• Number of  years served by the parolee
+• Class of  the most serious conviction
+• A~Murder, …, E~Theft of  $1,000-$3,000
+• Was the parolee convicted of  multiple crimes? (1 or 0)
+• Was the parolee convicted in New York City? (1 or 0)
+
+PDF PAGE 95
+Parole Violation Data
+Data Analytics for Business — CART 99
+𝒌: # of independent variables (𝒌 = 𝟔); 𝒏: # of observations (𝒏 = 𝟔, 𝟏𝟎𝟐)
+𝒏 = 𝟔, 𝟏𝟎𝟐
+
+PDF PAGE 96
+Parole Decision-Making Dataset
+Data Analytics for Business — CART 100
+• 6,102 parolees from New York state from 2012-2015
+• This is “censored” data on parolees — since we do not know the 
+data on inmates that were not granted parole
+→ How would you use a prediction model for decision support?
+Eligible for 
+parole
+Paroled
+Non-violator
+Not paroled
+Violator
+Our Dataset
+
+PDF PAGE 97
+Parole Violation Data
+Data Analytics for Business — CART 101
+𝒌: # of independent variables (𝒌 = 𝟔); 𝒏: # of observations (𝒏 = 𝟔, 𝟏𝟎𝟐)
+𝒏 = 𝟔, 𝟏𝟎𝟐
+
+
+PDF PAGE 98
+Training/Testing (stratified sampling)
+Data Analytics for Business — CART 102
+Full Dataset (𝒏 = 𝟔, 𝟏𝟎𝟐)
+70% Training Set (𝒏 = 𝟒, 𝟐𝟕𝟏)
+30% Testing Set (𝒏 = 𝟏, 𝟖𝟑𝟏)
+
+PDF PAGE 99
+How is CART for classification different than CART for 
+regression?
+2. CART for Classification
+Data Analytics for Business — CART 103
+
+PDF PAGE 100
+No interview
+No 
+interview
+Interview
+CART for Regression vs. Classification
+Regression: Salary ($/hour) Classification: Interview or not
+Data Analytics for Business — CART 104
+Salary: 59
+Salary: 31Salary: 6
+
+PDF PAGE 101
+Toy Example: Job Interviews
+Data Analytics for Business — CART 105
+𝒌: # of independent variables (𝒌 = 𝟐); 𝒏: # of observations (𝒏 = 𝟐𝟗)
+𝒏 = 𝟐𝟗
+
+
+PDF PAGE 102
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 106
+
+
+PDF PAGE 103
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 107
+No interview Interview
+
+PDF PAGE 104
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 108
+No interview
+No 
+interview
+Interview
+
+
+PDF PAGE 105
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 109
+No interview No 
+interview
+Interview
+No 
+interview
+
+
+PDF PAGE 106
+Predicting with the CART Model
+Data Analytics for Business — CART 110
+• Consider Stephanie, who 
+has a 3.91 GPA and 0.8 
+years of  experience
+• Is she predicted by the 
+model to receive a job 
+interview?
+
+PDF PAGE 107
+Constructing CART for Classification
+Data Analytics for Business — CART 111
+• How does CART decide:
+• The variable and cutoff  for each split
+• What to predict at each leaf  node 
+• When to stop splitting
+• Similar to CART for regression, but minor differences due to 
+differences between regression and classification.
+
+PDF PAGE 108
+How to predict: Total Loss (Cost)
+Data Analytics for Business — CART 112
+• In CART for Classification, we measure the quality of  the model using:
+Prediction/Decision
+Reality
+No Violation
+(Grant Parole)
+Violation
+(Deny Parole)
+No Violation 0 𝐿𝐹𝑃
+Violation 𝐿𝐹𝑁 0
+Cost of  a single false negative (FN) Cost of  a single false positive (FP)
+dTotal Loss = 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐹𝑁 ∗ 𝐿𝐹𝑁 + 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐹𝑃 ∗ 𝐿𝐹𝑃
+Average Loss = Total Loss
+Number of Data Points
+
+PDF PAGE 109
+Prediction at a Leaf
+Data Analytics for Business — CART 113
+• For each leaf  bucket, CART selects the class that has the lowest Total 
+Loss across all the training observations in that leaf  bucket. 
+• From the training set observations, suppose the bucket has: 
+• 6 parole violators
+• 23 non-violators
+• 𝐿𝐹𝑁 = 20 and 𝐿𝐹𝑃 = 1
+• If  predict this leaf  as “Violator” Total Loss is
+23 * 1 = 23
+• Total Loss from predicting “Non-violator” for this leaf
+6 * 20 = 120
+• “Violator” has the lower loss
+
+PDF PAGE 110
+Gini index: leaf  gini
+Data Analytics for Business — CART 114
+• Assume a CART tree has 𝐿 leaves numbered from 1 to 𝐿.
+• For each 𝑙 ∈  {1, … , 𝐿}, let 𝑝𝑙 and 𝑞𝑙 respectively denote the 
+proportions of  loss-weighted samples sizes of  violators and 
+non-violators at leaf  𝑙. Note that 𝑝𝑙 + 𝑞𝑙 = 1.
+• E.g. Leaf  𝑙 has 6 violators and 23 non-violators. Then:
+𝑝𝑙 = 20 ×  6
+20 ×  6 + 1 ×  23 = 0.84 , 𝑞𝑙 = 1 ×  23
+20 ×  6 + 1 ×  23 = 0.16. 
+• The expression of  the Gini index of  leaf  𝑙 is:
+𝐺𝑖𝑛𝑖 𝐿𝑒𝑎𝑓 𝑙 = 1 − 𝑝𝑙
+2  − 𝑞𝑙
+2.
+• It quantifies how uncertain the leaf  is of  its decision.
+
+PDF PAGE 111
+Gini index: Leaf  Gini
+Data Analytics for Business — CART 115
+• The expression of  the Gini index of  leaf  𝑙 is:
+𝐺𝑖𝑛𝑖 𝑝𝑙, 𝑞𝑙 = 1 − 𝑝𝑙
+2  − 𝑞𝑙
+2.
+• It quantifies how uncertain the leaf  is of  its label.
+𝑝𝑙
+𝐺𝑖𝑛𝑖 𝑝𝑙, 1 − 𝑝𝑙
+𝒑𝒍 very high, 𝒒𝒍 very low
+→ certain of  “Violator”  
+𝒑𝒍 very low, 𝒒𝒍 very high
+→ certain of  “Non-Violator”  
+𝒑𝒍 and 𝒒𝒍 are close
+→ leaf  is uncertain  
+
+
+PDF PAGE 112
+Split criterion: Gini reduction
+Data Analytics for Business — CART 116
+• CART decides which split to make by computing the Gini 
+reduction of  each potential split:
+• Iteratively, CART chooses the split with the highest Gini 
+Reduction.
+Gini reduction
+=
+weighted sum of Ginis of leaves −  Gini of original leaf
+𝑶𝒍𝒅 𝒍𝒆𝒂𝒇 𝑵𝒆𝒘 𝒍𝒆𝒂𝒗𝒆𝒔
+𝑺𝒑𝒍𝒊𝒕 𝒖𝒏𝒅𝒆𝒓
+𝒄𝒐𝒏𝒔𝒊𝒅𝒆𝒓𝒂𝒕𝒊𝒐𝒏
+
+PDF PAGE 113
+Why use Gini instead of  Total Loss for splitting?
+Data Analytics for Business — CART 117
+• Consider the following example for classification in 1 dimension:
+• Assume we use Total Loss as a metric to decide where to split. 
+Note that in this case, no split happens since no split has lower 
+loss than predicting     everywhere.
+→ No split
+with 𝐿𝐹𝑃 = 𝐿𝐹𝑁 = 1. 
+• However, if  we use Gini as a metric to decide where to split, 
+then the following sequence of  two splits is done since each 
+reduces Gini: 
+
+
+PDF PAGE 114
+CART Model Parameters 
+Data Analytics for Business — CART 118
+• Parameters ccp_alpha, min_samples_leaf, min_samples_split, 
+max_depth. 
+• The complexity parameter (ccp_alpha) removes splits that do not sufficiently lower 
+the losses. sklearn's algorithm automatically performs a two-step process:
+• Step 1: Grow the Full Tree. The model first grows a complete, unpruned, and 
+overfit tree (within other constraints like max_depth).
+• Step 2: Prune the weakest splits. The algorithm then looks at every branch and 
+calculates its “effective alpha”:
+𝛼𝑒𝑓𝑓 =  𝑇𝑜𝑡𝑎𝑙 𝐺𝑖𝑛𝑖 𝑟𝑒𝑑𝑢𝑐𝑡𝑖𝑜𝑛 𝑓𝑟𝑜𝑚 𝑡ℎ𝑖𝑠 𝑏𝑟𝑎𝑛𝑐ℎ
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑛𝑒𝑤 𝑙𝑒𝑎𝑣𝑒𝑠 𝑖𝑛 𝑡ℎ𝑖𝑠 𝑏𝑟𝑎𝑛𝑐ℎ − 1 .
+Trade-off: loss (Gini) reduction vs. model complexity
+It iteratively prunes the branch with the lowest 𝛼𝑒𝑓𝑓 until all remaining
+branches branches have an 𝛼𝑒𝑓𝑓 greater than ccp_alpha.
+
+PDF PAGE 115
+CART for Regression vs. Classification
+Data Analytics for Business — CART 119
+Regression
+ Classification
+• Each leaf  predicts a 
+numerical value (e.g., 
+$17.20). 
+• Minimizes sum of  
+squared error at each 
+split. 
+• Each leaf  predicts a 
+categorical value (e.g., 
+interview or not). 
+• Minimizes Gini at each 
+split (weighted by loss 
+matrix).
+• Constructs splits greedily, 
+minimizing impurity or cost of  
+errors. 
+• Complexity can be controlled 
+explicitly with ccp_alpha, 
+min_samples_leaf  …
+
+PDF PAGE 116
+Data Analytics for Business — CART 120
+CART for Parole Data
+
+PDF PAGE 117
+CART Model for Parole Data
+• Here is the CART model 
+we built for this 
+classification problem
+• 𝐿𝐹𝑃 = 1 and 𝐿𝐹𝑁 = 20 
+• min_samples_leaf = 25
+• ccp_alpha =  0.01
+Data Analytics for Business — CART 121
+
+PDF PAGE 118
+CART Model for Parole Data
+• Here is the CART model 
+we built for this 
+classification problem
+• What does it mean?  Why?
+Data Analytics for Business — CART 122
+
+PDF PAGE 119
+Restricting to “Time served” and “Class”
+Data Analytics for Business — CART 123
+• To visualize the tree on a 2D graph, 
+we restrict the model to the two 
+features “Time served (Years)” and 
+“Class of  conviction” (A,B,C,D,E).
+• 𝐿𝐹𝑃 = 1 and 𝐿𝐹𝑁 = 20 
+• min_samples_leaf = 25
+• ccp_alpha =  0.01
+
+
+PDF PAGE 120
+Data Analytics for Business — CART 124
+Visualizing the Tree using TimeServed and Class
+
+
+PDF PAGE 121
+Python Code to Generate Classification CART
+Data Analytics for Business — CART 125
+model = DecisionTreeClassifier(
+  min_samples_leaf = 25,
+  ccp_alpha = 0.01,
+  class_weight = {0: 1, 1: 20}
+   )
+To create a CART model:
+To fit a CART model:
+model.fit(X_train, y_train)
+To plot a CART tree:
+plot_tree(model)
+
+PDF PAGE 122
+Aside: CART trees for different LFN values, cont.
+Data Analytics for Business — CART 127
+𝑳𝑭𝑵 = 𝟐𝟎
+𝑳𝑭𝑷 = 𝟏
+𝑳𝑭𝑵 = 𝟓𝟎
+𝑳𝑭𝑷 = 𝟏
+
+PDF PAGE 123
+Aside: CART trees for different LFN values, cont.
+Data Analytics for Business — CART 128
+𝑳𝑭𝑵 = 𝟐𝟎
+𝑳𝑭𝑷 = 𝟏
+𝑳𝑭𝑵 = 𝟏𝟎
+𝑳𝑭𝑷 = 𝟏
+
+PDF PAGE 124
+What is overfitting and why are complex trees more likely 
+to overfit?
+How does cross validation allow us to select “optimal” 
+parameters (like cp) without looking at the test set?
+3. Cross Validation
+Data Analytics for Business — CART 129
+
+PDF PAGE 125
+Overfitting
+Data Analytics for Business — CART 130
+
+PDF PAGE 126
+Two different CART models
+Data Analytics for Business — CART 131
+• Which model is more accurate on the training data? 
+• Which model will be more accurate on the test data?
+No interview
+No 
+interview
+Interview
+Interview
+Interview
+No interview
+No interview
+No 
+interview
+No 
+interview
+
+PDF PAGE 127
+Complex Models and Overfitting
+Data Analytics for Business — CART 132
+• Definition of  Overfitting:
+• Finding patterns in the training dataset that 
+do not generalize to the test data.
+• Idiosyncratic Noise
+• Higher model complexity is both a blessing 
+and a curse. 
+• Blessing: Can find complex (real) patterns 
+(e.g., non-linearities) 
+• Curse: Prone to overfitting to noise 
+• Ignorance is bliss? Simple models cannot 
+“overthink” it. 
+https://en.wikipedia.org/wiki/Overfitting
+
+
+PDF PAGE 128
+Overfitting the (Training) Data
+Data Analytics for Business — CART 133
+• Model overfitting occurs when a model performs very well on 
+the training set in a way that will not translate to good 
+performance on the test set—or on new data in general
+• Overfitted models are often more complicated and do not 
+necessarily accord with intuition/judgment
+• Why should GPA falling in the narrow range 3.28-3.30 yield a 
+different result than values slightly above or below?
+• Overfitted models often capture idiosyncrasies (or even errors) 
+in the training data, instead of  capturing actual relationships that 
+will hold for new data
+
+PDF PAGE 129
+Addressing Overfitting in CART
+Data Analytics for Business — CART 134
+• Overfitting stems from differences between how models are 
+constructed (to maximize fitting) and how they are intended to 
+be used (to make prediction on new data)
+• Model fitting maximizes accuracy on a known set of  training data
+• Models are used to make predictions on new (previously unseen) data
+• Challenge:  How to address overfitting in CART? 
+Solution strategy to address overfitting: Deliberately build a 
+model with fewer splits.  Such a simpler model is more likely to not 
+overfit the data.
+
+
+PDF PAGE 130
+CART that perfectly fits the Training data
+Data Analytics for Business — CART 135
+TimeServ < 1.94
+Age >= 24.2
+Age < 58.5
+TimeServ < 1.87
+TimeServ < 1.19
+TimeServ >= 1.26
+Age >= 38.5
+Age < 38.4
+TimeServ < 1.25
+Age < 32.5
+Age >= 33
+TimeServ >= 1.88
+Multiple = 0
+Age >= 58.8
+Class = C,E
+TimeServ < 1.03
+TimeServ < 1.5
+Age < 22.5
+Age >= 22.9
+Class = B,C,E
+TimeServ >= 1.26
+TimeServ < 0.85
+Male = 0
+InCity = 1
+Age < 22.8
+TimeServ >= 0.89
+TimeServ >= 1.59
+Class = B,D
+InCity = 1
+Age < 24.1
+Age >= 22.9
+Class = A
+TimeServ >= 16
+TimeServ < 33.8
+InCity = 1
+TimeServ >= 22.5
+TimeServ < 22.5
+TimeServ >= 33.9
+TimeServ < 8.78
+Age >= 45.4
+TimeServ >= 12.5
+TimeServ < 15.9
+InCity = 1
+Age >= 28.4
+TimeServ < 9.47
+TimeServ < 2.78
+Class = C,D
+Age >= 24.4
+TimeServ >= 1.99
+Age >= 28.8
+Age < 28.6
+Age < 49
+InCity = 0
+Age < 23.1
+Multiple = 1
+Age >= 45.4
+Multiple = 1
+Age >= 39
+Age < 37.6
+TimeServ < 2.7
+Age >= 27.8
+Age >= 28.8
+Age < 32
+InCity = 1
+TimeServ >= 2.73
+Class = E
+Age < 44
+TimeServ < 2.24
+Age >= 41.1
+Age >= 32.5
+TimeServ >= 2.26
+Class = B
+TimeServ < 1.96
+Age < 19.9
+TimeServ < 2.2
+Age >= 25.1
+InCity = 1
+Age >= 26.4
+Age < 27.2
+Age >= 44.8
+TimeServ < 17.1
+TimeServ >= 13.3
+InCity = 1
+Age >= 48.4
+Age < 47.7
+Male = 1
+Class = C
+TimeServ < 12.3
+Class = B,D
+TimeServ < 3.22
+TimeServ >= 3.28
+TimeServ < 4.08
+TimeServ >= 4.22
+TimeServ < 6
+TimeServ < 13.2
+TimeServ >= 11.4
+TimeServ < 11.2
+Age >= 57.8
+TimeServ >= 10.8
+Age < 47.1
+TimeServ >= 6.26
+Multiple = 0
+TimeServ < 9.8
+Age >= 47.4
+Age < 52.1
+Age >= 51.5
+Age < 49.5
+Age < 49
+Multiple = 1
+TimeServ >= 4
+InCity = 1
+TimeServ < 5.97
+Age >= 53.6
+TimeServ < 3.07
+Age < 56.2
+TimeServ < 3.86
+TimeServ < 3.78
+Age < 47.3
+Age >= 60.5
+TimeServ >= 4.83
+TimeServ < 8.1
+Age >= 60.8
+Multiple = 1
+Age < 65.6
+Multiple = 1
+TimeServ < 24.9
+TimeServ >= 20.7
+InCity = 1
+TimeServ < 20.6
+Age >= 50.3
+Age < 46.4
+TimeServ >= 25.2
+Age < 51.3
+TimeServ < 26.6
+Age >= 54.2
+TimeServ >= 27.3
+TimeServ >= 33.5
+TimeServ >= 25.9
+InCity = 1
+Class = C
+Age < 48.7
+Class = D
+Age < 53.7
+Age >= 55.4
+TimeServ < 20.4
+TimeServ >= 18.2
+Age < 51
+Age >= 49.1
+Age >= 51.7
+Age < 54
+Class = B
+TimeServ >= 20.6
+Age >= 50.7
+Age < 55.1
+InCity = 1
+TimeServ < 3.12
+TimeServ < 7.29
+Multiple = 1
+Age >= 25.1
+Class = B
+TimeServ >= 6.83
+TimeServ < 4.76
+TimeServ >= 4.16
+TimeServ >= 3.36
+TimeServ < 4.12
+Age >= 43.5
+Age >= 31
+Age < 41.9
+Age < 35.2
+TimeServ >= 22.3
+TimeServ >= 9.95
+Class = D
+TimeServ < 12.7
+Multiple = 1
+TimeServ >= 19.9
+TimeServ >= 13.7
+TimeServ < 16.9
+Age < 37.9
+TimeServ < 19.2
+TimeServ >= 17
+Age < 34.3
+Age >= 44.3
+TimeServ < 17.9
+TimeServ >= 16.7
+Age >= 43.1
+TimeServ < 15.4
+Age >= 38.6
+TimeServ >= 15.2
+Age >= 42.9
+Class = E
+Age < 28.5
+Age >= 35.6
+Age < 38.4
+TimeServ < 5.78
+Class = B,C
+Age >= 27.2
+TimeServ >= 2.89
+Age < 25.3
+Age >= 43.8
+Multiple = 1
+TimeServ >= 4.9
+Age >= 40.5
+TimeServ < 2.99
+Age < 22.1
+TimeServ < 3.42
+Age >= 27.7
+Age < 24.8
+Age >= 25.7
+Age < 26.6
+Age >= 33.9
+Age < 39
+TimeServ >= 4.43
+TimeServ < 4.68
+Age < 27.3
+Age >= 24
+Class = D
+Age < 20.4
+TimeServ < 3.05
+TimeServ >= 2.94
+Age >= 37.8
+Age >= 30.6
+Age < 35.1
+TimeServ >= 3.08
+TimeServ < 3.47
+Age >= 34.3
+Male = 0
+TimeServ >= 3.42
+Age < 27.1
+Age >= 21.9
+TimeServ >= 3.14
+TimeServ >= 3.22
+TimeServ < 3.24
+Age >= 27.6
+Age < 28.2
+Age >= 25.3
+Age < 26.4
+TimeServ >= 4.08
+TimeServ < 4.34
+Age >= 36.8
+Age < 41.8
+Age >= 31.3
+Age < 37.1
+Age >= 41.7
+TimeServ >= 5.66
+TimeServ < 3.19
+TimeServ >= 3.13
+TimeServ < 16.4
+Age >= 44.1
+TimeServ >= 16.1
+TimeServ >= 14.4
+TimeServ < 15.9
+Class = B,D
+Age >= 31
+TimeServ < 5.94
+Age < 31.8
+Age < 41.4
+TimeServ >= 13.6
+Age >= 41.2
+Male = 0
+TimeServ >= 11
+TimeServ < 13.1
+Age >= 40.7
+TimeServ < 7.95
+TimeServ >= 6.37
+Multiple = 1
+Age >= 33.5
+Age < 35
+Class = B
+TimeServ < 10.8
+Multiple = 1
+Age < 26.6
+Age >= 24.1
+TimeServ < 6.4
+Age >= 39.7
+Age >= 37.1
+Age < 37.9
+Class = D
+TimeServ >= 20
+Age < 43.7
+0
+0
+0
+0
+0
+0
+1
+1
+0
+0
+1
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+1
+0
+1
+0
+0
+0
+1
+0
+1
+0
+1
+0
+0
+1
+0
+0
+1
+0
+0
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+0
+0
+1
+1
+1
+1
+0
+0
+0
+0
+0
+1
+0
+1
+1
+0
+0
+0
+1
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+0
+1
+0
+0
+1
+1
+1
+0
+0
+1
+1
+0
+0
+0
+1
+0
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+1
+0
+0
+1
+0
+0
+1
+0
+0
+0
+1
+0
+1
+1
+0
+0
+0
+0
+0
+1
+0
+1
+0
+1
+0
+1
+1
+0
+0
+0
+1
+1
+0
+0
+1
+0
+0
+0
+0
+1
+0
+0
+1
+1
+0
+1
+0
+0
+0
+0
+0
+0
+0
+1
+1
+1
+0
+0
+0
+0
+0
+0
+1
+1
+1
+0
+0
+0
+0
+1
+1
+0
+1
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+1
+1
+0
+1
+0
+1
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+0
+1
+0
+0
+1
+1
+1
+0
+0
+0
+1
+1
+0
+1
+1
+1
+1
+0
+0
+0
+1
+1
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+1
+0
+0
+0
+1
+0
+1
+1
+0
+1
+1
+0
+1
+1
+1
+0
+1
+0
+1
+1
+0
+0
+1
+1
+yes no
+How do you think this model 
+will perform on unseen data?
+
+PDF PAGE 131
+How do we find the best ccp_alpha?
+Data Analytics for Business — CART 136
+underfitting 
+the training 
+data?
+overfitting 
+the training 
+data?
+sweet spot?
+ccp_alpha = 0.005 ccp_alpha = 0.01 ccp_alpha = 0.1ccp_alpha = 0
+
+
+PDF PAGE 132
+Model Parameters
+Data Analytics for Business — CART 137
+• A model parameter controls how the model how to fit to the 
+data by controlling the coefficients, splits…etc. 
+• A setting chosen by us (the human), not the model itself.
+• Parameters often control some kind of  trade-off, like model 
+complexity.
+• CART
+• ccp_alpha, min_samples_leaf, min_samples_split, max_depth are 
+parameters
+• Dictate how CART decides when to split and when to stop 
+splitting
+
+PDF PAGE 133
+k-fold cross validation for choosing 
+model parameters in CART (or any 
+model)
+Data Analytics for Business — CART 138
+
+PDF PAGE 134
+k-fold Cross-Validation 
+Data Analytics for Business — CART 142
+• Divide the training set into 𝑘 pieces (“folds”)
+Training setFold 1 Fold 2 Fold 3 Fold 4 Fold 5
+• For each candidate parameter value…
+• Use 𝑘 − 1 folds to construct a model
+• Test that model on the remaining fold
+• Repeat for each of  the 𝑘 folds
+Divide
+Train / Test
+Average
+• For each candidate parameter value…
+• compute the average loss over the 𝑘 folds 
+Select
+• Finally, select the parameter value that minimizes the 
+average loss
+→ Uses the entire training set but nothing from the test set
+
+PDF PAGE 135
+5-Fold Cross-Validation
+Data Analytics for Business — CART 143
+• Repeat procedure for each value of  (ccp_alpha)
+• Select the value of  ccp_alpha that maximizes the 
+average loss
+Fold 1 Fold 2 Fold 3 Fold 5
+Fold 1 Fold 2 Fold 4 Fold 5
+Fold 1 Fold 3 Fold 4 Fold 5
+Fold 2 Fold 3 Fold 4 Fold 5
+Fold 1 Fold 2 Fold 3 Fold 4 Fold 5
+Fold 4
+Fold 3
+Fold 2
+Fold 1
+Losses on 
+Fold 5Prediction
+Prediction
+Prediction
+Prediction
+Prediction
+Losses on 
+Fold 4
+Losses on 
+Fold 3
+Losses on 
+Fold 2
+Losses on 
+Fold 1
+Average 
+Losses
+
+PDF PAGE 136
+Cross-Validation to choose ccp_alpha
+Data Analytics for Business — CART 144
+• It is common to perform 5-fold or 10-fold cross-validation
+(we will perform 10-fold cross-validation here)
+• One parameter is varied (ccp_alpha). min_samples_leaf is 
+fixed throughout.
+• We use our losses of  𝐿𝐹𝑁 = 20  and  𝐿𝐹𝑃 = 1  
+• For ccp_alpha = 0, 0.01, 0.02, 0.03, …, 1 :
+• We will do cross-validation with the value of  ccp_alpha.
+• We will record the average loss value over all folds.  Call it AvgLoss.
+• Finally, we will choose that value of  ccp_alpha that achieves the 
+lowest value of  AvgLoss.
+• Then fit a (final) tree on the full training data with this value of  
+ccp_alpha.
+
+PDF PAGE 137
+Cross-Validation to select the best choice of  ccp_alpha
+Data Analytics for Business — CART 145
+Overfitting
+(model is overly complex)
+Underfitting
+(model is overly simple)
+“Optimal” model complexity, “sweet spot”
+
+PDF PAGE 138
+Cross-Validation Results from R
+Data Analytics for Business — CART 146
+Tested values Average performance
+Select the best value
+
+
+PDF PAGE 139
+Python Code for Cross Validation
+Data Analytics for Business — CART 147
+cv.trees = GridSearchCV(
+  dt_cv,
+  param_grid = {'ccp_alpha': np.linspace(0, 1, 101)},
+  cv=StratifiedKFold(10),
+  scoring=loss_scorer,
+  n_jobs=-1
+      )
+3. Do cross validation on ccp_alpha:
+loss_scorer = make_scorer(lambda y_true, y_pred: avg_loss(y_true, 
+ y_pred, L), greater_is_better=False)
+2. Define the scoring function:
+dt_cv = DecisionTreeClassifier(
+  min_samples_leaf=5,
+  class_weight={0: 1, 1: L}
+   )
+1. Define the estimator with the loss matrix:
+
+PDF PAGE 140
+Using the model to make predictions on the Test set
+Data Analytics for Business — CART 148
+𝒌: # of independent variables (𝒌 = 𝟔); 𝒏: # of observations (𝒏 = 𝟏, 𝟖𝟑𝟏)
+𝒏 = 𝟏, 𝟖𝟑𝟏
+Violator Male  Age TimeServed Class Multiple InCity Prediction
+2         1    1 26.0       5.95     D        1      0          1
+3         0    1 24.9       2.25     D        1      0          0
+4         0    1 52.1      29.22     A        0      0          0
+9         0    1 31.6       1.17     E        0      0          0
+11        0    1 53.9      21.61     A        0      1          0
+20        0    1 36.4       1.63     D        0      1          0
+27        0    1 60.7       1.83     C        0      1          0
+35        0    1 30.3       1.83     B        1      0          0
+46        0    1 88.1      26.66     A        1      0          0
+52        0    1 47.6      20.57     A        1      0          0
+58        0    1 41.8      16.93     B        1      1          1
+59        0    1 57.0       1.01     E        0      0          0
+61        0    1 33.1       2.08     D        0      0          0
+63        0    1 43.7       0.86     E        0      0          0
+64        0    1 23.0       1.07     D        0      0          0
+68        0    1 39.2       0.92     E        0      0          0
+...      ...  ...  ...        ...   ...      ...    ...        ...
+6080        0    0 43.7       1.76     E        0      0          0
+6082        0    1 45.9       0.83     E        0      0          0
+6083        0    1 48.2       2.21     D        0      0          0
+6092        0    1 57.1       0.75     E        0      0          0
+6097        0    1 54.7      20.87     A        0      1          0 
+
+PDF PAGE 141
+Performance Metrics for our CART model with
+ccp_alpha = 0.02 ,  𝐿𝐹𝑁 = 20,  and 𝐿𝐹𝑃 = 1
+Data Analytics for Business — CART 149
+Model
+Reality
+No violation Violation
+No Violation (𝒀𝒊 = 𝟎) 1,184 546
+Violation (𝒀𝒊 = 𝟏) 7 94
+𝐴𝑐𝑐𝑢𝑟𝑎𝑐𝑦=
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑐𝑜𝑟𝑟𝑒𝑐𝑡
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 =
+94+1184 
+546+94+7+1184 = 0.698
+𝑇𝑟𝑢𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒 𝑅𝑎𝑡𝑒 (𝑇𝑃𝑅) =
+𝑇𝑟𝑢𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠
+𝐴𝑙𝑙 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠 =
+94
+94+7 = 0.931
+𝐹𝑎𝑙𝑠𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒 𝑅𝑎𝑡𝑒 (𝑇𝑃𝑅) = 𝐹𝑎𝑙𝑠𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠
+𝐴𝑙𝑙 𝑁𝑒𝑔𝑎𝑡𝑖𝑣𝑒𝑠 = 546
+546+1184 = 0.316
+𝐿𝑜𝑠𝑠 = 𝐿𝐹𝑃  × # 𝐹𝑎𝑙𝑠𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠+ 𝐿𝐹𝑁  ×  # 𝐹𝑎𝑙𝑠𝑒 𝑁𝑒𝑔𝑎𝑡𝑖𝑣𝑒𝑠= 1 × 546 + 20 × 7
+= 686
+
+PDF PAGE 142
+Performance Metrics for the “current practice” model
+Data Analytics for Business — CART 150
+• “Current practice”: Predict that all parolees will not violate parole
+2.8x higher 
+than CART
+Model
+Reality
+No violation Violation
+No Violation (𝒀𝒊 = 𝟎) 1,730 0
+Violation (𝒀𝒊 = 𝟏) 101 0
+
+PDF PAGE 143
+Performance Metrics for the “current practice” model
+Data Analytics for Business — CART 151
+• “Current practice”: Predict that all parolees will not violate parole
+2.9x higher 
+than CART
+Model
+Reality
+No violation Violation
+No Violation (𝒀𝒊 = 𝟎) 1,730 0
+Violation (𝒀𝒊 = 𝟏) 101 0
+𝐴𝑐𝑐𝑢𝑟𝑎𝑐𝑦=
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑐𝑜𝑟𝑟𝑒𝑐𝑡
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 =
+1730+0 
+1730+101+0+0 = 0.945
+𝑇𝑟𝑢𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒 𝑅𝑎𝑡𝑒 (𝑇𝑃𝑅) =
+𝑇𝑟𝑢𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠
+𝐴𝑙𝑙 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠 =
+0
+101+0 = 0.000
+𝐹𝑎𝑙𝑠𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒 𝑅𝑎𝑡𝑒 (𝑇𝑃𝑅) =
+𝐹𝑎𝑙𝑠𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠
+𝐴𝑙𝑙 𝑁𝑒𝑔𝑎𝑡𝑖𝑣𝑒𝑠 =
+0
+1730+0 = 0.000
+𝐿𝑜𝑠𝑠 = 𝐿𝐹𝑃  × # 𝐹𝑎𝑙𝑠𝑒 𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠+ 𝐿𝐹𝑁  × # 𝐹𝑎𝑙𝑠𝑒 𝑁𝑒𝑔𝑎𝑡𝑖𝑣𝑒𝑠= 1 × 0 + 20 × 101
+= 2,020
+
+PDF PAGE 144
+CART can assign probabilities to 
+classes (instead of  assigning classes)
+Data Analytics for Business — CART 152
+
+PDF PAGE 145
+CART is equivalent to assigning probabilities 
+using the training set
+Data Analytics for Business — CART 153
+• This tree was constructed to 
+“fit” the n = 4,271 inmates in 
+the training set
+• Look at the composition of  
+the 4 leaves: these are loss-
+weighted sample sizes
+• We convert these leaf  buckets 
+to probabilities
+• Now the leaf  values are 
+probabilities 
+No Violator: 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+Violator: 𝐿 × 𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+
+PDF PAGE 146
+CART is equivalent to assigning probabilities 
+using the training set
+Data Analytics for Business — CART 154
+• This tree was constructed 
+to “fit” the n = 4,271 
+inmates in the training set
+• Look at the composition of  
+the 4 leaves: these are loss-
+weighted sample sizes
+• We can convert these leaf  
+buckets to probabilities:
+ 
+ 𝑃
+= 𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠 + 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+.
+• Now the leaf  values are 
+probabilities 
+𝑷 = 𝟏𝟖𝟎
+𝟏𝟖𝟎 + 𝟐𝟏𝟏𝟕 = 𝟎. 𝟎𝟕𝟖
+𝑷 = 𝟑𝟓𝟔𝟎
+𝟑𝟓𝟔𝟎 + 𝟕𝟐𝟔 = 𝟎. 𝟖𝟑𝟏 𝑷 = 𝟖𝟐𝟎
+𝟖𝟐𝟎 + 𝟓𝟔𝟐 = 𝟎. 𝟓𝟗𝟑
+𝑷 = 𝟏𝟐𝟎
+𝟏𝟐𝟎 + 𝟔𝟑𝟐 = 𝟎. 𝟏𝟔𝟎
+
+PDF PAGE 147
+CART is equivalent to assigning probabilities 
+using the training set
+Data Analytics for Business — CART 155
+• sklearn assigns labels to 
+leaves based on the majority 
+loss-weighted sample sizes.
+• A leaf  is labeled “Violator” 
+when:
+         𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠 > 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠.
+• This is equivalent to
+ 
+𝑃 = 𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠 + 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+> 0.5.
+𝑷 = 𝟏𝟖𝟎
+𝟏𝟖𝟎 + 𝟐𝟏𝟏𝟕 = 𝟎. 𝟎𝟕𝟖
+𝑷 = 𝟑𝟓𝟔𝟎
+𝟑𝟓𝟔𝟎 + 𝟕𝟐𝟔 = 𝟎. 𝟖𝟑𝟏 𝑷 = 𝟖𝟐𝟎
+𝟖𝟐𝟎 + 𝟓𝟔𝟐 = 𝟎. 𝟓𝟗𝟑
+𝑷 = 𝟏𝟐𝟎
+𝟏𝟐𝟎 + 𝟔𝟑𝟐 = 𝟎. 𝟏𝟔𝟎
+
+PDF PAGE 148
+Let us Assess our “new” CART Probability Model 
+on the Test Set 
+Data Analytics for Business — CART 156
+• We can use our “new” CART 
+tree to assign a probability of  
+parole violation to each of  the    
+n = 1,831  inmates in the Test 
+set
+• E.g.: test input falls into leaf:
+Then it’s labeled “Violator”
+No Violator: 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+Violator: 𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+⟺  𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠 > 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+⟺  𝑃 > 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.5.
+𝑷 = 𝟏𝟖𝟎
+𝟏𝟖𝟎 + 𝟐𝟏𝟏𝟕 = 𝟎. 𝟎𝟕𝟖
+𝑷 = 𝟑𝟓𝟔𝟎
+𝟑𝟓𝟔𝟎 + 𝟕𝟐𝟔 = 𝟎. 𝟖𝟑𝟏 𝑷 = 𝟖𝟐𝟎
+𝟖𝟐𝟎 + 𝟓𝟔𝟐 = 𝟎. 𝟓𝟗𝟑
+𝑷 = 𝟏𝟐𝟎
+𝟏𝟐𝟎 + 𝟔𝟑𝟐 = 𝟎. 𝟏𝟔𝟎
+
+PDF PAGE 149
+𝑷 = 𝟑𝟓𝟔𝟎
+𝟑𝟓𝟔𝟎 + 𝟕𝟐𝟔 = 𝟎. 𝟖𝟑𝟏 𝑷 = 𝟖𝟐𝟎
+𝟖𝟐𝟎 + 𝟓𝟔𝟐 = 𝟎. 𝟓𝟗𝟑
+Setting 𝑝𝑡ℎ𝑟𝑒𝑠 at test time
+Data Analytics for Business — CART 157
+• Assume that we use 𝐿 = 20 to 
+construct the CART but use a 
+different 𝑝𝑡ℎ𝑟𝑒𝑠 at test time.
+• E.g.: set 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.1. Test 
+input falls into leaf:
+Then it’s labeled “Violator”
+No Violator: 𝑛𝑁𝑜𝑛−𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+Violator: 𝐿 ×  𝑛𝑉𝑖𝑜𝑙𝑎𝑡𝑜𝑟𝑠
+⟺  𝑃 > 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.1.
+Note the change in predicted 
+class for this leaf
+𝑷 = 𝟏𝟖𝟎
+𝟏𝟖𝟎 + 𝟐𝟏𝟏𝟕 = 𝟎. 𝟎𝟕𝟖
+𝑷 = 𝟏𝟐𝟎
+𝟏𝟐𝟎 + 𝟔𝟑𝟐 = 𝟎. 𝟏𝟔𝟎
+
+PDF PAGE 150
+Choose a threshold probability 𝑝𝑡ℎ𝑟𝑒𝑠 and process the Test 
+set data into a confusion matrix for that cutoff  value
+Data Analytics for Business — CART 158
+𝒏 = 𝟏, 𝟖𝟑𝟏
+Suppose we declare someone a parole violation risk if  their loss-
+weighted probability of  violating parole is at least 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.1…
+𝑝𝑡ℎ𝑟𝑒𝑠 = 0.1
+
+PDF PAGE 151
+Confusion Matrix for cutoff  probability 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.1
+Data Analytics for Business — CART 159
+Model (cutoff  probability 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.1)
+Reality
+Low violation risk
+Pr(𝒀𝒊 = 𝟏) < 𝟎. 𝟏
+High violation risk
+Pr(𝒀𝒊 = 𝟏) > 𝟎. 𝟏
+No Violation (𝒀𝒊 =  𝟎) 917 813
+Violation (𝒀𝒊 =  𝟏) 5 96
+Cutoff  probability 𝑝𝑡ℎ𝑟𝑒𝑠 TPR FPR
+0.1 0.951 0.470
+Records of  all TPR and FPR values
+
+
+PDF PAGE 152
+Choose a threshold probability 𝑝𝑡ℎ𝑟𝑒𝑠 and process the Test 
+set data into a confusion matrix for that cutoff  value
+Data Analytics for Business — CART 160
+𝒏 = 𝟏, 𝟖𝟑𝟏
+Suppose we declare someone a parole violation risk if  their loss-
+weighted probability of  violating parole is at least 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.5…
+𝑝𝑡ℎ𝑟𝑒𝑠 = 0.5
+
+PDF PAGE 153
+Confusion Matrix for cutoff  probability 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.5
+Data Analytics for Business — CART 161
+Model (cutoff  probability 𝑝𝑡ℎ𝑟𝑒𝑠 = 0.5)
+Reality
+Low violation risk
+Pr(𝒀𝒊 = 𝟏) < 𝟎. 𝟓
+High violation risk
+Pr(𝒀𝒊 = 𝟏) > 𝟎. 𝟓
+No Violation (𝒀𝒊 =  𝟎) 1184 546
+Violation (𝒀𝒊 =  𝟏) 7 94
+Cutoff  probability 𝑝𝑡ℎ𝑟𝑒𝑠 TPR FPR
+0.1 0.951 0.470
+0.5 0.931 0.316
+Records of  all TPR and FPR values
+
+
+PDF PAGE 154
+ROC Curve and AUC for the 
+CART Model’s Probability Tree with 𝐿𝐹𝑁 = 20
+Data Analytics for Business — CART 162
+Model AUC
+CART  𝐿𝐹𝑁 = 20 0.810
+Naïve Baseline 0.500
+
+
+PDF PAGE 155
+Aside: CART for Classification
+Data Analytics for Business — CART 163
+Logistic 
+Regression
+Probability of  
+Yes 
+(Between 0 and 1)
+Prediction of  
+Yes / No 
+(0 or 1)
+Choose a 
+Specific 
+Cutoff 𝑝𝑡ℎ𝑟𝑒𝑠
+Vary Cutoff  
+from 0 to 1
+ROC Curve
+AUC
+Confusion 
+Matrix
+Classification Metrics
+Accuracy, 
+TPR, FPR
+Model OutputsModel
+CART for 
+Classification
+Cost Matrix
+
+PDF PAGE 156
+Conclusion
+Data Analytics for Business — CART 164
+
+PDF PAGE 157
+Analytics for Parole Decisions
+Data Analytics for Business — CART 165
+• 15+ states require formal risk assessment tools to inform Parole 
+Boards. Texas has been using analytics the longest.
+• 80%+ of  all Parole Boards use analytics for decision support
+• “Unaided, parole board members rely too much on their personal 
+experiences and make inconsistent decisions” – Donna Syteck, New 
+Hampshire Parole Board
+• “It is better to be guided by software than one’s gut”– Olivia Craven, 
+head of  the Idaho Commission of  Pardons and Parole
+• Depending on the state, models consider 50-100 different factors!
+• Newer models use “personalized terms of  parole” to adjust the terms 
+of  parole based on parolee characteristics
+→ Improve likelihood of  rehabilitation through personalized 
+academic/vocational training, substance abuse rehabilitation programs, mental 
+health programs, work programs, etc.
+
+PDF PAGE 158
+Methodology Summary
+Data Analytics for Business — CART 166
+• CART: a tree-based method for both regression and 
+classification
+• Interpretable
+• Data-driven
+• Flexible
+• Predictive power
+• Trade-off  between model complexity and predictive power
+• k-fold cross validation: a powerful technique

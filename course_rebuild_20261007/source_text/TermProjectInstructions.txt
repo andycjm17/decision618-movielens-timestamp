@@ -1,0 +1,137 @@
+PDF PAGE 1
+ 
+ 
+Instruction for Term Project 
+ 
+Your team will conduct a data science project of their choosing with a clear 
+“product/solution/deliverable” of interest.  The data could be from your current/previous job, 
+something of interest to the school, data acquired from the web, etc.  You will describe a business 
+application in which data science can potentially make an improvement. You will design the machine 
+learning tasks, mine the data, describe your results, and connect them with the business application.  
+Researching existing solutions to the problem is encouraged, if any have been proposed or documented.  
+(Your own data and results need not be on par with actual industry results; the goal is for you to get as 
+realistic a hands-on experience as possible, given the constraints of what you have learned.)  
+ 
+In writing up/presenting your research, think of yourselves as analysts employed by or retained by a 
+company (large or small) or by a funding source (e.g., a VC firm or incubator), who wants to understand 
+the state of the art for using data science for the task in question.  Review what has been done to date 
+on your problem.  Consider as an example predictive analytics for on-line advertising:  A VC firm 
+considering funding on-line ad networks or ad-tech startups would need to understand the state of the 
+art in using data mining for targeting on-line advertising, when considering an idea for applying data 
+mining.  Do not worry too much about coming up with a novel idea. (Specifics of the business can many 
+times make standard data science tools develop new insights.) It is more important to develop the idea 
+well from the motivation to how it will be deployed (within the scope of what we’ve discussed in class).   
+ 
+You should use the “data mining process” to structure your research and write up (see last page and 
+book). Keep in mind that it may be ineffective to proceed linearly through the steps, and this may need 
+to be reflected in your analysis.  You should interact with me (specially project proposal, project update, 
+and office hours) and the course assistants from the preparation of your initial ideas through your write-
+up. Use your imagination, prior experience, and remember to emphasize the key data science and the 
+business value. 
+  
+It is important to realize that a well structured business application can motivate several different data 
+science tasks. Although I expect you to discuss some of them in the project, due to time constraints and 
+data availability, I do not expect a team necessarily to attempt all of them. However, a successful project 
+is expected to conduct (at least) two related data science tasks:  
+• data visualization, to effectively explain and communicate facts (e.g., plots, clustering, networks); 
+• build and evaluate a predictive/causal model (e.g. regression, Lasso, deep learning, DML) 
+ 
+Keep in mind that your data must be rich enough to allow for these tasks. Typically the data would allow 
+you to use many of the topics we discussed in class (but unlikely to be applicable to all of them). Finally, 
+make sure that the data is compatible with the use in your application. (Note: There are no 
+requirements to do the project using a specific software. Feel free to use the tool that works better 
+for each stage of the project. Using multiple tools can potentially help you. R covers all topics but you 
+might be more familiar with other software (e.g. Excel or Python) for specific tasks that you want to 
+use.)  
+
+
+PDF PAGE 2
+Schedule for Term Project Deliverables 
+ 
+Deliverable #1: Day Before Class 4, you will submit a brief proposal for your project. (Submission must 
+be in pdf format following the guidelines in the syllabus. A single page with bullet points suffices but no 
+more than 2 pages. Additional files and appendices can be submitted as support material.)  This should 
+give enough details of your ideas, so that I can give you feedback.  Include in your proposal your ideas 
+about: What is the exact business problem? What is the use case (i.e. how it would be used in practice)? 
+Which is the data source? What is an “observation” in your data set (i.e. data unit)? What precisely is 
+the data science problem? Is it supervised or unsupervised? If there is a prediction, what might be the 
+target variable? What features would be useful? How exactly would it add business value? Etc. 
+ 
+Deliverable #2: Day Before Class 8, you will submit a status report, including preliminary results or issues 
+that you are facing in developing your project. (If you have doubts about the project talk to me during 
+office hours, do not make questions on the Project Update and definitely do not wait for the feedback 
+of the Project Update.) At this stage, I expect the team to have at least cleaned up the data. Keep in 
+mind that this can be time consuming. You will also specify the “Industry” for which the project belongs, 
+e.g. Consulting, Investment Banking, General Management, Corporate Finance, Healthcare, Technology, 
+Marketing, Operations, Energy, Media & Entertainment, Private Equity, Public/Government Policy, 
+Sports. If you feel your project does not fall into any of those, please specify.  (Submission must be in 
+pdf format following the guidelines in the syllabus. A single page suffices but no more than 2 pages. . 
+Additional files and appendices can be submitted as support material.)   
+ 
+Deliverable #3: Before Class 12 (see course page, typically day before), you will submit your final write-
+up, which should include the information detailed on the next/back of this page, in approximately the 
+order given.  Your write-up need not have corresponding sections or bullet points, but I should be able 
+to find the information without searching too hard.  Be as precise and specific as you can.   
+The write-up should be up to 10 double-spaced pages (with 12pt font). 
+Any appendices with additional material you would like to submit can be submitted via a separate file. 
+Make the main write-up self-contained (do not expect people to look at the appendices). (Submission 
+must be in pdf format following the guidelines in the syllabus.) Use external sources where 
+appropriate, and provide clear citations and bibliography.  All group members should contribute to the 
+analysis and write-up.  The report should include an appendix describing the contributions of each team 
+member. 
+By this date you should also submit your data, your (well documented) code, and slide presentation 
+(ppt or pdf). 
+ 
+Deliverable #4: During Class 12, you will present to the class the results of your research.  I will give you 
+a time limit for your presentation beforehand, and your presentation will be expected to remain within 
+the time limit.  Please keep in mind that this is a very important skill to master: if a VC or a corporate 
+officer/board member tells you she’ll give you 5 minutes to present your idea or proposal, you present 
+your proposal in 5 minutes -- not 7 or 10.  Going over the time by more than one minute will be 
+reflected negatively in your grade, but I’ll warn you when you’re getting close. 
+ 
+  
+
+PDF PAGE 3
+Your final project write-up should include the information detailed below, in approximately the order 
+given.  Your write-up need not have corresponding sections or bullet points, but I should be able to 
+find the information without searching too hard.  Be as precise/specific as you can. 
+ 
+ 
+Business Understanding (take this seriously) 
+• Identify, define, and motivate the business problem that you are addressing.   
+• How (precisely) will a data mining solution address the business problem? 
+(NB: I’d like to see a good definition/motivation of the business problem and a precise statement of 
+how a data mining solution will address the problem.  It’s not so important that the results match 
+perfectly.  It’s more important that you have the experience of working through a realistic problem 
+definition.) 
+ 
+Data Understanding 
+• Identify and describe the data (and data sources) that will support data mining to address the 
+business problem.  Include those aspects of the data that we routinely talk about in class and/or 
+in the assignments. (If appropriate highlight potential bias, full disclosure always better, and 
+identify potential bias directions.)  
+ 
+Data Preparation 
+• Specify how these data are integrated to produce the format required for data mining. 
+(NB: data preparation can be time consuming.  Get started early.  Talk to the TAs or Prof if you need 
+advice.) 
+ 
+Modeling 
+• Specify the type of model(s) built and/or patterns mined. 
+• Discuss choices for data mining algorithm: what are alternatives, and what are the pros and 
+cons? 
+• Discuss why and how this model should “solve” the business problem (i.e., improve along some 
+dimension of interest to the firm). 
+ 
+Evaluation 
+• Discuss how the result of the data mining is/should be evaluated. Provide good measures of the 
+performance of predictive models.  How should a business case be developed to project 
+expected improvement?  ROI?   If this is impossible/very difficult, explain why and identify any 
+viable alternatives. 
+ 
+Deployment 
+• Discuss how the result of the data mining will be deployed. 
+• Discuss any issues the firm should be aware of regarding deployment. 
+• Are there important ethical considerations? 
+• Identify the risks associated with your proposed plan and how you would mitigate them.  
+ 

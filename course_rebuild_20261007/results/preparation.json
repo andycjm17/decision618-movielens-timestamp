@@ -1,0 +1,12 @@
+{
+  "ratings": 1000209,
+  "users": 6040,
+  "rated_movies": 3706,
+  "catalog_movies": 3883,
+  "random_test_has_later_same_user_training_fraction": 0.9885034489653104,
+  "raw_sha256": {
+    "ratings.dat": "506d64ca44484487c11dc2d9a28de5c54948213e6b96285e298afe28d6ea4e0f",
+    "movies.dat": "9f3e4b8c0980d55819dc9de4727f1feeb3fa57e1d3c58d5a788d1a9755a4c6c7",
+    "users.dat": "1dc3a95300cb19f7c10e027daf29b8cdf1d908dab65b5edfb45950aa389a10a3"
+  }
+}

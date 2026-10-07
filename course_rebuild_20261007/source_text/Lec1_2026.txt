@@ -1,0 +1,1595 @@
+PDF PAGE 1
+CLASS1 -INTRODUCTION
+Decision618 Data Analytics for Business
+Prof. Peng Sun
+
+PDF PAGE 2
+What is Analytics?
+1
+Using data to build models that lead to better decisions that add value to an organization’s mission
+Note: Analytics can be both “big data” and “small data”
+Decision 618–Lecture 1:  Introduction
+
+
+PDF PAGE 3
+From Data to Decisions
+2
+Descriptive Analytics: patterns in the dataPredictive Analytics: insight into outcomes•Data management•Data visualization
+Prescriptive Analytics: business decisions•Machine learning•Forecasting•Optimization
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 4
+Why Now?
+3
+Increased availability and lower cost of  data availabilityUnprecedented computing powerAnalytics-savvy business leaders
+•Analytics is not new — it has been around for decades•But today’s environment creates new opportunities to transform business practices through analytics
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 5
+Growth of  Analytics
+4
+•Extremely strong growth in demand for analytics professionals•And analytics is critical component of  top MBA program value proposition
+Source: Maximize Market Research, PVT. LTD.Decision 618–Lecture 1:  Introduction
+
+
+PDF PAGE 6
+Age of  AI
+Decision 618–Lecture 1:  Introduction5
+•Do we still need to learn analytics in the age of  AI?•My reasons:•Analytics easier with AI help•Understand fundamentals behind AI’s “end-to-end” solution•Small data environment•Basics to better understand the world and solve problems•“Matrix” and human agency
+
+PDF PAGE 7
+Motivation, Philosophy, Objectives
+Decision 618–Lecture 1:  Introduction6
+
+PDF PAGE 8
+Course Objectives
+Decision 618–Lecture 1:  Introduction7
+•Identify competitive advantages to individuals and companies•Learn the benefits (and limitations) of  analytics techniques•power and importance of  data•how analytics methods work •which methods are most salient in which context•how to understand, interpret, use, and implement analytics results•Communicate analytics to other stakeholders•Inspire you to leverage analytics in your career and within your organization•Overarching goal:  improve/change the way you think, with data and models
+
+PDF PAGE 9
+Predictive Analytics
+Decision 618–Lecture 1:  Introduction8
+Tree-Based Models
+Ensemble Methods
+Deep Learning
+Collaborative Filtering
+Linear Models
+
+PDF PAGE 10
+Descriptive Analytics
+Decision 618–Lecture 1:  Introduction9
+Network Analysis Clustering
+Text Analytics
+
+PDF PAGE 11
+Prescriptive Analytics
+Decision 618–Lecture 1:  Introduction10
+Multi-Objective Optimization School Bus Routing
+Integer Optimization Sponsored AdsandSupermarketPromotion
+Stochastic Optimization Power Grid
+Linear Optimization WorldFoodProgramme
+
+PDF PAGE 12
+Sample Application Areas
+11
+•solar power generation•customer retention•heart disease•parole violators•medical costs•sponsored ad click-through rates•housing prices•hospital readmissions•customer segmentation and CRM•contract design
+•stock returns•Trump tweets•online reviews•social networks•retail recommender systems•optimization in supply/demand chains•online advertising •public school busing•landfill siting and optimization•…→An ever-growing list of  applications across functions and industry sectors
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 13
+With opportunities come potential challenges…
+Decision 618–Lecture 1:  Introduction12
+
+PDF PAGE 14
+With opportunities come potential challenges…
+Decision 618–Lecture 1:  Introduction13
+•Challenges:  bad data, bad models, inappropriate uses, spurious relationships, bias and fairness issues….
+•Learning new concepts and new modeling tools + how to navigate, avoid, identify, and mitigate the above challenges
+•This is also part of  “changing the way you think” with data and models
+
+PDF PAGE 15
+Correlation can be different from causation
+14
+From 1936-2008, the incumbent party results of  the US presidential elections were nearly perfectly correlated with the results of  the last home game of  the Washington D.C. (American) football team.  https://en.wikipedia.org/wiki/Redskins_Rule
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 16
+The past might not be a good predictor of  the future…
+15Decision 618–Lecture 1:  IntroductionCourtesy of  Prof. Adrien Verdelhan of  MIT Sloan
+
+PDF PAGE 17
+Analytics models can exhibit bias/unfairness
+16Decision 618–Lecture 1:  Introduction
+
+
+PDF PAGE 18
+One might be studying the wrong problem (or the right problem with the wrong data)
+Decision 618–Lecture 1:  Introduction17
+•In WWII, German antiaircraft were responsible for downing a large number of  British RAF planes. •British military Operations Research unit mapped bullet holes to determine where to put extra armor on aircraft
+
+PDF PAGE 19
+One might be studying the wrong problem (or the right problem with the wrong data)
+Decision 618–Lecture 1:  Introduction18
+•In WWII, German antiaircraft were responsible for downing a large number of  British RAF planes. •British military Operations Research unit mapped bullet holes to determine where to put extra armor on aircraft
+But the data was from planes that were not shot down
+
+PDF PAGE 20
+With opportunities come potential challenges…
+19
+Flawed data methods
+Bias/Fairness IssuesWrong problem or model•Data scarcity, missing data, inaccurate data•Inadequate model fitting, model overfitting•Solutions: Model validation, human judgment
+Spurious relationships
+•Data look backward, decisions look forward•Solutions: Field experimentation, “what-if ” simulation, human judgment•Coincidental correlations•Correlations due to confounding factors•Solutions: Econometrics, human judgment•Analytics-based decisions with disparate impacts on sub-populations•Solutions: “Fair” analytics, human judgment
+Decision 618–Lecture 1:  Introduction
+
+
+PDF PAGE 21
+With opportunities come potential challenges…
+Decision 618–Lecture 1:  Introduction20
+•Challenges:  bad data, bad models, inappropriate uses, spurious relationships, bias and fairness issues….•In addition to teaching you new concepts and new modeling tools to add value to you and your enterprises, we also will aim to show you how to navigate, avoid, identify, and mitigate the above challenges•This is also part of  “changing the way you think” with data and models
+
+PDF PAGE 22
+Decision 618–Lecture 1:  Introduction21
+Okay, let’s start learning some analytics…
+
+PDF PAGE 23
+Google, Search-engine Arithmetic, and Network Analytics
+Decision 618–Lecture 1:  Introduction22
+
+PDF PAGE 24
+Web Search in the 1990’s
+Decision 618–Lecture 1:  Introduction23
+•Let’s go back to the 1990s, the beginnings of  the internet.•Web search was a new problem with many competitors. •Ask Jeeves, Altavista, Lycos, Yahoo!
+•Search results quality was questionable.  •Google came along in 1998 with an innovative algorithm called PageRank.
+
+
+PDF PAGE 25
+Let’s Design a Method to Rank Webpages 
+Decision 618–Lecture 1:  Introduction24
+•What are some straightforward methods to rank webpages?•How would you go about ranking those pages in terms of  relevance?•Thought experiment: search for “flowers”•Assume you have the entire content information about each page: text, images, videos, hyperlinks, etc.•Try to prescribe a way to determine a numerical score that is higher if  the page is more relevant to the query (in this case, “flowers”)
+
+PDF PAGE 26
+•Assign numerical weights w1, w2, w3 to a query-website combination•w1 is the weight if  the query is in the title of  the page•w2 is the weight of  number of  times the query appears on the page•w3 is the weight of  number of  times similar words (e.g., florist) appear•Add up the weighted value of  each page and rank accordingly. The method is simple and intuitive! But what’s the problem?
+Simple Ranking Algorithm
+Decision 618–Lecture 1:  Introduction25
+Query“Flowers”
+Flowers…
+…FloristFlowersWebsite
+
+PDF PAGE 27
+Google’s Innovative Idea
+Decision 618–Lecture 1:  Introduction26
+•Key Idea: Filter websites by keywords, but rank based on how “popular” or “influential” a website is. 
+•How to measure “popularity?”•Useful information from hyperlinks… 
+vs.Some random internet blog
+
+
+PDF PAGE 28
+Let’s take a quick detour…
+Decision 618–Lecture 1:  Introduction27
+•Let’s go to the world of  taxi/Uber/Lyft drivers
+
+
+PDF PAGE 29
+Random Driver ModelNext LocationABCA0.700.30B0.900.10C0.500.50
+CurrentLocation
+Decision 618–Lecture 1:  Introduction28
+•Given the “Current Location”, the next passenger brings the taxi to “Next Location” with certain probabilities. •Question: After 50 trips, where is the taxi likely to be? (A, B or C)
+A
+CB
+0.700.30
+0.100.50
+0.900.50
+
+
+PDF PAGE 30
+Computing Likelihoods
+Likelihood of being at Current LocationCurrent LocationNext Location:ABC.25A .70.30.25B.90 .10.50C.50.50Likelihood of  Next Location:.25 *.90 + .50*.50   = .475.25*.70 + .50*.50   = .425.25*.30 + .25*.10  = .10
+Decision 618–Lecture 1:  Introduction29
+
+PDF PAGE 31
+Computing Likelihoods
+Likelihood of  being at Current LocationCurrent LocationNext Location:ABCPa A .70.30Pb B.90 .10Pc C.50.50Likelihood of  Next Location:Pb * .90 + Pc * .50Pa * .70 + Pc * .50Pa * .30 + Pb * .10
+Decision 618–Lecture 1:  Introduction30
+
+PDF PAGE 32
+Probability Distribution of  Visited Locations
+Location:ABC0100100.7000.30020.7800.1500.07030.1700.5810.24940.6470.2440.109…………
+Number of  Trips
+Start at location A, compute the probability of  being at locations A, B, and C after 1, 2, 3, … trips:
+Decision 618–Lecture 1:  Introduction31
+A
+CB0.700.30
+0.100.50
+0.900.50
+
+
+PDF PAGE 33
+Probability Distribution of  Visited Locations
+Location:ABC100.7000.30020.7800.1500.07030.1700.5810.24940.6470.2440.10950.2740.5080.219…………50.438.392.17051.438.392.170
+Number of  Trips
+Start at location A, compute the probability distributionof  being at locations A, B, and C after 1, 2, 3, … trips:
+A
+CB
+.70.30
+.10
+.50
+.90 .50
+Decision 618–Lecture 1:  Introduction32
+
+PDF PAGE 34
+Probability Distribution of  Visited Locations
+Location:ABC10.5000.500020.4500.3500.20030.4150.4150.17040.4590.3760.16650.4210.4040.176…………55.438.392.17056.438.392.170
+Number of  Trips
+Start at location C, compute the probability distributionof  being at locations A, B, and C after 1, 2, 3, … trips:
+A
+CB
+.70.30
+.10
+.50
+.90 .50
+Decision 618–Lecture 1:  Introduction33
+
+PDF PAGE 35
+Probability Distribution of  Visited Locations•Regardless of  where a driver starts, eventually (after around 55 trips) the probability distribution of  her/his current location will be:
+•This is a property of  a probabilistic system known as a Markov chain (which is typically taught in first graduate course in probability theory)•This also means that with a fleet of  1000 cars, eventually:•~438 drivers will be at location A•~392 drivers will be at location B•~170 drivers will be at location C•Location A appears more “popular” than B and C
+LocationABCProbability.438.392.170
+Decision 618–Lecture 1:  Introduction34
+
+PDF PAGE 36
+World Wide Web as a Network
+•Vertices are pages•Arcs are hyperlinksB
+C
+ED
+F
+A
+Decision 618–Lecture 1:  Introduction35
+
+PDF PAGE 37
+Web User ModelModel:  users go from pageto page with equal probabilityamong all hyperlinks from theircurrent page
+If  I start at page C, I next go to page A, B, or E each with probability  p = 0.333
+B
+C
+ED
+F
+A
+Decision 618–Lecture 1:  Introduction36
+
+PDF PAGE 38
+Web Network Model, continued•Think of  a hyperlink as a recommendation: a hyperlink from my homepage to yours is my endorsement of  your webpage•A page is more important/valuable/influential if  it receives many recommendations•But the stature of  the recommender also matters…
+Decision 618–Lecture 1:  Introduction37
+
+PDF PAGE 39
+Model Probability TableNext Page:ABCDEFA.5.5B 1.0C.333.333.333D .5.5E .5.5F.5 .5
+Current Page
+B
+C
+ED
+F
+A
+Decision 618–Lecture 1:  Introduction38
+
+PDF PAGE 40
+Probability Distribution of  Visited Pages
+Page:ABCDEF100.50.500020.1670.16700.50.1670300.0830.0830.250.250.33340.1940.02800.3750.1530.2550.1250.0970.0970.2290.1880.264…………………67.140.093.070.295.171.23368.140.093.070.295.171.233
+Number of  Click-Thrus
+Start on page A, compute the probability distributionof  visited pages after 1, 2, 3, … click-thrus:
+Decision 618–Lecture 1:  Introduction
+B
+C
+ED
+F
+A
+39
+
+PDF PAGE 41
+Probability Distribution of  Visited Pages
+Page:ABCDEF10000.500.520.25000.250.250.2530.1250.1250.1250.250.1250.2540.1670.1040.0630.3130.1670.18750.1150.1040.0830.2810.1770.240…………………63.140.093.070.295.171.23364.140.093.070.295.171.233
+Number of  Click-Thrus
+Start on page E, compute the probability distributionof  visited pages after 1, 2, 3, … click-thrus:
+Decision 618–Lecture 1:  Introduction
+B
+C
+ED
+F
+A
+40
+
+PDF PAGE 42
+Probability of  Visited Pages as Popularity Measure•Regardless of  where a user starts, eventually (after around 70 visits) the user’s probability distribution of  visited pages will be:
+•What about all users?  14% of  all users will be visiting page A, 9.3% will be visiting page B, …, 23.3% will be visiting page F•Again, this is a property of  a system known as a Markov chain (that is typically taught in a first graduate course in probability theory)
+PageABCDEFProbability.140.093.070.295.171.233
+Decision 618–Lecture 1:  Introduction41
+
+PDF PAGE 43
+Model Probability TableNext Page:ABCDEFA.5.5B 1.0C.333.333.333D .5.5E .5.5F.5 .5
+Current Page
+B
+C
+ED
+F
+A
+Decision 618–Lecture 1:  Introduction42
+
+PDF PAGE 44
+Probability Distribution and Page Ranking
+•The probability that a page is visited is equivalent to its importance/relevance/influence and hence is used for ranking:
+•This is the essence of  the PageRank methodology developed by Google
+PageABCDEFProbability.140.093.070.295.171.233“PageRank”:.140.093.070.295.171.233
+Decision 618–Lecture 1:  Introduction43
+
+PDF PAGE 45
+Web Network Model, cont.
+Decision 618–Lecture 1:  Introduction44
+•Think of  a hyperlink as a recommendation, or an endorsement•A page is more important/valuable/influential if  it receives more recommendations•A page is more important/valuable/influential if  it receives recommendations from other influential pages•An endorsement from Jeff  Bezos probably does more to boost a job application than 20 endorsements from 20 unknown colleagues•However, if  Jeff  Bezos is very generous with praise, then his endorsements drop in importance/value/influence•PageRank implicitly accounts for these considerations across the entire network
+
+PDF PAGE 46
+PageRank Innovation •Brin and Page proposed the idea of  ranking pages using a minor variant of  this method•Page filed for a patent in 1998 (the patent was granted in 2001)
+•Method is “easy” to compute•Just do the simple arithmetic (for 30 billion pages)•Challenging from a computational engineering point of  view•But a simple concept based on very elementary probability
+Decision 618–Lecture 1:  Introduction45
+
+PDF PAGE 47
+PageRank Innovation, continued 
+Decision 618–Lecture 1:  Introduction46
+•Many enhancements to PageRank, including:•Users typing in a new URL, spending more or less time on each page, clicking on hyperlinks with higher or lower likelihood, etc.•Personalization of  rankings (for you) through data analytics and machine learning (PageBrain)•Modifications for e-commerce applications•PageRank idea is used extensively today in public relations, college rankings, board/committee memberships, social networks, etc.•PageRank plays a role when we discuss Social Network Analytics later today…
+
+PDF PAGE 48
+Google’s PageRank
+Decision 618–Lecture 1:  Introduction53
+•Simple but powerful use of  basic probability concepts•Many other analytics developments at Google•Prediction of  Click-Thru Rates (CTRs) •Text analytics, auto-complete, and predictions •Online advertising optimization (Google AdWords)•Social Network Analytics •Google’s integration of  analytics techniques has resulted in one of  the world’s most successful companies
+
+PDF PAGE 49
+Course Administration
+Decision 618–Lecture 1:  Introduction54
+
+PDF PAGE 50
+Course Logistics
+55
+•Class Sessions Schedule
+•Grading
+Decision 618–Lecture 1:  Introduction
+Day(s)TimeLocationLectureMonday/Thursday9:00-11:15amRandTA SessionFriday?
+ComponentsPercentIndividual Assignments50%Team Project35%Class Participation15%
+
+PDF PAGE 51
+Attendance
+Decision 618–Lecture 1:  Introduction56
+•Lecture attendance is required•Missing one class session does not carry penalty•Each additional missed class reduces total grade by 5%•Automatic failure if  missing 4 or more class sessions•TA sessions: Q/A for homework assignments•I will also hold office hour from 2pm to 3pm on every Wednesday
+
+PDF PAGE 52
+Class Participation
+Decision 618–Lecture 1:  Introduction57
+•Class participation is very important •Allows fruitful exchange of  ideas/observations•Ask questions about material you do and do not understand•Demonstrates your understanding of  class material•Helps everyone engage•Helps us learn from each other!•Class participation helps me gauge how the class is keeping up (or not)•Class attendance: you can’t participate if  you’re not in class…•Please use your name tag in class
+
+PDF PAGE 53
+Honor Code and Classroom NormsWe take integrity and its violations very seriouslySpecific Rules of  this Classroom•No laptops open or Cellphone in class•You may take notes on a tablet device•Your class participation score will decrease steeply if  you are observed using your phone or if  your laptop is open
+Decision 618–Lecture 1:  Introduction58
+Time Matters•Late arrivals are disruptive to everyone and carry penaltiesingrading•Please use Fuqua Checkin to sign in your seat every time you arrive to class.
+
+PDF PAGE 54
+Individual Assignments
+Decision 618–Lecture 1:  Introduction59
+•Weekly assignments generally due on Sunday at 11:59pm on Canvas.•Assignments consist of  a Notebook in R or Python. •1-2 questions, each with multiple parts that guide you through an analysis.•You will need to write some code.•Provide written answers directly in the notebook. •Collaboration Policy•Allowed: discussing course concepts with fellow students, seeking debugging assistance (including with AI)•Disallowed: providing or copying solutions, copying code, and any other action that constitutes plagiarism
+
+PDF PAGE 55
+Final Project
+60
+•You will work in (self-formed) teams of  3 •You propose your own topic, gather the data, conduct the analysis, and write your recommendations•The TA and I are available to provide advice and guidance•Timeline and deliverables:https://fuqua.instructure.com/courses/4169/pages/team-project
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 56
+Examples of  Potential Project Topics
+Decision 618–Lecture 1:  Introduction61
+•Sports•Player performance in cricket•NBA player salaries•Entertainment•What makes a YouTube videos go viral•Which movies will be successful•Which restaurants will earn Michelin Stars •Public Policy•Environment, policing, substance abuse, educational outcomes•Pick topics that are of  interest to you!
+
+PDF PAGE 57
+Dataset Resources
+Decision 618–Lecture 1:  Introduction62
+Google Datasets Searchdatasetsearch.research.google.comKaggle Datasetskaggle.com/datasetshttps://fuqua.instructure.com/courses/4169/pages/data-sources-for-projects
+
+PDF PAGE 58
+Using Python (and a little bit R) 
+Decision 618–Lecture 1:  Introduction63
+
+PDF PAGE 59
+Programming Language used
+Decision 618–Lecture 1:  Introduction64
+
+
+PDF PAGE 60
+R and Python
+65
+•We will use Python for most of  the modeling techniques in the course: linear regression, logistic regression, Random Forests, clustering, text analytics, neural networks, etc.
+•We will also work with some R: mostly for CART and collaborative filtering for recommendation systems
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 61
+Rvs.Python
+66
+•Both R and Python are popular languages for data analysis•R is a statistical programming language•Significantly more powerful than Excel and more user-friendly than other language•Can create almost any learning model imaginable•Python is a general-purpose programming language•Candoanything•Not as simple as R, but still easier to use than many other programming languages
+Decision 618–Lecture 1:  Introduction
+
+PDF PAGE 62
+R and Python, continued
+Decision 618–Lecture 1:  Introduction69
+•This is not a Python or R programming course•The focus is on learning about analytics tools and applications•We will use the language; but won’t get lost in coding•GenAI tools make coding much more accessible•The scripts we distribute in the course will serve as templates that will cover most tasks you will need to perform
+
+PDF PAGE 63
+NETWORK ANALYTICSFrom Page Rank to Centrality Measures
+
+
+PDF PAGE 64
+Outline
+Decision 618–Lecture 1:  Introduction72
+•Introduction to Networks •Applications in business and beyond•Notation and terminology•Centrality measures•Measuring the importance of  nodes in a network•Community detection •“Clustering” on a network •Link prediction•Predicting which links will be formed in the future
+
+PDF PAGE 65
+Networks Are Everywhere
+73
+Oil pipelineAir transportation
+Decision 618–Lecture 1:  Introduction
+Social network
+Power grid
+
+PDF PAGE 66
+Networks in Business
+Decision 618–Lecture 1:  Introduction74
+•Organization charts •Collaboration between employees (slack, email)•Referral graphs (customer, clients)•Telecommunications (AT&T, Verizon)•Physical supply chain (i.e., manufacturing) •Digital supply chain (i.e., software)
+
+PDF PAGE 67
+Network Lexicon
+Decision 618–Lecture 1:  Introduction76
+•Nodes and Edges•A network consists of  a collection of  nodes (vertices) and connections between nodes called edges (arcs, links). •A, B, C, D, E, F are nodes•A-F, F-D, etc. are edges •Neighbors•Node C has two neighbors: B and E•Connected•Node A is connected to node C: there exists a path from A to C•Shortest Path and Distance •The shortest path from A to C is A-F-E-C•The distance from A to C is 3 (length of  the shortest path)
+B
+C
+ED
+F
+A
+
+PDF PAGE 68
+Directed vs. Undirected Networks
+Decision 618–Lecture 1:  Introduction77
+B
+C
+ED
+F
+A B
+C
+E
+D
+F
+A
+Directed Networks (e.g. Twitter Followers)Undirected Networks           (e.g. Facebook Friendships)
+
+PDF PAGE 69
+Example: “Market basket” network
+Decision 618–Lecture 1:  Introduction
+•Each node is a good sold at the supermarket•Links indicate that the pair of  goods are frequently purchased together•Can be directed or undirected.•Applications:•Designing promotions•Understanding customer purchasing patterns•Others…
+78
+B
+C
+ED
+F
+A
+
+PDF PAGE 70
+Many Different Ways to Represent the same Network
+Decision 618–Lecture 1:  Introduction79
+B
+C
+E
+D
+F
+A
+B
+C
+E
+D
+F
+A
+
+PDF PAGE 71
+Weighted vs. Unweighted Networks
+Decision 618–Lecture 1:  Introduction80
+•Edges might have weights reflecting importance, distance, cost, capacity, etc.•This lecture will focus on undirected, unweighted networks
+
+PDF PAGE 72
+Two Running Examples
+Decision 618–Lecture 1:  Introduction81
+Emails at Enron •Energy trading giant from 2001 convicted of  fraud•Federal investigation led to 500,000 internal emails released. 
+US Flight Network•Publicly available dataset•Network of  249 airports and 3000+ routes served by commercial airlines 
+
+
+PDF PAGE 73
+About Enron
+Decision 618–Lecture 1:  Introduction82
+•Enron Corporation: former energy, commodities, and services company based in Houston, TX•~20,000 employees•$100 billion in reported revenues—one of  the world’s top energy companies•Named America’s Most Innovative Company from 1996–2001 by Fortune magazine•Implicated in the California energy crisis of  2000-2001•Manipulation of  electricity prices, illegal shutdown of  gas pipelines•Financial position was found to be sustained by “institutionalized, systematic, and creatively planned accounting fraud”•Internal emails released by the FERC (Federal Energy Regulatory Commission) as part of  their investigation
+
+
+PDF PAGE 74
+Enron Email Network
+Decision 618–Lecture 1:  Introduction83
+•148 nodes: former employees•95 energy traders•23 top executives•5 lawyers•25 other employees•678 edges: pairs of  employees who exchanged at least 10 emails in ~1999-2000→Insight on social network of  interactions within the company
+
+PDF PAGE 75
+US Air Route Network
+Decision 618–Lecture 1:  Introduction84
+
+
+PDF PAGE 76
+Networks: The Analytics Edge
+Decision 618–Lecture 1:  Introduction85
+•Quantifies the importance / prominence of  nodes in a network•Several similar, yet different, metricsCentrality
+Community detection
+Link prediction
+•Identifies communities in a network based on existing interactions•One among many techniques•Identifies most “promising” new links to strengthen the network•Predictions on dynamic networks
+
+
+PDF PAGE 77
+Measuring the importance of  a nodeCentrality Measures
+Decision 618–Lecture 1:  Introduction86
+
+PDF PAGE 78
+Network Centrality
+Decision 618–Lecture 1:  Introduction87
+•How central / important are each of  the nodes in a network?•There are many quantitative ways to measure centrality. No metric is perfect.•We will discuss four centrality metrics1.Degree centrality2.Closeness centrality3.Betweenness centrality4.PageRankcentrality
+
+PDF PAGE 79
+Degree Centrality
+Decision 618–Lecture 1:  Introduction88
+•Definition: degree centrality is the number of  neighbors of  a node in the network•Someone with many LinkedIn connections, many collaborators, etc.•Advantage: simple metric to understand and communicate•Limitation: too local; does not capture connections of  those whom you are connected to•10 summer interns count as much as 10 top executivesB
+C
+ED
+F
+A
+NodeABCDEFneighborsFC,D,EB,EB,E,FB,C,D,FA,D,EDegree centrality132343
+
+PDF PAGE 80
+Degree Centrality in Enron Social Network
+Decision 618–Lecture 1:  Introduction89
+•Minimum degree of  0      (7 employees are not connected to any others)
+•Maximum degree of  31
+Philip AllenManaging Director, TradingDegree: 31
+Louise KitchenPresident, Enron OnlineDegree: 29
+John LavoratoCEO, Enron AmericaDegree: 29
+
+
+PDF PAGE 81
+US Airports
+Decision 618–Lecture 1:  Introduction90
+Which airports’ degree centrality are the highest?
+
+PDF PAGE 82
+Degree Centrality
+Decision 618–Lecture 1:  Introduction91
+Top 5 1.ORD (Chicago): 1212.DEN (Denver): 1053.DTW (Detroit): 1004.DFW (Dallas): 98 5.IAH (Houston): 95RDU: 21 Bottom 5 1.RNT (Renton): 12.RST (Rochester): 1 3.LSE (La Crosse): 14.JAC (Jackson): 15.YUM (Yuma): 1
+
+
+PDF PAGE 83
+Closeness Centrality
+Decision 618–Lecture 1:  Introduction92
+•Definition: closeness centrality is the reciprocal of  the sum of  the shortest path lengths from that node to every other node. The commonly used normalized form multiplies this value by (n − 1), where n is the number of  reachable nodes.•Someone who needs few introductions to reach everyone on LinkedIn•Advantage: simple way to capture how central each node is•Limitation: too “global”, focused equally on distances to every other nodeFrom/ToABCDEFA—33221B3—1112C31—212D212—11E2111—1F12211—Sum1189767Closeness Centrality5/115/85/95/75/65/7
+B
+C
+ED
+F
+A
+
+PDF PAGE 84
+Closeness Centrality of  Node “A” in the Mininet
+Decision 618–Lecture 1:  Introduction93
+•Closeness(A)      =5/(3+3+2+2+1)      = 5/11 = 0.455
+B
+C
+ED
+F
+A
+NodeShortest PathDistanceBA-F-E-B3CA-F-E-C3DA-F-D2EA-F-E2FA-F1
+
+
+PDF PAGE 85
+Closeness Centrality in Enron Social Network
+Decision 618–Lecture 1:  Introduction94
+•Minimum closeness of  0.214 (average distance of  4.67)
+•Maximum closeness of  0.476 (average distance of  2.1)
+•Closeness not computed for the 7 nodes that are not in the main connected component
+Phillip AllenManaging Director, ENA West Region TradingCloseness: 0.471
+Michael GrigsbyVice President, ENA West Region TradingCloseness: 0.458
+John LavoratoCEO, Enron AmericaCloseness: 0.476
+
+
+PDF PAGE 86
+Closeness Centrality
+Decision 618–Lecture 1:  Introduction95
+Top 5 1.ORD (Chicago):           0.6592.DEN (Denver):           0.6393.DTW (Detroit):           0.6304.DFW (Dallas):           0.6275.IAH (Houston):           0.622RDU:           0.507Bottom 5 1.PBG (Plattsburgh):             0.3402.IAG (Niagara Falls):           0.3403.LBE (Latrobe):           0.3474.OTH (North Bend):            0.3565.ART (Watertown):           0.359
+
+PDF PAGE 87
+Betweenness Centrality
+Decision 618–Lecture 1:  Introduction96
+•The betweenness centrality of  a node is the number of  shortest paths in the network in which this node appears
+•The betweenness of  a node v is computed as follows:•For every pair of  nodes s and t (excluding v), compute the shortest path(s) between s and t , and indicate if  v falls along the path•If  there are multiple “shortest paths” between s and t , indicate instead the proportion of  shortest paths that v falls along•Sum the result across all pairs of  nodes
+
+PDF PAGE 88
+Betweenness Centrality of  Node “F” in the Mininet
+Decision 618–Lecture 1:  Introduction97•Betweenness(F) = 4
+Node PairShortest PathA-BA-F-E-BA-F-D-BA-CA-F-E-CA-DA-F-DA-EA-F-EB-CB-CB-DB-DB-EB-EC-DC-E-DC-B-DC-EC-ED-ED-E
+B
+C
+E
+D
+F
+A
+
+
+PDF PAGE 89
+Betweenness Centrality of  Node “E” in the Mininet
+Decision 618–Lecture 1:  Introduction98•Betweenness(E) = 3.5
+Node PairShortest PathA-BA-F-E-BA-F-D-BA-CA-F-E-CA-DA-F-DA-FA-FB-CB-CB-DB-DB-FB-E-FB-D-FC-DC-B-DC-E-DC-FC-E-FD-FD-F
+B
+C
+E
+D
+F
+A
+
+
+PDF PAGE 90
+Betweenness Centrality
+Decision 618–Lecture 1:  Introduction99
+B
+C
+E
+D
+F
+A
+NodeABCDEFBetweenness centrality00.5013.54
+
+PDF PAGE 91
+Betweenness Centrality
+Decision 618–Lecture 1:  Introduction100
+•Betweenness centrality measures the degree to which a node bridges otherwise disconnected parts of  the network•Example: Somebody who collaborates/communicates with both the data science team and the sales team in the company•Someone who “reaches across the aisle” (in language of  the United States Congress)•Limitation: Over-emphasizes the shortest paths
+
+PDF PAGE 92
+Betweenness Centrality in Enron Social Network
+Decision 618–Lecture 1:  Introduction101
+•Minimum betweenness centrality of  0 (21 nodes have this value)
+•Maximum betweenness centrality of  1,310
+Mary HainIn-House LawyerBetweenness: 1,310
+Philip AllenManaging Director, TradingBetweenness: 912
+Susan ScottAnalyst, TradingBetweenness: 852
+
+
+PDF PAGE 93
+Betweenness Centrality
+Decision 618–Lecture 1:  Introduction102
+hub-and-spoke modelintheUSTop 5 1.ORD (Chicago):      4,6172.MSP (Minneapolis):      4,4533.DEN (Denver):      4,4084.ATL (Atlanta):      4,1535.DTW (Detroit):      4,030RDU:      7.83Bottom 5: All 0.001.FSM (Fort Smith)                     2.MRY (Monterey Peninsula)3.SBA (Santa Barbara)4.AVL (Asheville)5.FSD (Sioux Falls)
+
+PDF PAGE 94
+PageRank
+Decision 618–Lecture 1:  Introduction103
+•Recall Google’s PageRank algorithm.•Imagine a randomly “driving” around the network. Which proportion of  the time do you visit each node?•That is the PageRank centrality (note: sums to 1.00).  •Advantages •Robust metric that is hard to ”game” •Captures intuition that your importance is determined by how many important connections you have. •Disadvantages •Difficult to interpret. What does a PageRank of  0.05 mean?
+
+PDF PAGE 95
+PageRank Metric for the Mininet
+Decision 618–Lecture 1:  Introduction104
+B
+C
+E
+D
+F
+A
+NodeABCDEFPageRank:.080.180.126.182.237.195
+
+PDF PAGE 96
+PageRank in the Enron Social Network
+Decision 618–Lecture 1:  Introduction105
+•Minimum PageRank of  0.0011 (the 7 nodes with no neighbors)
+•Maximum PageRank of  0.029
+Jeff  DasovichGovernment Relation Executive, PageRank: 0.027
+Tana JonesLegal,TradingPageRank: 0.029
+John LavoratoCEO, Enron AmericaPageRank: 0.027
+
+
+PDF PAGE 97
+Page Rank Centrality
+Decision 618–Lecture 1:  Introduction106
+Top 5 1.ORD (Chicago): 0.04442.DEN (Denver): 0.03953.DTW (Detroit): 0.03814.MSP (Minneapolis): 0.03765.ATL (Atlanta): 0.0360RDU: 0.0067Bottom 5 1.ART (Watertown): 0.00082.OTH (North Bend): 0.00093.ISP (Islip): 0.00094.MLB (Melbourne): 0.00095.GNV (Gainesville): 0.0009
+
+PDF PAGE 98
+Centrality in Enron’s Network
+Decision 618–Lecture 1:  Introduction107
+degreebetweenness
+closenessPageRank
+
+PDF PAGE 99
+Most Central Nodes at Enron
+Decision 618–Lecture 1:  Introduction108
+RankNamePosition1John LavoratoPresident, CEO2Philip AllenManaging Director3Michael GrigsbyVice President
+Degree centralityRankNamePosition1John LavoratoPresident, CEO2Philip AllenManaging Director3Michael GrigsbyVice President
+Closeness centrality
+RankNamePosition1Mary HainIn-house lawyer2Philip AllenManaging Director3Susan ScottAnalyst - Rotation
+Betweenness centralityRankNamePosition1Tana JonesLegal2Jeff  DasovichGovernment Relation Executive3John LavoratoPresident, CEO
+PageRank centrality
+
+PDF PAGE 100
+Most Central Airports
+Decision 618–Lecture 1:  Introduction109
+Closeness Centrality1.ORD (Chicago)2.DEN (Denver)3.DTW (Detroit) 4.DFW (Dallas)5.IAH (Houston) 
+Degree Centrality1.ORD (Chicago)2.DEN (Denver)3.DTW (Detroit)4.DFW (Dallas)5.IAH (Houston)
+Betweenness Centrality1.ORD (Chicago) 2.MSP (Minneapolis) 3.DEN (Denver) 4.ATL (Atlanta)5.DTW (Detroit)
+PageRank Centrality1.ORD (Chicago)2.DEN (Denver)3.DTW (Detroit)4.MSP (Minneapolis)5.ATL (Atlanta)
+
+PDF PAGE 101
+Use of  Centrality
+Decision 618–Lecture 1:  Introduction110
+•Central nodes are those that are more connected to the broader network, and can be leveraged for diffusion purposes•Organizing a training with a few “central” sales persons and let them diffuse the new sales practices with their peers•Providing a new product promotion to a few “central” (or “influential”) customers to encourage word of  mouth on a product•Central nodes can also be leveraged to counter the diffusion of  adverse outcomes within an organization•Banning “central” accounts to fight fake news propagation•In crime prevention, getting a few “central” gang members out of  a gang can lead other members to leave the gang
+
+PDF PAGE 102
+Finding densely connected nodesCommunities in Social Networks
+Decision 618–Lecture 1:  Introduction111
+
+PDF PAGE 103
+Communities in Networks
+Decision 618–Lecture 1:  Introduction112
+•What is a community in a network?•Group of  nodes that are densely connected within the community versus outside the community. •Cluster, Clique•How might we define communities in the network on the right?●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●●
+●
+●
+●
+●
+●
+●●●
+●
+●
+●
+●
+●
+● ●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●●
+●
+●●
+●
+●
+●
+●
+
+PDF PAGE 104
+Communities in Social Networks
+Decision 618–Lecture 1:  Introduction113
+•Nodes: People•Edges: Social connections•Community: A group of  individuals who are socially connected to each other but not as well connected to others in the network•Applications: Direct marketing, corporate organizational design, …Email communication between traders, lawyers, pipeline specialists, and top executives at Enron.
+
+PDF PAGE 105
+Communities in Word Co-Occurrence Networks
+Decision 618–Lecture 1:  Introduction114
+•Nodes: Documents (tweets, emails, news articles, …•Edges: Documents that share a high number/percentage of  word stems in common•Community: Documents that have similar words with each other but different words from other documents•Application: Topic segmentation
+●
+●
+●
+●●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+Tweets @apple immediately after the iPhone 5c/5s release that shared at least 3 word stems in common.
+
+PDF PAGE 106
+Assessing Community Assignments
+Decision 618–Lecture 1:  Introduction115
+•How might we mathematically measure the quality of  a community assignment? •How “good” is the community assignment displayed on the right in this mini-network?•Is this the “best” community assignment?•What might “best” mean in this context?
+
+
+PDF PAGE 107
+Defining and Assessing Communities
+Decision 618–Lecture 1:  Introduction116
+•Can we “detect” communities from network-wide observations?•How can we evaluate the quality of  a community assignment? 
+
+
+PDF PAGE 108
+Within-community Links
+Decision 618–Lecture 1:  Introduction117
+•pwithin: proportion of  edges in the network that link two nodes within the same community→How the assignment separates the network into distinct sub-groups
+pwithin=12/14=0.857pwithin=11/14=0.786pwithin=8/14=0.571
+Seems to be “best”. But how to evaluate it?
+
+PDF PAGE 109
+“Baseline” Model and prandom
+Decision 618–Lecture 1:  Introduction118
+•Consider a collection of  “randomized” versions of  the network that keep the number of  neighbors of  each node fixed•prandom: the proportion of  edges that link two nodes within the same community, averaged over all the randomized networks→proportion of  within-community edges that arise by chance
+8/14=0.5176/14=0.4296/14=0.429
+average: 0.541…
+
+PDF PAGE 110
+Modularity
+Decision 618–Lecture 1:  Introduction119
+•Modularity = pwithin - prandom (between -1 and 1)•Modularity measures the extent to which the within-community links is higher than what would be expected by chance→Used to determine the “best” community assignment in the network
+Modularity = 0.316Modularity = 0.161Modularity = 0.214
+
+PDF PAGE 111
+Communities in the Enron Network
+Decision 618–Lecture 1:  Introduction120
+•Louvainalgorithmaimstofindthecommunitieswithhighestmodularity•16 communities, ranging from size 1 to size 31•Modularity is 0.6637•How do these communities compare to known  “ground truth” communities in the network?•groups based on position•groups based on region•etc.
+
+PDF PAGE 112
+Job Positions in the Enron Network
+Decision 618–Lecture 1:  Introduction121
+“pipeline”groupaccountants
+executiveslawyers
+
+
+PDF PAGE 113
+Communities in Airline Routes
+Decision 618–Lecture 1:  Introduction122
+
+
+PDF PAGE 114
+Use of  Network Communities
+Decision 618–Lecture 1:  Introduction123
+•Employee networks: Community detection for (re)organization•Differences between the org chart and identified communities can suggest potential organizational realignments within a corporation•Business units with multiple poorly connected communities might benefit from interventions to improve communication•Consumer networks: Community detection for customer service•Communities can suggest segments and categories of  customers, and be used to for targeted actions (e.g., promotions, replies to tweets, etc.)•Product networks: Community detection for product planning•Communities can suggest similar products, used for targeted marketing (“other products you might like…”), promotion planning, etc.
+
+PDF PAGE 115
+Social Networks
+Decision 618–Lecture 1:  Introduction124
+•Quantifies the importance / prominence of  nodes in a network•[Several similar, yet different, metrics]Centrality
+Community detection
+Link prediction
+•Identifies communities in a network based on existing interactions•[One among many techniques]•Identifies most “promising” new links to strengthen the network•Predictions on dynamic networks
+
+
+PDF PAGE 116
+Link Prediction
+Decision 618–Lecture 1:  Introduction125
+
+PDF PAGE 117
+Link Prediction Modeling
+Decision 618–Lecture 1:  Introduction126
+•Inputs: Enron network in 2000•Node: 139 employees who sent or received an email in 2000 •Edges: 327 pairs of  employees with 10+ emails•Consideration of  the node pairs that were unlinked in 2000•Dependent variable: whether a pair becomes connected in 2001•276 new edges created in 2001
+
+PDF PAGE 118
+Friend Recommendations
+Decision 618–Lecture 1:  Introduction127
+•Friend recommendations are based on link prediction(who you are likely to know or are likely to be friends with)•Combination of  tools from network analysis and prediction models
+
+
+PDF PAGE 119
+Independent Variables
+Decision 618–Lecture 1:  Introduction128
+•What variables (available at the end of  2000) can we use to predict whether a link will appear in 2001 if  it did not appear in 2000?•Only about 3% of  all possible unconnected links were linked in 2001 •Network information (from the 2000 network)•For each unlinked pair of  2 nodes in 2000, the shortest-path distance between them•Minimum/maximum PageRank, betweenness, closeness, and degree centrality of  2 nodes (PageRankMin, PageRankMax, BetweennessMin, etc.)•Proportion of  neighbors in common•Whether the two nodes are in the same community•Information about the employees themselves• Whether the nodes are in the same functional area (traders, lawyers, execs, etc.)•𝒌: number of  independent variables (𝒌=𝟏𝟑)•𝒏: number of  observations (𝒏=𝟗,𝟐𝟔𝟒)
+
+PDF PAGE 120
+Link Prediction Data𝒌: # of independent variables (𝒌=𝟏𝟑); 𝒏: # of observations (𝒏=𝟗,𝟐𝟔𝟒)
+Decision 618–Lecture 1:  Introduction129
+
+
+PDF PAGE 121
+Training and Testing Set (70% Random Split)
+Decision 618–Lecture 1:  Introduction130
+Full dataset (𝑛=9,264)Training data (𝑛=6,484)
+Test data (𝑛=2,780)
+
+
+PDF PAGE 122
+Test-Set ROC Curve
+Decision 618–Lecture 1:  Introduction131
+
+
+PDF PAGE 123
+Logistic Regression Output
+Decision 618–Lecture 1:  Introduction132
+
+
+PDF PAGE 124
+Random Forest Variable Importance
+Decision 618–Lecture 1:  Introduction133
+
+
+PDF PAGE 125
+Connecting Isolated Communities
+Decision 618–Lecture 1:  Introduction134
+•How can we connect the pipeline team to the rest of  the network?•Flag the 10 edges with the highest predicted link probability in 2001•Predicted probabilities: 11–25%•4/10 links actually appeared in 2001•Other edges might have appeared with internal social networking
+
+
+PDF PAGE 126
+Friend Recommendations
+Decision 618–Lecture 1:  Introduction135
+•How can we better connect John Lavorato (CEO) to his employees?•Flag the 10 individuals with highest predicted link probability in 2001•Predicted probabilities: 10-51%•4/10 links actually appeared in 2001•Other edges might have appeared with appropriate interventions
+
+PDF PAGE 127
+Conclusion
+Decision 618–Lecture 1:  Introduction136
+
+PDF PAGE 128
+Social Networks: The Analytics Edge
+Decision 618–Lecture 1:  Introduction137
+●●
+●●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+● ●
+●
+●●
+●●
+●●
+●
+●●
+●●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+●●
+●●
+●
+●
+●
+● ●
+●
+●
+●
+● ●
+●
+●
+●
+●
+●
+•Quantifies the importance / prominence of  nodes in a network•[Several similar, yet different, metrics]Centrality
+Community detection
+Link prediction
+•Identifies communities in a network based on existing interactions•[One among many techniques]•Identifies most “promising” new links to strengthen the network•Predictions on dynamic networks
+
+
+PDF PAGE 129
+Use of  Social Network Analytics
+Decision 618–Lecture 1:  Introduction138
+•Formal organization structure is not necessarily optimized to foster communication/collaboration between business units•Community detection identifies who is currently collaborating•Community detection is a power descriptive tool on network dynamics but does not give us the “right” interventions•Organizations may benefit from catalyzing communications between relevant business units•Internal social network analysis: important focus of  HR consulting•Link prediction allows us to identify how “natural” it might be for certain connections to be formed between units/persons
+
+PDF PAGE 130
+About meProfessor Peng SunJB Fuqua ProfessorCourses Taught•Decision Models•Strategic Modeling and Business Dynamics•Dynamic Programming and Control (PhD course)Interests•Decision making under uncertainty•Optimization models for incentive management•Healthcare analytics•Sustainability•Running•Movies•Documentaries on nature, science and historyDecision 618–Lecture 1:  Introduction139
+Coordinates •psun@duke.edu•W325
+
+
+PDF PAGE 131
+End Slide 
+Decision 618–Lecture 1:  Introduction140
+I’m looking forward to engaging with you this term.See you Monday!

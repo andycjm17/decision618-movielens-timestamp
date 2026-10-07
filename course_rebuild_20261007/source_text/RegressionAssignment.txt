@@ -1,0 +1,671 @@
+CELL 0 markdown
+# Regression Assignment
+Author: "Your Name Here"  
+
+This assignment consists of 2 problems.  One on Linear Regression and the second on Logistic Regression.
+
+-   **Problem 1**: Linear Regression
+
+## Notes:
+
+-   **Writing Code.** You only need to write code in the cells marked `### YOUR CODE HERE (...) ###`. In the parentheses, we will be clear about what we expect you to print out from the cell.
+
+-   **Writing Responses.** When answering the questions in this document, simply replace the "*Replace this text with your response"* with your answer. Keep the text in italics, as it makes grading easier. Do not change or delete any other text from this file. We are looking for short responses (no more than 2-3 sentences) that are precisely answer the question. For questions that have multiple sub-questions, you can answer each of the sub-questions in a sentence or two.
+
+CELL 1 code
+# Loading libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+import warnings
+warnings.filterwarnings('ignore')
+
+CELL 2 markdown
+# Problem 1: Linear Regression for Predicting Housing Prices in Ames, Iowa
+
+In this problem, we consider the Ames, Iowa Housing Prices dataset, which describes sales of 2,836 properties in the town of Ames, Iowa from 2006 to 2010. You will work with the dataset provided in the `AmesSales_modified.csv` file, which has been pre-processed to simplify the analysis. We started with a partially processed set available on [Github](https://github.com/mikearango/DATS_Final) and selected a few of the most relevant variables to include in our analysis. We also modified a few entries in the data.
+
+The dataset contains 12 variables, described below. The first variable is the property's sale price---which we aim to predict. The other variables describe the property details in quantitative terms (square footage, number of rooms, date of construction...etc.). There is one categorical variable, BldgType, which describes different types of homes (e.g. townhouse, duplex, etc.).
+
+-   **SalePrice**: the property's sale price (dollars)
+
+-   **TotalRooms**: Total number of rooms
+
+-   **Bedrooms**: Number of bedrooms
+
+-   **FullBath**: Full bathrooms
+
+-   **HalfBath**: Half baths
+
+-   **LivArea**: Ground living area (sq. feet)
+
+-   **Fireplaces**: Number of fireplaces
+
+-   **GarageArea**: Size of garage (sq. feet)
+
+-   **PoolArea**: Size of pool (sq. feet)
+
+-   **YearBuilt**: Original construction date
+
+-   **YearSold**: Year Sold
+
+-   **BldgType**: Type of dwelling
+
+Let's read in the dataset first to the variable `ames` and examine the first 6 rows of this dataset with the `head` function. Remember to save the data file `AmesSales_modified.csv` file is in the same folder as this notebook (`Assignment_1.ipynb`). If you are using Google Colab, make sure to upload `AmesSales_modified.csv` through the files tab on the left hand side.  
+
+CELL 3 code
+ames = pd.read_csv('AmesSales_modified.csv')
+ames.head(6)
+
+CELL 4 markdown
+## (a): Visualizing SalePrice
+
+Now, let's examine the distribution of the dependent variable `SalePrice`. Use the `describe()`and `hist()` functions to view summary statistics and distribution of `SalePrice`.
+
+CELL 5 code
+### YOUR CODE HERE (print summary statistics) ###
+
+
+CELL 6 code
+### YOUR CODE HERE (print the histogram) ###
+
+
+CELL 7 markdown
+**Question 1**: What do you notice about the distribution of `SalePrice`?
+
+***Answer 1:*** Type your response here.
+
+CELL 8 markdown
+## (b): Train/Test Split
+
+Let's train a linear regression model to predict `SalePrice`. But first, we will perform a test/train split by randomly dividing the dataset `ames` into 70% for training and 30% for testing. The following code creates the dataframes `train` and `test`.
+
+CELL 9 code
+train, test = train_test_split(ames, test_size=0.3, random_state=2025)
+print("Training set dimensions:", train.shape)
+print("Testing set dimensions:", test.shape)
+
+CELL 10 markdown
+The training set has 1985 rows and 12 columns.
+
+**Question 2**: What is the purpose of setting `random_state = 2025`?
+
+***Answer 2***: Type your response here.
+
+CELL 11 markdown
+## (c): Training a Linear Regression Model
+
+Run the code below that defines a function which prints regression summary with significance stars. Unlike in R, `statsmodels` does not automatically print significance stars in Python.
+
+CELL 12 code
+# run this code cell
+def significance_stars(p):
+  if p < 0.001:
+    return '***'
+  elif p < 0.01:
+    return '**'
+  elif p < 0.05:
+    return '*'
+  elif p < 0.1:
+    return '.'
+  else:
+    return ''
+
+def print_summary_with_stars(model):
+    # Get the full summary object
+    summary = model.summary2()
+
+    # Get coefficients table (table[1])
+    coef_table = summary.tables[1].copy()
+
+    # Add significance stars
+    coef_table['Signif'] = coef_table['P>|t|'].apply(significance_stars)
+
+    # Round only numeric columns to 4 decimal places
+    numeric_columns = coef_table.select_dtypes(include=['float64', 'int64']).columns
+    coef_table[numeric_columns] = coef_table[numeric_columns].round(4)
+
+    # Print model info (from table[0])
+    print("=" * 80)
+    print("Regression Results")
+    print("=" * 80)
+
+    # Print basic model info
+    info_table = summary.tables[0]
+    print(f"R-squared: {model.rsquared:.4f}")
+    print(f"Adjusted R-squared: {model.rsquared_adj:.4f}")
+    print(f"F-statistic: {model.fvalue:.4f}")
+    print(f"Prob (F-statistic): {model.f_pvalue:.4f}")
+    print(f"Log-Likelihood: {model.llf:.4f}")
+    print(f"No. Observations: {int(model.nobs)}")
+    print(f"Df Model: {int(model.df_model)}")
+    print(f"Df Residuals: {int(model.df_resid)}")
+
+    print("=" * 80)
+    print("Coefficients:")
+    print("-" * 80)
+    print(coef_table.to_string(index=True))
+    print("=" * 80)
+    print("Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1")
+    print("=" * 80)
+
+CELL 13 markdown
+Now, train a linear regression model on the `train` dataset to predict `SalePrice` using all other available variables as predictors. Assign the fitted model to the variable `model`. After training, evaluate the results by calling the custom function `print_summary_with_stars(model)`, which will display the regression output along with significance stars. Use this function consistently for summarizing all regression models throughout the assignment.
+
+
+CELL 14 code
+### YOUR CODE HERE (print the summary of model) ###
+
+
+CELL 15 markdown
+**Question 3**: What is the in-sample (training) R2 of your model? Are there any variables which are not significant? What does it mean for a variable to not be significant?
+
+***Answer 3:*** Type your response here.
+
+Note: Throughout this assignment, we will refer to the R2 on the training set as the training R2 or in-sample R2, while the R2 on the testing dataset is referred to as the testing R2 or out-of-sample R2.
+
+**Question 4**: Please interpret the coefficient for `BldgTypeDuplex` in this linear regression model. What is the reference class? (Hint: Run `train['BldgType'].value_counts()`.)
+
+***Answer 4***: Type your response here.
+
+CELL 16 markdown
+## (d): Analyzing the Residuals
+
+Python offers a number of functional capabilities to help assess the quality of regression models and identify potential problems with the model. For linear regression models, you can access a significant amount of information by creating diagnostic plots. Here, `plot` does not mean plotting the regression line, rather it refers to a set of scatter-plot graphs of various objects like residuals of training data prediction values and the like.
+
+Of particular interest to us is the graph of Fitted Value vs. Residual, which we can show by plotting the fitted values on the x-axis and the residuals on the y-axis. Run the following code where `model` is the name of your model from part (c).
+
+CELL 17 code
+# Residuals vs Fitted plot
+plt.scatter(model.fittedvalues, model.resid, alpha = 0.5)
+plt.axhline(y = 0, color = 'red', linestyle = '--')
+
+# Find outliers based on abs(residual)
+abs_resid = np.abs(model.resid)
+outlier_idx = abs_resid.nlargest(3).index
+print("Outlier indices:", outlier_idx.tolist())
+
+# Highlight outliers
+plt.scatter(model.fittedvalues[outlier_idx], model.resid[outlier_idx],
+           color='red', s=100, alpha=0.8, label='Outliers')
+for idx in outlier_idx:
+    plt.text(model.fittedvalues[idx], model.resid[idx],
+             f' {idx}', fontsize=10, fontweight='bold')
+
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Fitted Values vs. Residuals')
+plt.show()
+
+CELL 18 markdown
+Here we will focus on identifying outliers. Outliers can sometimes have a disproportionate effect on the regression model and lead to poor estimates of the model coefficients. The plot above shows the residuals of the SalePrice regression model (vertical axis) and the “fitted values” which are the model’s predicted values on the training set (horizontal axis). In this plot, three extreme outliers are labeled: observations “1507”, “1589”, and “1449” (please email the teaching team if you do not see these 3 labels). These three outliers have very large negative or positive residuals, which means that the regression model does not fit these rows well (the predicted prices are significantly higher or lower than the actual prices).
+
+Let's print these three observations and compare them to the rest of the training data, using the following commands.
+
+CELL 19 code
+outliers = [1449, 1589, 1507]
+outlier_data = train.loc[outliers]
+print("Outlier Observations:")
+print(outlier_data)
+
+CELL 20 markdown
+Why are these 3 data points considered outliers? Let's examine some summary statistics for the `SalePrice` and `LivArea` using the `describe` command below.
+
+CELL 21 code
+train['SalePrice'].describe()
+
+CELL 22 code
+train['LivArea'].describe()
+
+CELL 23 markdown
+**Question 5**: Explain intuitively why these 3 data points are considered outliers (i.e., why is their sale price unexpected). What are some potential explanations for why these 3 data points are in the dataset?
+
+***Answer 5***: Type your response here.
+
+## (e): Dealing with Outliers
+
+When we find outliers that are also very influential in the model, we can consider the following options:
+
+-   **Remove the observations from the model**. This is appropriate if we believe the outliers are due to data errors, or if the outliers are substantially different from the target population that we are trying to model (for example, we could probably justify excluding a professional athlete from a model that uses data on physical exercise habits).
+
+-   **Treat the outlier values as missing data.** This should only be done if we believe the outlier values are due to data errors. Depending on the type of application, we may be able to use imputation or other methods to avoid discarding the entire observation from our dataset.
+
+-   **Keep the outliers in our model**. If we do not believe that there is anything inherently wrong with the outlier, then it may reflect something important about the system we are trying to model.
+
+In the setting of this model and this dataset, we will remove the outliers from our dataset. You can use this code to create a new training set (called `train2`) without the outliers.
+
+CELL 24 code
+train2 = train.drop(outlier_idx)
+print("Training set2 dimensions:", train2.shape)
+
+CELL 25 markdown
+`train2` has 1982 rows (3 fewer than the 1985 that `train` had). This makes sense since we removed 3 rows.
+
+Train a new linear regression model using `train2`. Name your model `model2`. Show a `summary` of `model2`.
+
+CELL 26 code
+### YOUR CODE HERE (print the summary of model2) ###
+
+
+CELL 27 markdown
+**Question 6**: What is the training (in-sample) R2 of your model (with outliers removed)? How does this compare to the model without removing outliers?
+
+***Answer 6:*** Type your response here.
+
+**Question 7**: Suppose a property developer in Iowa looks at your model (`model2`) and decides to encourage clients to add an extra fireplace because *a model developed at NS States shows that every additional fireplace constructed causes the value of a house to rise by more than \$10,000*. Is this claim supported by the model? Why or Why not?
+
+***Answer 7:*** Type your response here.
+
+**Question 8**: Are there any model coefficients that have the “wrong” (i.e., counter-intuitive) sign? Is there anything surprising to you about the statistical significance (or lack thereof) of certain coefficients? Check for correlations among the numerical variables in the training data and comment on how these correlations may explain these phenomena (code provided below).
+
+***Answer 8:*** Type your response here.
+
+
+
+
+
+CELL 28 code
+# Correlation among numeric columns (excluding BldgType)
+train2_numeric = train2.drop(columns=['BldgType'])
+train2_numeric.corr()
+
+CELL 29 markdown
+## (f): Out-of-Sample Performance
+
+Let's calculate the out-of-sample R2 for `model` and `model2` on the testing data `test`. You can use the `predict` function to make predictions, and then calculate the `sse` and `sst` appropriately.
+
+CELL 30 code
+### YOUR CODE HERE (print OSR^2 for model) ###
+
+
+CELL 31 code
+### YOUR CODE HERE (print OSR^2 for model2) ###
+
+
+CELL 32 markdown
+**Question 9**: Compare the two OSR\^2 from `model` and `model2`. Do they align with your intuition? By removing outliers, is the out-of-sample R2 *guaranteed* to increase? Why or Why Not?
+
+***Answer 9:*** Type your response here.
+
+## (g): A Simpler Model
+
+Train one final linear regression model using only the 5 varaibles `BldgType`, `YearBuilt`, `Fireplaces`, `GarageArea`, `LivArea`. Call this model `model3`. Remember to train it on `train2` (outliers removed). Print out a `summary` of the model.
+
+CELL 33 code
+### YOUR CODE HERE (print the summary statistics of model3) ###
+
+
+CELL 34 markdown
+Calculate the out-of-sample R\^2 for `model3`.
+
+CELL 35 code
+### YOUR CODE HERE (print OSR^2 for model3) ###
+
+
+CELL 36 markdown
+**Question 11**: Discuss the pros and cons of `model3` (5 variables) versus `model2` (many variables). If you were an investor trying to flip homes in Ames, Iowa, which model would you use? Which model would you use to analyze the relationship between different features and SalePrice?
+
+***Answer 11:*** Type your response here.
+
+CELL 37 markdown
+
+# Problem 2: Logistic Regression for the Framingham Heart Study
+
+CELL 38 code
+# Run this cell to import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_curve, auc, confusion_matrix, classification_report
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import warnings
+warnings.filterwarnings('ignore')
+
+CELL 39 code
+# Run this code cell
+def significance_stars(p):
+    if p < 0.001:
+        return '***'
+    elif p < 0.01:
+        return '**'
+    elif p < 0.05:
+        return '*'
+    elif p < 0.1:
+        return '.'
+    else:
+        return ''
+
+def print_summary_with_stars(model):
+    """
+    Print a comprehensive summary for GLM logistic regression models with significance stars
+    """
+    print("=" * 80)
+    print("Logistic Regression Results")
+    print("=" * 80)
+
+    # Print basic model info for GLM
+    print(f"Model Family: {model.family.__class__.__name__}")
+    print(f"Link Function: {model.family.link.__class__.__name__}")
+    print(f"Method: Maximum Likelihood Estimation (MLE)")
+    print(f"Date: {model.summary().extra_txt}")
+    print(f"No. Observations: {int(model.nobs)}")
+    print(f"Df Model: {int(model.df_model)}")
+    print(f"Df Residuals: {int(model.df_resid)}")
+
+    print("-" * 40)
+    print("Model Fit Statistics:")
+    print(f"Log-Likelihood: {model.llf:.4f}")
+    print(f"AIC: {model.aic:.4f}")
+    print(f"BIC: {model.bic:.4f}")
+
+    # For GLM, use pseudo R-squared instead of regular R-squared
+    if hasattr(model, 'prsquared'):
+        print(f"Pseudo R-squared (McFadden): {model.prsquared:.4f}")
+
+    # Likelihood Ratio Test if available
+    if hasattr(model, 'llr') and hasattr(model, 'llr_pvalue'):
+        print(f"LLR p-value: {model.llr_pvalue:.4f}")
+
+    print("=" * 80)
+    print("Coefficients:")
+    print("-" * 80)
+
+    # Create coefficients table manually
+    coef_data = {
+        'Coef': model.params,
+        'Std Err': model.bse,
+        'z': model.tvalues,
+        'P>|z|': model.pvalues,
+        '[0.025': model.conf_int()[0],
+        '0.975]': model.conf_int()[1]
+    }
+
+    coef_table = pd.DataFrame(coef_data)
+
+    # Add significance stars
+    coef_table['Signif'] = coef_table['P>|z|'].apply(significance_stars)
+
+    # Round numeric columns to 4 decimal places
+    numeric_columns = ['Coef', 'Std Err', 'z', 'P>|z|', '[0.025', '0.975]']
+    for col in numeric_columns:
+        coef_table[col] = coef_table[col].round(4)
+
+    # Print the table
+    print(coef_table.to_string())
+
+    print("=" * 80)
+    print("Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1")
+    print("=" * 80)
+
+CELL 40 markdown
+Heart disease is the leading cause of death worldwide. About 15.5
+million people died from coronary heart disease (CHD) in 2022—over 22%
+of all deaths that year across the globe (including COVID).
+
+CELL 41 markdown
+In the late 1940s, the U.S. government started to take various
+actions to address heart disease. As part of this effort, they decided
+to track a large cohort of initially healthy people over time. The town
+of Framingham, MA, was selected as the site for the study, which began
+in 1948 with 5,209 participants. Participants were given a questionnaire
+and a medical exam every two years, with data collected on physical and
+behavioral characteristics. Over the years, the study has expanded to
+include multiple generations and many factors, including genetic
+information. This dataset is now famously known as the Framingham Heart
+Study.
+
+CELL 42 markdown
+The dataset is contained in the file `framingham.csv` ,
+with 3,658 observations corresponding to study participants. There are
+16 variables in the dataset, described below. You aim to predict `tenYearCHD` , whether a patient experiences CHD within 10
+years of their first examination. You will also aim to identify risk
+factors to make recommendations for preventing CHD.
+
+CELL 43 markdown
+### Variables in the dataset `framingham.csv`
+
+| Variable          | Description                                                                 |
+|-------------------|-----------------------------------------------------------------------------|
+| **male**          | Gender of patient (1 if male, 0 if female)                                  |
+| **age**           | Age (in years) at first examination                                         |
+| **education**     | Some high school, high school/GED, some college/vocational school, college  |
+| **currentSmoker** | 1 if patient is a current smoker, 0 otherwise                               |
+| **cigsPerDay**    | Number of cigarettes per day                                                |
+| **BPMeds**        | 1 if patient is on blood pressure medication at time of first examination   |
+| **prevalentStroke** | 1 if patient previously had a stroke, 0 otherwise                        |
+| **prevalentHyp**  | 1 if patient is currently hypertensive, 0 otherwise                         |
+| **diabetes**      | 1 if patient currently has diabetes, 0 otherwise                            |
+| **totChol**       | Total cholesterol (mg/dL)                                                   |
+| **sysBP**         | Systolic blood pressure                                                     |
+| **diaBP**         | Diastolic blood pressure                                                    |
+| **BMI**           | Body Mass Index: weight (kg)/height (m)^2                                   |
+| **heartRate**     | Heart rate (beats/minute)                                                   |
+| **glucose**       | Blood glucose level (mg/dL)                                                 |
+| **tenYearCHD**    | 1 if patient has experienced coronary heart disease within 10 years, 0 otherwise |
+
+
+
+
+
+
+
+
+CELL 44 markdown
+Let’s first read in the necessary libraries and datasets.
+
+CELL 45 code
+data = pd.read_csv("framingham.csv")
+data.head(6)
+
+CELL 46 code
+print(f"\nProportion of patients with CHD within 10 years: {data['TenYearCHD'].mean():.3f}")
+
+CELL 47 markdown
+The dataset is imbalanced: only 15% of patients experienced CHD
+within 10 years. Let's create a train/test split with 75% in train and 25% in test.
+
+CELL 48 code
+X = data.drop('TenYearCHD', axis=1)
+y = data['TenYearCHD']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=25)
+train=pd.concat([X_train, y_train], axis=1)
+test=pd.concat([X_test, y_test], axis=1)
+print(f"Train set size: {X_train.shape[0]}")
+print(f"Test set size: {X_test.shape[0]}")
+
+CELL 49 markdown
+
+
+## (a): Construct a logistic regression model
+
+CELL 50 markdown
+Using all the independent variables in the dataset, construct a
+logistic regression model to predict the probability that a patient will
+experience CHD within the next 10 years. Use the logistic regression (statsmodel) function with family='binomial'. Remember to use the self-defined `print_summary_with_stars(model)` to view the results.
+
+CELL 51 code
+### YOUR CODE HERE ###
+
+
+
+
+CELL 52 markdown
+***Question 1***: Suppose that a patient could choose
+between (1) reducing their cigarettes per day (cigsPerDay) by 10 or reducing their systolic blood pressure sysBP by 10. According to the logistic regression model, which would lower that
+patient’s risk of CHD more?  
+***Answer 1***: Type your response here.
+
+CELL 53 markdown
+
+
+## (b): Prediction for the fourth patient
+
+CELL 54 markdown
+Consider patient number 4 in the original dataset who is a 61 year old male, current smoker, smokes 30 cigarettes per day…etc. Compute the model’s predicted probability that this individual will develop CHD in 10 years. Use the `predict()` function.
+
+CELL 55 code
+fourth_patient = data.iloc[3:4]
+fourth_patient
+
+CELL 56 code
+### YOUR CODE HERE ###
+
+
+
+
+CELL 57 markdown
+The fourth patient is recommended by his doctor to curtail his
+smoking habits. Let’s calculate the predicted probability of CHD for a
+patient with the same characteristics as patient four, but who smokes
+only 20 cigarettes a day instead of 30? To do this in Python, we create a
+copy of the 4th patient. Then, we update their cigsPerDay to 20. Then, run the same code as you did in the cell above on fourth_patient_copy .
+
+CELL 58 code
+### YOUR CODE HERE ###
+
+
+
+
+
+CELL 59 markdown
+
+
+## (c): ROC and AUC
+
+CELL 60 markdown
+Generate probability predictions for all of the observations in the
+test set using our logistic regression models. Plot the test set ROC,
+and compute the AUC.
+
+CELL 61 code
+### YOUR CODE HERE ###
+
+
+
+
+
+CELL 62 markdown
+***Question 2:*** Suppose I chose a probability threshold
+of 0.25 for predicting that a patient will develop CHD in the next 10 years. The false positive rate of my predictions is 13.9%. What is my true positive rate? (approximately, from the AUC curve graph).  
+***Answer 2:*** Type your response here.
+
+---
+
+
+
+***Question 3:*** If I were to decrease my threshold of predicting that a patient will develop CHD from 0.25 to 0.15, how would I expect the false positive rate and true positive rate to change? (Will it increase or decrease?)  
+***Answer 3:*** Type your response here.
+
+CELL 63 markdown
+
+
+## (d) Prescribing Medication
+
+CELL 64 markdown
+To lower the risk of CHD, physicians can prescribe preventive
+medication that lowers blood pressure or cholesterol. Recommending
+preventive medications requires evidence-based analysis that weighs the
+pros and cons of such interventions. A common methodology is known as
+health economic evaluation, which accounts for medical costs and health
+benefits (a monetized metric of improved life longevity).
+
+CELL 65 markdown
+Let us suppose that a colleague of yours has just completed a health economics study to assess a recently approved medication. The study has estimated that patients who experience CHD within the next 10 years are expected to incur a lifetime cost of \$150,000 associated with the disease—including the costs of treatment (\$75,000) and lower quality of life and life expectancy. The medicine is expected to lower patients’ risk of developing CHD within the next 10 years by a factor of 3. Regardless of whether a patient develops CHD, the preventive medication costs \$9,000 (per patient) over the next 10 years. A table describing the study’s analysis is shown in the table below, where p denotes the probability that a patient will develop CHD within the next 10 years without medication.
+
+CELL 66 markdown
+| Decision            | Outcome | Probability | Cost      |
+|---------------------|---------|-------------|-----------|
+| No medication       | CHD     | *p*         | \$150,000  |
+| No medication       | No CHD  | 1 − *p*     | \$0        |
+| Prescribe medication| CHD     | *p*/3       | \$159,000  |
+| Prescribe medication| No CHD  | 1 − *p*/3   | \$9,000    |
+
+
+CELL 67 markdown
+***Question 4:*** What is the expected cost for a patient
+who does not take the preventive medication, as a function of p? And what is the expected cost for a patient who is prescribed the preventive
+medication, as a function of \(p\) ? For which values of \(p\) would you recommend the medication (considering cost alone)?  
+***Answer 4:*** Type your response here.
+
+
+
+
+CELL 68 markdown
+
+
+## (e) Predicting Who to Prescribe Medication To
+
+CELL 69 markdown
+Let’s use the threshold \(p\) computed above to decide who to prescribe medication to. We decide to give the medication to patients with a predicted probability of CHD in 10 years higher than \(p\) . Recall from part (c) that we stored these predictions probabilities in a variable called `test_predictions`.
+
+CELL 70 markdown
+**Task.** Apply this threshold \(p\) to `test_predictions` and generate medication , which contains TRUE if a patient will be prescribed the medicine and FALSE otherwise. Then, print out a confusion numpy array / matrix, showing whether the patients we decide to treat will actually get CHD.
+
+CELL 71 code
+### YOUR CODE HERE ###
+
+
+
+
+
+
+CELL 72 markdown
+Note that in this confusion numpy array / matrix, the rows indicate whether the patient actually got CHD, while the columns represent whether we decide to give them medication (i.e. if we predict CHD, we will give them medication).
+
+***Question 5:*** From the confusion numpy array / matrix above, what is the accuracy, true positive rate and false positive rate of our medication decision? You can compute these using a calculator, or by running some simple computations in the Python console.
+
+***Answer 5:*** Type your response here.
+
+CELL 73 markdown
+***Question 6.*** Comment on the interpretation of false
+positives and false negatives in our medication decision. As a medical practitioner deciding who to prescribe medicine to, which of these two quantities would you recommend to focus on minimizing?
+
+***Answer 6:*** Type your response here.
+
+---
+
+
+
+
+
+CELL 74 markdown
+From question 16, we see that the accuracy of our medical decisions is somewhat low. In fact, simply deciding to give no one the medication has an accuracy of about 84% (i.e., the proportion of people in our dataset who do not get CHD). However, our model achieved a pretty good AUC, showing that our model certainly has predictive power much higher than a model that randomly guesses.
+
+***Question 7:*** Using this observation, comment briefly on whether AUC or accuracy is a better metric in imbalanced datasets.
+
+***Answer 7:*** Type your response here.
+
+CELL 75 markdown
+
+
+## (f) Economic Cost Comparison
+
+CELL 76 markdown
+Let’s consider two scenarios regarding the 914 patients in the test set. Assume that none of the 914 patients in the test were given the CHD medication, and `test[TenYearCHD]` is their CHD outcome in 10 years. From our data, we see that 140 out of 914 patients got CHD, leading to an economic cost of $140 * 150,000 =
+21,000,000$.
+
+CELL 77 markdown
+Let’s consider the following alternative scenarios.
+
+
+1.   **Scenario 1:** Everyone in the test set is prescribed the medication. A patient who would have gotten CHD has a 2/3 chance of not getting CHD anymore, given the medication. A patient who would not have gotten CHD would obviously still not get CHD.
+2.   **Scenario 2:** The patients with a probability of CHD higher than p is given the medication (as indicated by medication).
+
+
+
+CELL 78 markdown
+***Question 8.*** What is the total economic cost in Scenario 1?  
+***Answer 8:*** Type your response here.
+
+CELL 79 markdown
+***Question 9.*** What is the expected total economic cost in Scenario 2? By comparing this cost to that of scenario 1 and the \$22,976 per patient from doing nothing, comment on the value of our predictive medication model.  
+***Answer 9:*** Type your response here.

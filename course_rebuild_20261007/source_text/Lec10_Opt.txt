@@ -1,0 +1,420 @@
+PDF PAGE 1
+Elevator Pitch
+Data Analytics for Business --- Prescriptive Analytics and Optimization0
+Kim, Jeongmin1Truong, Tra1Yim, Z Won1Cui, Jiaming2Jerateepkulmeth, Tung2Lim, Joonse2Andino, Ricardo3Hitchins, Julianna3Llontop Melgar, Joel3Cervantes, Alex4Colquitt, Jade4Marsh, Michael4Li, Hanjing5Sochaczevski, Jon5Contreras Garcia, Jacky6Perez, Andres6Santander, Alejandra6Costa, Danilo7Figueiredo, Rafael7Joaquim, Leticia7Chao, Jimmy8Chiu, Amy8Izidoro, Guilherme8Kwon, Jaeho9Tran, Elizabeth9Zhou, Kelvin9Akers, Leo10Mortazavi, Sina10Wu, Celeste10
+Cronin, Pat11Mei, TJ 11Singh, Arohi11Bennett, Ailish12Hummerstone, Cammy12Romero, Ernie12Citra, Herman13Hwang, Jinwon13Tang, Rita13Blackmon, Mitchell14Cremin, Sam14Furlong, Daniel14Aldunate, Nicolas15Gonzalez Pelaez, Carolina15Puig Lopez, Ignacio15Chalaparambath Hariharan, Anjana16Garg, Himani16Bonilla, Fernando17McKenzie, Michael17Diakhate, Awa18Koempf, Alexander18Payard, Augustin18May, Garett19Penaka, Rajitha19Stevens, Jimmy19Readinger, Jake20Roney, Jakob20Sinai Hede, Hirsh20
+
+PDF PAGE 2
+Optimization for Contract DesignData Analytics for BusinessProfessor PengSun
+Prescriptive Analytics
+
+PDF PAGE 3
+Summary of  Predictive Analytics
+Data Analytics for Business --- Prescriptive Analytics and Optimization2
+•From linear regression to neural networks•Interpretability and accuracy•Amount of  data
+
+PDF PAGE 4
+Optimization Model: key elements
+Data Analytics for Business --- Prescriptive Analytics and Optimization3
+•Decision Variables
+•Objective
+•Constraints
+
+PDF PAGE 5
+Optimization
+Data Analytics for Business --- Prescriptive Analytics and Optimization4
+•Example: transportation problem•Four assembly plants, each requiring a number of engines shipped from various harbors
+•Transportation costs
+PLANTREQUIREDLeipzig400Nancy900Liège200Tilburg500
+HARBORAVAILABLEAmsterdam500Antwerp700Le Havre800
+FromOriginTo DestinationLeipzigNancyLiègeTilburgAmsterdam121346Antwerp641011Le Havre109124
+
+PDF PAGE 6
+Transportation problem key elements
+Data Analytics for Business --- Prescriptive Analytics and Optimization5
+•Decision Variables•How much to ship from one origin to one destination (12 decision variables)•Objective•Minimize total cost•Constraints•Total available from each origin•Total required at each destination•Non-negativity
+
+PDF PAGE 7
+Model in Excel
+Data Analytics for Business --- Prescriptive Analytics and Optimization6
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+A B C D E F G
+TRANSPORTATION PROBLEM
+Total cost $0.00
+TRANSPORTATION COSTS
+To Leipzig To Nancy To Liege To Tilburg No. available
+From Amsterdam 12 13 4 6 500
+From Antwerp 6 4 10 11 700
+From LeHavre 10 9 12 4 800
+No. required 400 900 200 500
+NUMBER TRANSPORTED
+Total
+From Amsterdam 0
+From Antwerp 0
+From LeHavre 0
+Total 0 0 0 0 0
+
+PDF PAGE 8
+Fertilizer distribution in Niger
+Data Analytics for Business --- Prescriptive Analytics and Optimization7
+•Niger of  West Africa, poor and flanked by terrorism•A key: food insecurity•One of  the lowest users of  fertilizer in the world•Exceedingly high delivery costs•Millennium Challenge Corporation (MCC)•Risk of  losing the agreement of  $437M to improve agriculture sector•Endsight Consulting and the International Fertilizer Development Center (IFDC) to advise on fertilizer reform
+
+PDF PAGE 9
+Steve Grudda’s initial model
+Data Analytics for Business --- Prescriptive Analytics and Optimization8
+Fertilizer Transport Optimization for NigerIMPORTERS
+Transport Cost IMP1IMP2IMP3 IMP4IMP5 Available
+Lome 2 3 2 1 2 15000 36,000 
+Coutonou 1 2 2 3 1 15000 20,000 
+Lagos 3 1 3 1 2 15000 Departments (36)
+Optimal VolumeIMP1IMP2IMP3 IMP4IMP5 Total Communes (265)
+Lome -      -     3,000           6,000 -                9,000        Cantons/Groupement
+Coutonou 6,000  -     3,000           -     6,000            15,000     Village (17,000)
+Lagos -      6,000 -               -     -                6,000        56,000 
+Total6,000  6,000 6,000           6,000 6,000            30,000     
+Tender Approved 60006000 60006000 6000 30,000     
+REGIONAL CENTERS
+Transport Cost NiameyDossoDiffa ZinderTilaberi Agadez MaradiTahoua Available
+IMP1 4 1 3 2 2 2 1 4 6,000     
+IMP2 3 4 3 2 2 4 1 2 6,000     
+IMP3 3 2 4 3 4 1 1 1 6,000     
+IMP4 1 3 2 3 1 2 3 1 6,000     
+IMP5 1 1 1 1 4 3 3 4 6,000     
+Optimal VolumeNiameyDossoDiffa ZinderTilaberi Agadez MaradiTahoua Total
+IMP1 -      1,500 -               -     -                -            500     -                  2,000     
+IMP2 -      -     -               -     -                -            -      -                  -         
+IMP3 -      -     -               -     -                2,500        2,000  1,500              6,000     
+IMP4 2,500  -     -               -     2,500            -            -      1,000              6,000     
+IMP5 -      1,000 2,500           2,500 -                -            -      -                  6,000     
+Total2,500  2,500 2,500           2,500 2,500            2,500        2,500  2,500              20,000   
+#USED AT RCs 25002500 25002500 2500 2500 2500 250020,000   
+Transport Cost to:
+Importers (5)
+Regional Center (8)
+Total Cost (Minimized)
+
+PDF PAGE 10
+Optimization for Contract Design
+Data Analytics for Business --- Prescriptive Analytics and Optimization9
+
+PDF PAGE 11
+Incentives for Drug Development•Nature of  drug development•Clinic trials as a “gold standard”•Long time•High cost•Uncertain outcome•High drug prices to recoup investment•Drug development is about not only science, but also economics•Lack of  profitable market for rare and tropical disease drugs •Lack of  available drugs for rare and tropical diseases•Funding from governments and private foundationsData Analytics for Business --- Prescriptive Analytics and Optimization10
+https://www.henryford.com/blog/2023/04/what-happens-during-each-phase-of-a-clinical-trial
+
+PDF PAGE 12
+Global Health Funding
+Data Analytics for Business --- Prescriptive Analytics and Optimization11
+•Gates Foundation•Launched in 2000•$77B assets as of  late 2024•New deadline (May 2025):•“20 years to give away all ($200B, including future contributions)”•Global Health Division•Has donated more than $6.6 billion for global health programs•The Global Fund•The Global Fund to Fight AIDS, Tuberculosis and Malaria•Accountability
+
+PDF PAGE 13
+Based on part of  this paper
+Data Analytics for Business --- Prescriptive Analytics and Optimization12
+
+
+PDF PAGE 14
+Funding Drug Development•A firm with a patent for treating a tropical disease•A foundation provides grants to support clinical trials•Firm’s private information•Firm knows how promising the drug is – Adverse selection•Firm needs to exert effort to maximize chance of  success – Moral hazard•Contract to induce firm to truthfully reveal the drug’s promise; exert effort to maximize chance of  success; and do it with the least costData Analytics for Business --- Prescriptive Analytics and Optimization13
+
+PDF PAGE 15
+Push vs Pull Funding
+Data Analytics for Business --- Prescriptive Analytics and Optimization14
+•Push: offer funding in the beginning•Preferred by cash-constrained firm •Firm discounts future income with a factor 𝛿<1 (say 0.6, for income a few years after clinical trial finishes)•Foundation does not discount (deeper pocket)•Pull: offer funding after success (FDA approval)•Accountability•More costly – need to pay interest due to firm’s discounting•What about funding after failure?•Add the decision variable and see if  optimization picks it up
+
+PDF PAGE 16
+Model Parameters
+Data Analytics for Business --- Prescriptive Analytics and Optimization15
+•If  drug is successful•Gates Foundation receives social welfare benefit: 𝑤 (vary greatly across diseases)•Firm receives commercial profit: 𝜋 (also vary greatly – whether high-income countries also suffer from the disease)•Firm’s effort cost: 𝑐 (say, $100M)•If  firm pretends to have worked, cost is ̃𝑐<𝑐 and chance of  success is 0.  (say, ̃𝑐~0.5𝑐) •With effort, the drug succeeds with probability 𝜃•Firm knows 𝜃•Foundation does not know 𝜃, only knows distribution of 𝜃 
+
+PDF PAGE 17
+Distribution P(𝜃)
+Data Analytics for Business --- Prescriptive Analytics and Optimization16
+
+
+PDF PAGE 18
+Objective•Foundation’s probability on the probability of  success being 𝜃: P(𝜃) 
+•𝑚!: push (how much to pay before clinical trial)•𝑚": pull (how much to pay after clinical trial succeeds)•𝑚#: “insurance” (how much to pay after clinical trial fails)Data Analytics for Business --- Prescriptive Analytics and Optimization17
+0.36
+Success
+P(0.36)
+0.36 w-mS
+-m0 0.64
+Failure
+mF
+0.37
+Success
+P(0.37)
+0.37 w-mS
+-m0 0 0.63
+Failure
+mF
+.
+.
+.
+.
+.
+1
+Success
+P(1)
+1 w-mS
+-m0 0 0
+Failure
+mF
+
+PDF PAGE 19
+Optimal Contract Design
+Data Analytics for Business --- Prescriptive Analytics and Optimization18
+•Decision variables (3 of  them):•𝑚!: push (how much to pay before clinical trial)•𝑚": pull (how much to pay after clinical trial succeeds)•𝑚#: “insurance” (how much to pay after clinical trial fails)•These three funding levels imply a threshold, 𝜏, on the chance of  success, above which the firm is willing to participate•Objective: Gates maximizes its expected payoffmax	−𝑚!+("#$𝜃𝑤−𝑚%−1−𝜃𝑚&,𝑃𝜃•No discounting – deep pocket
+
+PDF PAGE 20
+Objective function
+Data Analytics for Business --- Prescriptive Analytics and Optimization19
+−𝑚!+𝑃0.360.36𝑤−𝑚%+0.64−𝑚&+𝑃0.370.37𝑤−𝑚%+0.63−𝑚&+𝑃0.380.38𝑤−𝑚%+0.62−𝑚&+⋯+𝑃0.990.99𝑤−𝑚%+0.01−𝑚&+𝑃1𝑤−𝑚%
+0.36
+Success
+P(0.36)
+0.36 w-mS
+-m0 0.64
+Failure
+mF
+0.37
+Success
+P(0.37)
+0.37 w-mS
+-m0 0 0.63
+Failure
+mF
+.
+.
+.
+.
+.
+1
+Success
+P(1)
+1 w-mS
+-m0 0 0
+Failure
+mF
+Assume the firm is willing to participate if  it believes that the probability of  success is above 𝜏=0.35.
+
+PDF PAGE 21
+Distribution P(𝜃)
+Data Analytics for Business --- Prescriptive Analytics and Optimization20
+
+
+PDF PAGE 22
+Constraints
+Data Analytics for Business --- Prescriptive Analytics and Optimization21
+•Firm’s expected gain if  exerting effort:•From before clinical trial: 𝑚!−𝑐•From clinical trial:𝛿𝜃𝑚%+𝜋+1−𝜃𝑚&
+•Together:𝑚!−𝑐+𝛿𝜃𝑚%+𝜋+1−𝜃𝑚&•Not exerting effort:𝑚!−̃𝑐+𝛿𝑚&
+θ
+Success
+mS+π
+1-θ
+Failure
+mF
+
+PDF PAGE 23
+Constraints
+Data Analytics for Business --- Prescriptive Analytics and Optimization22
+•Firm’s expected gain if  exerting effort𝑚!−𝑐+𝛿𝜃𝑚%+𝜋+1−𝜃𝑚&=𝑚!−𝑐+𝛿𝜃𝑚%+𝜋−𝑚&+𝛿𝑚&
+•Willing to exert effort if  and only if  chance of  success 𝜃≥𝜏𝑚!−𝑐+𝛿𝜃𝑚%+𝜋−𝑚&+𝛿𝑚&≥𝑚!−̃𝑐+𝛿𝑚&,∀𝜃≥𝜏and𝑚!−𝑐+𝛿𝜃𝑚%+𝜋−𝑚&+𝛿𝑚&<𝑚!−̃𝑐+𝛿𝑚&,	∀𝜃<𝜏(many constraints)•Monetary payments are non-negative: 𝑚!,𝑚%,𝑚&≥0
+
+PDF PAGE 24
+Simplify Constraints
+Data Analytics for Business --- Prescriptive Analytics and Optimization23
+•Firm’s utility of  exerting effort to conduct clinical trial𝑚!−𝑐+𝛿𝜃𝑚%+𝜋+1−𝜃𝑚&=𝑚!−𝑐+𝛿𝜃𝑚%+𝜋−𝑚&+𝛿𝑚&
+•Willing to exert effort if  and only if  chance of  success 𝜃≥𝜏𝛿𝜏𝑚%+𝜋−𝑚&≥𝑐−̃𝑐,	For 𝜃 right below threshold 𝜏:𝛿𝜃𝑚%+𝜋−𝑚&≤𝑐−̃𝑐(2 constraints)•Monetary payments are non-negative: 𝑚!,𝑚%,𝑚&≥0
+
+PDF PAGE 25
+Optimization for Contract Design
+Data Analytics for Business --- Prescriptive Analytics and Optimization24
+max1$%&−𝑚!+𝜃𝑤−𝑚"−1−𝜃𝑚#4𝑃𝜃 Subject to𝛿𝜏𝑚"+𝜋−𝑚#≥𝑐−̃𝑐	𝛿9𝜃𝑚"+𝜋−𝑚#≤𝑐−̃𝑐𝑚!,𝑚",𝑚#≥0•For any given threshold 𝜏, this is a linear optimization with 3 decision variables and 5 constraints.•To find the best threshold 𝜏, loop through possible values of  𝜃!
+
+PDF PAGE 26
+Distribution 𝑃(𝜃)
+Data Analytics for Business --- Prescriptive Analytics and Optimization25
+
+
+PDF PAGE 27
+Optimize over different 𝜏
+Data Analytics for Business --- Prescriptive Analytics and Optimization26
+•Fix 𝛿=0.6,𝑐=$100𝑀,𝑤=$400𝑀,𝜋=$300𝑀,̃𝑐=$50𝑀
+•Optimal contract: 𝑚!∗=0,𝑚#∗=0,𝑚$∗=$46.15𝑀,𝑂𝐵𝐽∗=$26.06𝑀
+
+
+PDF PAGE 28
+Economic Insight: why funding failure?
+Data Analytics for Business --- Prescriptive Analytics and Optimization27
+•What if  we do not allow funding failure?•How to revise the optimization model to reflect this restriction?•Add constraint 𝑚$=0 (equivalent to removing this decision variable)•𝑂𝐵𝐽∗=$25.88𝑀,𝜏∗=0.49•Why funding for failure helps?•Incentivize not-so-promising drug a chance to be developed•Offer “insurance”•Mitigate incentive to undersell (“sand-bag”)•“Give me a lot of  push/pull because the drug will likely fail”•Never optimal to pay for both success and failure•Better to increase push, and reduce pull and insurance, until one of  them becomes 0
+
+PDF PAGE 29
+Overall picture
+Data Analytics for Business --- Prescriptive Analytics and Optimization28
+•Optimal solutions for varying model parameters•Assume Uniform[0,1] distribution of  𝜃•Paper proves the following intuitive structures…
+
+PDF PAGE 30
+Case 1: 𝑚!∗=𝑚#∗=𝑚$∗=0,	𝜏∗=1
+Data Analytics for Business --- Prescriptive Analytics and Optimization29
+
+
+PDF PAGE 31
+Case 2: 𝑚!∗=̃𝑐,𝑚#∗>0,𝑚$∗=0
+Data Analytics for Business --- Prescriptive Analytics and Optimization30
+
+
+PDF PAGE 32
+Case 3: 𝑚!∗=̃𝑐,𝑚#∗=𝑚$∗=0
+Data Analytics for Business --- Prescriptive Analytics and Optimization31
+
+
+PDF PAGE 33
+Data Analytics for Business --- Prescriptive Analytics and Optimization32
+Case 4: 𝑚!∗+𝛿𝑚$∗=̃𝑐,𝑚#∗=0
+
+PDF PAGE 34
+Case 5: 𝑚!∗=𝑚#∗=0,𝛿𝑚$∗=̃𝑐
+Data Analytics for Business --- Prescriptive Analytics and Optimization33
+
+
+PDF PAGE 35
+Case 6: 𝑚!∗=𝑚#∗=0,𝛿𝑚$∗<̃𝑐
+Data Analytics for Business --- Prescriptive Analytics and Optimization34
+
+
+PDF PAGE 36
+Case 7: 𝑚!∗=𝑚#∗=𝑚$∗=0,𝜏∗<1
+Data Analytics for Business --- Prescriptive Analytics and Optimization35
+
+
+PDF PAGE 37
+Implementations
+Data Analytics for Business --- Prescriptive Analytics and Optimization36
+•How to calibrate the model parameters•Profit 𝜋: high-income countries’ DALY (disability-adjusted life year) improvement•Welfware 𝑤: DALY improvement from all countries•Discount 𝛿: commercial loan annual interest rate compounded over 3 to 4 years•How to implement 𝑚#∗>0?•Reimbursement?•Forgivable loan?
+
+PDF PAGE 38
+Tropical Diseases
+Data Analytics for Business --- Prescriptive Analytics and Optimization37
+
+
+PDF PAGE 39
+Recall
+Data Analytics for Business --- Prescriptive Analytics and Optimization38
+
+
+PDF PAGE 40
+Optimal Funding Mechanisms
+Data Analytics for Business --- Prescriptive Analytics and Optimization39
+
+
+PDF PAGE 41
+Different funding mechanisms…
+Data Analytics for Business --- Prescriptive Analytics and Optimization40
+•… for malaria, TB and HIV/AIDS•They cause similar level of  pain and are often considered as similar by funding agencies•Potential commercial profit quite different•Different prevalence in high-income countries
+
+PDF PAGE 42
+A Small Digression: Mountains beyond Mountains by Tracy Kidder
+Data Analytics for Business --- Prescriptive Analytics and Optimization41
+•Paul Farmer (1959-2022)•Global Health•Duke and Harvard•Partners in Health
+•Market Failure•TB drug pricing•Jim Yong Kim•Partners in Health, Dartmouth College, World Bank
+
+
+PDF PAGE 43
+Other Problems in Drug Development
+Data Analytics for Business --- Prescriptive Analytics and Optimization42
+•We use optimization models for other incentive issues in drug development•Conditional Approval (FDA policy)Conditional and Lenient Drug Approvals (2025) by Xu, Lopomo, Ridley, Sun•Drugs for rare diseases (low market profit)•Timing! (high profit only in patent protection period) •FDA ’s “pre-approval program”•Allow drug on market after Phase II while doing Phase III trial?•Boost profit to incentivize investments into clinical trial•Commit to lenient final approval threshold as well?
+
+PDF PAGE 44
+Mechanism Design
+Data Analytics for Business --- Prescriptive Analytics and Optimization43
+
+PDF PAGE 45
+Auctions as Resource Allocation Mechanisms
+Data Analytics for Business --- Prescriptive Analytics and Optimization44
+•Resource Allocation (e.g., FCC’s bandwidth auction)•Procurement auctions: sellers are bidders•Vendors in the private sector•Builders for public contracts•Key component: private information•Each bidder knows their own valuation of  obtaining the resource, or production cost in procurement settings•Potential objectives for resource allocation decisions: maximize•auctioneer’s revenue, or•efficiency (sell to the bidder with the highest valuation/buy from the cheapest source)
+
+PDF PAGE 46
+General Mechanisms•Posting a price•Negotiation•Various auctions•Sealed bid (first- and second- price auctions)•Ascending bid•Descending bid•…•Strategic behavior: e.g., bid may not be the same as valuation•Which one maximizes the designer’s objective?Data Analytics for Business --- Prescriptive Analytics and Optimization45
+
+PDF PAGE 47
+Revenue Equivalence
+Data Analytics for Business --- Prescriptive Analytics and Optimization46
+•Revenue Equivalence Theorem: Myerson (1981) generalized Vickrey (1961)•~ Any mechanisms that yield the same equilibrium allocation outcome generate the same expected revenue.•More importantly, Myerson formulated mechanism design as an optimization model.
+
+
+PDF PAGE 48
+Direct Mechanism and Optimization
+Data Analytics for Business --- Prescriptive Analytics and Optimization47
+•Revelation Principle:Without loss of  generality, focus on “direct mechanisms,” which induces truth-telling (e.g., bidding true value), and look for the optimal direct mechanism.•Optimal mechanism design on a conceptual level•Objective: Auctioneer’s expected revenue•Decision variables: given a sequence of  bids, how to allocate the item, and how much to charge•Constraints: •bidder has incentive to bid the true valuation (incentive compatibility)𝑈𝑡𝑖𝑙𝑖𝑡𝑦(𝑏𝑖𝑑𝑑𝑖𝑛𝑔	𝑡𝑟𝑢𝑒	𝑣𝑎𝑙𝑢𝑒)≥𝑈𝑡𝑖𝑙𝑖𝑡𝑦(𝑏𝑖𝑑𝑑𝑖𝑛𝑔	𝑎𝑜𝑡ℎ𝑒𝑟	𝑣𝑎𝑙𝑢𝑒)•bidder willing to participate (individual rationality)𝑈𝑡𝑖𝑙𝑖𝑡𝑦(𝑏𝑖𝑑𝑑𝑖𝑛𝑔	𝑡𝑟𝑢𝑒	𝑣𝑎𝑙𝑢𝑒)≥0
+
+PDF PAGE 49
+Impact of  Optimization Formulation
+Data Analytics for Business --- Prescriptive Analytics and Optimization48
+•Based on this optimization formulation, Myerson showed “second-price auction with a reservation price” is optimal when allocating one item among multiple bidders:•Maximizes seller’s revenue among all possible mechanisms•Not “efficient” due to reservation price – (may not allocate)•Variations of  this optimization formulation is behind designing optimal mechanisms for diverse settings•Multiple items?  Dynamic arrivals?  …•We considered a concrete setting in global health.  But before that, let us generalize even more…
+
+PDF PAGE 50
+Adverse Selection and Moral Hazard
+Data Analytics for Business --- Prescriptive Analytics and Optimization49
+
+PDF PAGE 51
+Asymmetric information
+Data Analytics for Business --- Prescriptive Analytics and Optimization50
+•Private information is not limited to bidder’s valuation in an auction•“Market for lemons” (Akerlof  1970)•Seller knows quality of  used car•Buyer does not•Given uncertainty, buyers do not want to pay as ifknowing car is of  high quality•High quality sellers leave market•Only low-quality cars left, market failure•Implication to insurance market:•Healthy people do not want to buy insurance
+
+
+PDF PAGE 52
+More on Insurance Market
+Data Analytics for Business --- Prescriptive Analytics and Optimization51
+•Private information: health conditions•People with poorer health more willing to buy insurance – Adverse Selection•Private actions: Smoke? Drive fast? Exercise?•How to induce good behavior – Moral Hazard•Two types of  private information•Adverse Selection refers to agents know more than the designer, but does not “control” the uncertainty•Moral Hazard refers to agents take actions that not observable by the designer
+
+PDF PAGE 53
+Adverse Selection v.s. Moral Hazard
+Data Analytics for Business --- Prescriptive Analytics and Optimization52
+•Good incentive management/policy takes both adverse selection and moral hazard into consideration•Induce healthy people to buy insurance•Induce people to quit smoking, eating well, excise•Traditional political left/right division through the lens of  asymmetric information•Different outcomes due to•Luck?•Effort?
+•In business management?
+
+
+PDF PAGE 54
+Optimization for Incentive Management
+Data Analytics for Business --- Prescriptive Analytics and Optimization53
+•Asymmetric information•Adverse selection (mechanism design)•Moral hazard (contract design)•Designer has more information (information design)•Operational levers•Monitoring/inspection•Adding delay to screen patient versus impatient customers in congested service systems•Dynamic settings•Resource allocation without money•Learning and Statistics
+
+PDF PAGE 55
+Other Applications of  Optimization
+Data Analytics for Business --- Prescriptive Analytics and Optimization54
+
+PDF PAGE 56
+Delivery Routing Problem
+Data Analytics for Business --- Prescriptive Analytics and Optimization55
+•Summer of  2020•Pandemic, local restaurants, Chapel Hill high school student drivers•Picking up from a restaurant and delivering to multiple homes•What is the best route for each driver?•Formulate the optimization problem as Traveling Salesman Problem (TSP)•Solve optimization using Google OR Tools: https://developers.google.com/optimization/install•Solution coded in Python by motivated middle school students•Open source on GitHub
+
+PDF PAGE 57
+Traveling Salesman Problem (TSP)
+Data Analytics for Business --- Prescriptive Analytics and Optimization56
+“Given a list of  cities and the distances between each pair of  cities, what is the shortest possible route that visits each city exactly once and returns to the origin city?”•Theoretical computer science and complexity theory•Algorithm design (enumeration does not work)•Applications: logistics, microchip manufacturing, DNA sequencing, astronomy…•Benchmark problem for quantum computing
+
+PDF PAGE 58
+Converting Delivery Routing to TSP
+Data Analytics for Business --- Prescriptive Analytics and Optimization57
+•Is our problem a TSP?•Restaurant, delivery addresses and driver’s home as “nodes”•Pair-wise distance/time from Google Distance Matrix api or OpenStreetMap api•Want to have a tour starting from restaurant and ending at driver’s home•What if  the TSP tour puts restaurant in between delivery addresses?•Revise travel distance/time from any delivery address to restaurant to be extremely large, and from driver’s home to restaurant 0
+
+PDF PAGE 59
+Web based interface
+Data Analytics for Business --- Prescriptive Analytics and Optimization58
+•http://routing.colab.duke.edu/delivery/•Open source: https://github.com/autorouting/main

@@ -1,0 +1,32 @@
+{
+  "boundary_rule": "timestamp-only 80th/90th percentiles; left-closed later partitions; ties never split",
+  "train_cutoff": 975768738,
+  "test_cutoff": 978133414,
+  "partitions": [
+    {
+      "split": "train",
+      "rows": 800164,
+      "first_utc": "2000-04-25T23:05:32+00:00",
+      "last_utc": "2000-12-02T14:51:59+00:00",
+      "users": 5400,
+      "movies": 3662
+    },
+    {
+      "split": "validation",
+      "rows": 100024,
+      "first_utc": "2000-12-02T14:52:18+00:00",
+      "last_utc": "2000-12-29T23:42:47+00:00",
+      "users": 1134,
+      "movies": 3305
+    },
+    {
+      "split": "test",
+      "rows": 100021,
+      "first_utc": "2000-12-29T23:43:34+00:00",
+      "last_utc": "2003-02-28T17:49:50+00:00",
+      "users": 1209,
+      "movies": 3407
+    }
+  ],
+  "target": "Explicit 1-5 rating, unchanged from the course"
+}

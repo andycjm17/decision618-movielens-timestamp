@@ -1,0 +1,55 @@
+            protocol                     model scope   rows  users     RMSE      MAE      OSR2
+         random_99_1             Training mean   all  10003   3697 1.123683 0.941470  0.000000
+         random_99_1                softImpute   all  10003   3697 0.919767 0.710589  0.330010
+         random_99_1             CF + metadata   all  10003   3697 0.898997 0.711635  0.359927
+         random_99_1 CF + metadata + timestamp   all  10003   3697 0.893975 0.706467  0.367059
+global_time_80_10_10             Training mean   all 100021   1209 1.089294 0.902477  0.000000
+global_time_80_10_10                softImpute   all 100021   1209 1.224647 0.929495 -0.263955
+global_time_80_10_10             CF + metadata   all 100021   1209 1.030320 0.816393  0.105349
+global_time_80_10_10 CF + metadata + timestamp   all 100021   1209 1.000097 0.781161  0.157065
+{
+  "random": {
+    "softImpute": {
+      "improvement_RMSE": 0.02579204987505468,
+      "ci95": [
+        0.019961413249247557,
+        0.03170777370511153
+      ],
+      "resamples": 2000,
+      "cluster": "user; event-weighted RMSE",
+      "users": 3697
+    },
+    "CF + metadata": {
+      "improvement_RMSE": 0.00502225465950068,
+      "ci95": [
+        0.0030775545114828133,
+        0.006886731331226188
+      ],
+      "resamples": 2000,
+      "cluster": "user; event-weighted RMSE",
+      "users": 3697
+    }
+  },
+  "temporal": {
+    "softImpute": {
+      "improvement_RMSE": 0.2245498485337476,
+      "ci95": [
+        0.17417979132503408,
+        0.27977717884908293
+      ],
+      "resamples": 2000,
+      "cluster": "user; event-weighted RMSE",
+      "users": 1209
+    },
+    "CF + metadata": {
+      "improvement_RMSE": 0.030222663434478436,
+      "ci95": [
+        0.011114178925162546,
+        0.05038576040534907
+      ],
+      "resamples": 2000,
+      "cluster": "user; event-weighted RMSE",
+      "users": 1209
+    }
+  }
+}

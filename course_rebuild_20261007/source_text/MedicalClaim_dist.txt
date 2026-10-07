@@ -1,0 +1,559 @@
+CELL 0 markdown
+
+# CART for Regression
+
+
+CELL 1 code
+# Core libraries
+import numpy as np
+import pandas as pd
+
+# Visualization
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Modeling
+from sklearn.model_selection import train_test_split
+from sklearn import tree
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+# Display
+pd.set_option("display.max_columns", 200)
+sns.set_theme(context="notebook", style="whitegrid")
+
+CELL 2 markdown
+## 1. Load the data and basic preprocessing
+
+CELL 3 code
+# Read in the data (published by the United States Centers for Medicare and Medicaid Services)
+# This is a 1% random sample of patients in the Medicare program, anonymized to protect the privacy of the patients
+# Big data!
+claims = pd.read_csv("claimsFull.csv")
+
+# Note: The last column appears to be processed.
+# Will remove this column because otherwise it dominates the CART model
+if "monthsWithClaims" in claims.columns:
+    claims = claims.drop(columns=["monthsWithClaims"])
+
+# Keep a copy of raw 2010 reim\bursement before log transform for the first histogram
+claims = claims.copy()
+claims["reimb2010_raw"] = claims["reimb2010"]
+
+CELL 4 code
+display(claims)
+
+CELL 5 markdown
+### Histogram of 2010 reimbursements (raw)
+
+CELL 6 code
+# Visualize reimbursement data
+ax = sns.histplot(data=claims, x="reimb2010_raw", bins=50)
+ax.set_title("Histogram of 2010 reimbursements")
+ax.set_xlabel("Reimbursement [$]")
+ax.set_ylabel("Count")
+plt.show()
+
+CELL 7 markdown
+### Log transform reimbursement columns
+
+CELL 8 code
+# Log(1 + x) transform
+for col in ["reimb2008", "reimb2009", "reimb2010"]:
+    claims[col] = np.log10(claims[col] + 1)
+
+# Rename columns to match the R script
+claims = claims.rename(columns={
+    "reimb2008": "log10_reimb2008",
+    "reimb2009": "log10_reimb2009",
+    "reimb2010": "log10_reimb2010"
+})
+
+CELL 9 markdown
+### Histogram of 2010 reimbursements (log)
+
+CELL 10 code
+ax = sns.histplot(data=claims, x="log10_reimb2010", bins=50)
+ax.set_title("Histogram of 2010 reimbursements (log transform)")
+ax.set_xlabel("log10(1 + reimbursement) [log($)]")
+ax.set_ylabel("Count")
+plt.show()
+
+# Quick peek
+display(claims.head(12))
+
+CELL 11 markdown
+## 2. Train/Test split and baseline
+
+CELL 12 code
+# 70/30 split
+train_df, test_df = train_test_split(
+    claims, test_size=0.3, random_state=110, shuffle=True
+)
+
+baseline = train_df["log10_reimb2010"].mean()
+
+display(train_df.sort_index().head(10))
+display(train_df.sort_index().tail(5))
+display(test_df.sort_index().head(10))
+display(test_df.sort_index().tail(5))
+
+CELL 13 markdown
+
+## 3. Tiny 0.1% subset & 2-feature Decision Tree
+
+We sample ~0.1% of the training data and fit a small CART on:
+- Features: `log10_reimb2009`, `OfficeVisit`
+- Target: `log10_reimb2010`
+
+
+CELL 14 code
+# 0.1% sample (round at least 1 row)
+rng = np.random.default_rng(144)
+n_vis = max(1, int(0.001 * len(train_df)))
+vis_idx = rng.choice(len(train_df), size=n_vis, replace=False)
+viz_df = train_df.iloc[vis_idx][["log10_reimb2010", "log10_reimb2009", "OfficeVisit"]].dropna()
+
+# Fit a small decision tree
+tree_direct = tree.DecisionTreeRegressor(
+    min_samples_leaf=5,
+    ccp_alpha=0.0,              # keep splits; we'll control complexity via min_samples_leaf here
+    random_state=144
+)
+tree_direct.fit(viz_df[["log10_reimb2009", "OfficeVisit"]], viz_df["log10_reimb2010"])
+
+# Scatter colored by target; this mirrors the "boxes" intuition w/o drawing exact split boxes
+ax = sns.scatterplot(
+    data=viz_df,
+    x="OfficeVisit",
+    y="log10_reimb2009",
+    hue="log10_reimb2010",
+    s=30
+)
+
+ax.set_title("Tiny subset: color = log10_reimb2010")
+ax.set_xlabel("Number of office visits in 2010")
+ax.set_ylabel("2009 spend (log)")
+plt.legend(title="2010 spend (log)", bbox_to_anchor=(1.02, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+
+CELL 15 code
+from matplotlib.patches import Rectangle
+from sklearn.tree import _tree
+
+# X_small = viz_df[["log10_reimb2009", "OfficeVisit"]]
+feat_names_2 = ["log10_reimb2009", "OfficeVisit"]  # index 0 = y-axis feature, 1 = x-axis feature
+
+# Outer bounds similar to the R code
+x_min = 0 # np.floor(viz_df["OfficeVisit"].min() / 5) * 5 - 0.2
+x_max = 50 # np.ceil(viz_df["OfficeVisit"].max() / 5) * 5
+y_min = 0 # np.floor(viz_df["log10_reimb2009"].min() / 5) * 5 - 0.2
+y_max = 6 # np.ceil(viz_df["log10_reimb2009"].max() / 5) * 5
+
+def draw_leaf_boxes(ax, tree, x0, x1, y0, y1):
+    """Draw an axis-aligned rectangle for every leaf region in the 2D tree."""
+    t = tree.tree_
+    UNDEF = _tree.TREE_UNDEFINED
+
+    def recurse(node, xl, xr, yb, yt):
+        f = t.feature[node]
+        thr = t.threshold[node]
+
+        # Leaf → draw the current region
+        if f == UNDEF:
+            if xr > xl and yt > yb:  # only draw if region has area
+                ax.add_patch(Rectangle((xl, yb), xr - xl, yt - yb,
+                                       fill=False, linewidth=0.5, edgecolor="black", zorder=3))
+            return
+
+        fname = feat_names_2[f]
+
+        if fname == "OfficeVisit":  # vertical split at x = thr
+            # If split is completely to the left of the region, we are entirely on the RIGHT child
+            if thr <= xl:
+                recurse(t.children_right[node], xl, xr, yb, yt)
+            # If split is completely to the right of the region, we are entirely on the LEFT child
+            elif thr >= xr:
+                recurse(t.children_left[node], xl, xr, yb, yt)
+            else:
+                # Proper split inside current [xl, xr]
+                recurse(t.children_left[node],  xl, thr, yb, yt)  # x <= thr
+                recurse(t.children_right[node], thr, xr, yb, yt)  # x > thr
+
+        elif fname == "log10_reimb2009":  # horizontal split at y = thr
+            if thr <= yb:
+                recurse(t.children_right[node], xl, xr, yb, yt)
+            elif thr >= yt:
+                recurse(t.children_left[node], xl, xr, yb, yt)
+            else:
+                recurse(t.children_left[node],  xl, xr, yb, thr)  # y <= thr
+                recurse(t.children_right[node], xl, xr, thr, yt)  # y > thr
+
+    recurse(0, x0, x1, y0, y1)
+
+# --- Plot scatter + boxes ---
+fig, ax = plt.subplots()
+
+# jitter OfficeVisit slightly (like R's jitter)
+x_jitter = viz_df["OfficeVisit"] + np.random.default_rng(0).normal(0, 0.15, size=len(viz_df))
+sns.scatterplot(x=x_jitter,
+                y=viz_df["log10_reimb2009"],
+                hue=viz_df["log10_reimb2010"],
+                s=30, ax=ax, zorder=2)
+
+ax.set_title("CART partition boxes (tiny 2-feature tree)")
+ax.set_xlabel("Number of office visits in 2010")
+ax.set_ylabel("2009 spend (log)")
+
+# Draw partition rectangles
+draw_leaf_boxes(ax, tree_direct, x_min, x_max, y_min, y_max)
+
+# Draw outer frame
+ax.add_patch(Rectangle((x_min, y_min), x_max - x_min, y_max - y_min,
+                       fill=False, linewidth=1, edgecolor="black", zorder=3))
+
+ax.set_xlim(x_min, x_max)
+ax.set_ylim(y_min, y_max)
+ax.legend(title="2010 spend (log)", bbox_to_anchor=(1.02, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+# (Optional) quick sanity check:
+print("tiny tree depth:", tree_direct.get_depth(), "nodes:", tree_direct.tree_.node_count)
+
+
+CELL 16 markdown
+## 4. CART on reimbursement data
+
+CELL 17 code
+# For visualizing trees
+
+import graphviz
+import math
+from IPython.display import display
+
+def plot_tree_graphviz(model, feat_names, max_depth=3, title=None, export=False):
+    """
+    Generates and displays a customized decision tree plot.
+
+    Args:
+        model (DecisionTreeRegressor): The trained scikit-learn tree model.
+        feat_names (list): A list of feature names.
+        max_depth (int): The maximum depth of the tree to display.
+        title (str, optional): An optional title for the graph.
+        export (bool): If True, exports the plot as a PNG image to the current directory.
+    """
+    dot = graphviz.Digraph(
+        'tree',
+        node_attr={'shape': 'box', 'style': 'rounded,filled', 'fontname': 'helvetica'},
+        edge_attr={'fontname': 'helvetica', 'fontsize': '12'}
+    )
+    dot.attr('graph', rankdir='TB', label=title or '', fontname='helvetica', fontsize='16')
+
+    tree_ = model.tree_
+
+    def build_graph_recursive(node_id=0, depth=0):
+        is_leaf = tree_.children_left[node_id] == tree_.children_right[node_id]
+
+        if is_leaf:
+            leaf_value = f"{tree_.value[node_id][0][0]:.3f}"
+            dot.node(str(node_id), label=leaf_value, shape='oval', fillcolor='lightgoldenrodyellow')
+        else:
+            feature_index = tree_.feature[node_id]
+            threshold = tree_.threshold[node_id]
+            split_condition = f"{feat_names[feature_index]} < {threshold:.3f}"
+            dot.node(str(node_id), label=split_condition, fillcolor='white')
+
+            if depth < max_depth - 1:
+                left_child_id = tree_.children_left[node_id]
+                right_child_id = tree_.children_right[node_id]
+
+                dot.edge(str(node_id), str(left_child_id), label='yes')
+                dot.edge(str(node_id), str(right_child_id), label='no')
+
+                build_graph_recursive(left_child_id, depth + 1)
+                build_graph_recursive(right_child_id, depth + 1)
+            else:
+                left_ellipsis_id = f"ellipsis_left_{node_id}"
+                right_ellipsis_id = f"ellipsis_right_{node_id}"
+
+                dot.node(left_ellipsis_id, label="...", shape='plaintext')
+                dot.edge(str(node_id), left_ellipsis_id, label='yes')
+
+                dot.node(right_ellipsis_id, label="...", shape='plaintext')
+                dot.edge(str(node_id), right_ellipsis_id, label='no')
+
+    build_graph_recursive()
+
+    # --- Added Export Logic ---
+    if export:
+        # Saves the graph to 'tree.png' and removes the intermediate source file
+        dot.render('tree', format='png', cleanup=True)
+        print("Tree exported to 'tree.png'")
+
+    display(dot)
+
+CELL 18 code
+# Separate features/target
+target_cols = ["log10_reimb2010", "reimb2010_raw"]
+X_train = train_df.drop(columns=target_cols)
+y_train = train_df["log10_reimb2010"].copy()
+X_test  = test_df.drop(columns=target_cols)
+y_test  = test_df["log10_reimb2010"].copy()
+
+# One-hot encode categorical columns (similar to R using all '.' features implicitly)
+cat_cols = X_train.select_dtypes(include=["object", "category"]).columns.tolist()
+X_train_enc = pd.get_dummies(X_train, columns=cat_cols, drop_first=True)
+X_test_enc  = pd.get_dummies(X_test,  columns=cat_cols, drop_first=True)
+
+# Align columns
+X_test_enc = X_test_enc.reindex(columns=X_train_enc.columns, fill_value=0)
+
+# Feature names
+feat_names = list(X_train_enc.columns)
+
+# Base tree (analogous to rpart(,..., minbucket=25, cp=0.002))
+tree_base = tree.DecisionTreeRegressor(
+    min_samples_leaf=25,
+    ccp_alpha=0.002,
+    random_state=123
+)
+tree_base.fit(X_train_enc, y_train)
+
+# Compare a few ccp_alpha; keep min_samples_leaf fixed for parity
+alphas = [0.001, 0.002, 0.005]
+depths = {}
+for alpha in alphas:
+    model = tree.DecisionTreeRegressor(min_samples_leaf=50, ccp_alpha=alpha, random_state=123)
+    model.fit(X_train_enc, y_train)
+    depths[alpha] = model.get_depth()
+
+depths
+
+CELL 19 markdown
+### Visualizing tree of depth 3
+
+CELL 20 code
+tree_depth3 = tree.DecisionTreeRegressor(min_samples_leaf=25, ccp_alpha=0.005, random_state=123)
+tree_depth3.fit(X_train_enc, y_train)
+plot_tree_graphviz(tree_depth3, feat_names, max_depth=math.inf, title="")
+
+CELL 21 markdown
+### Visualizing tree of depth 3 using scikit-learn
+
+CELL 22 code
+# In sklearn ... + tree sklearn plot_tree.
+
+plt.figure(figsize=(18, 10))
+tree.plot_tree(
+    tree_depth3,
+    feature_names = feat_names,
+    filled=True,
+    rounded=True,
+    impurity=False,
+    label="none",
+    proportion=True
+)
+plt.show()
+
+CELL 23 markdown
+### Three specific trees to compare (small vs larger ccp_alpha)
+
+CELL 24 code
+# "tree1" ~ very small alpha to allow more splits
+tree1 = tree.DecisionTreeRegressor(min_samples_leaf=25, ccp_alpha=1e-5, random_state=123)
+tree1.fit(X_train_enc, y_train)
+
+# "tree2" ~ moderate alpha
+tree2 = tree.DecisionTreeRegressor(min_samples_leaf=25, ccp_alpha=0.001, random_state=123)
+tree2.fit(X_train_enc, y_train)
+
+# "tree3" ~ large alpha
+tree3 = tree.DecisionTreeRegressor(min_samples_leaf=25, ccp_alpha=0.005, random_state=123)
+tree3.fit(X_train_enc, y_train)
+
+CELL 25 code
+plot_tree_graphviz(tree1, feat_names, max_depth=3, title="Tree 1: Low Pruning (ccp_alpha = 1e-5)")
+plot_tree_graphviz(tree2, feat_names, max_depth=3, title="Tree 2: Moderate Pruning (ccp_alpha = 0.001)")
+plot_tree_graphviz(tree3, feat_names, max_depth=3, title="Tree 3: High Pruning (ccp_alpha = 0.005)")
+# plot_tree_graphviz(tree1, feat_names, max_depth=math.inf, title="Tree 1: Low Pruning (ccp_alpha = 1e-5)", export=True)
+# plot_tree_graphviz(tree2, feat_names, max_depth=math.inf, title="Tree 2: Moderate Pruning (ccp_alpha = 0.001)", export=True)
+# plot_tree_graphviz(tree3, feat_names, max_depth=math.inf, title="Tree 3: High Pruning (ccp_alpha = 0.005)", export=True)
+
+CELL 26 markdown
+### Predictions & display sample
+
+CELL 27 code
+# We'll use tree_base as the 'final' model
+tree_final = tree_base
+
+pred_train_final = tree_final.predict(X_train_enc)
+pred_test_final  = tree_final.predict(X_test_enc)
+
+# Show a few columns + prediction (first 11 columns if available)
+display_cols = list(test_df.columns[:11])
+df_display = test_df[display_cols].copy()
+df_display["PredictTest"] = pred_test_final
+
+# Mimic headTail: show head(18) and tail(5)
+display(df_display.head(18))
+display(df_display.tail(5))
+
+CELL 28 code
+plot_tree_graphviz(tree_final, feat_names, max_depth=3, title="Base tree")
+# plot_tree_graphviz(tree_final, feat_names, max_depth=math.inf, title="Base tree", export=True)
+
+CELL 29 markdown
+### R-Squared and OSR-Squared for CART
+
+CELL 30 code
+# Helper to compute OSR^2 relative to training-mean baseline, similar to R code
+def osr2(y_true, y_pred, baseline_mean):
+    sst = np.sum((y_true - baseline_mean) ** 2)
+    sse = np.sum((y_pred - y_true) ** 2)
+    return 1 - sse / sst
+
+# Baseline
+baseline = y_train.mean()
+
+# Final tree
+sst_train = np.sum((y_train - baseline) ** 2)
+sse_train = np.sum((pred_train_final - y_train) ** 2)
+R2_CART_treeFinal = 1 - sse_train / sst_train
+
+sst_test = np.sum((y_test - baseline) ** 2)
+sse_test = np.sum((pred_test_final - y_test) ** 2)
+OSR2_CART_treeFinal = 1 - sse_test / sst_test
+
+# Smaller alpha tree ("tree1") for comparison
+pred_train_smaller = tree1.predict(X_train_enc)
+pred_test_smaller  = tree1.predict(X_test_enc)
+
+sst_train_s = np.sum((y_train - baseline) ** 2)
+sse_train_s = np.sum((pred_train_smaller - y_train) ** 2)
+R2_CART_treeSmaller = 1 - sse_train_s / sst_train_s
+
+sst_test_s = np.sum((y_test - baseline) ** 2)
+sse_test_s = np.sum((pred_test_smaller - y_test) ** 2)
+OSR2_CART_treeSmaller = 1 - sse_test_s / sst_test_s
+
+print(f"""Base tree R^2: {R2_CART_treeFinal:.3f}
+Base tree OSR^2: {OSR2_CART_treeFinal:.3f}
+Low pruning tree R^2: {R2_CART_treeSmaller:.3f}
+Low pruning tree OSR^2: {OSR2_CART_treeSmaller:.3f}""")
+
+CELL 31 markdown
+## 6. Linear Regression & Smart Baseline
+
+CELL 32 code
+import statsmodels.formula.api as smf # Changed from statsmodels.api as sm
+import numpy as np
+import pandas as pd
+
+# --- Assume the following variables are pre-defined ---
+# X_train_enc, y_train, X_test_enc, y_test (as pandas DataFrames/Series)
+# baseline (e.g., y_train.mean())
+# train_df, test_df (with the "log10_reimb2009" column)
+# ---------------------------------------------------
+
+## --- Linear Regression using statsmodels.formula ---
+
+# Combine X_train_enc and y_train into a single DataFrame for the formula interface
+train_data_for_formula = X_train_enc.copy()
+train_data_for_formula['log10_reimb2010'] = y_train
+
+# Construct the formula string, wrapping feature names in Q() for special characters
+# Patsy (used by statsmodels.formula) requires special characters to be quoted with Q()
+formula = 'log10_reimb2010 ~ ' + ' + '.join([f'Q(\'{col}\')' for col in X_train_enc.columns])
+# The line below caused a SyntaxError because '.' is not a valid patsy feature name.
+# formula = 'log10_reimb2010 ~ .'
+
+# 1. Fit the Ordinary Least Squares (OLS) model
+# smf.ols automatically adds an intercept and handles categorical variables.
+sm_model = smf.ols(formula=formula, data=train_data_for_formula).fit()
+
+# 2. Make predictions on the test set
+# For formula API, predict directly on the test features. It will correctly use the fitted model's structure.
+pred_lr_test = sm_model.predict(X_test_enc)
+
+# 3. Calculate in-sample R^2
+pred_lr_train = sm_model.predict(X_train_enc)
+sst_train = np.sum((y_train - y_train.mean()) ** 2)
+sse_train = np.sum((pred_lr_train - y_train) ** 2)
+R2_Lr = 1 - sse_train / sst_train
+
+# 4. Calculate out-of-sample OSR^2 (relative to training-mean baseline)
+SST = np.sum((y_test - baseline) ** 2)
+SSE = np.sum((pred_lr_test - y_test) ** 2)
+OSR2_Lr = 1 - SSE / SST
+
+## --- Smart Baseline Calculation (no changes needed) ---
+
+# Train metrics
+SST_train = np.sum((y_train - baseline) ** 2)
+SSE_train = np.sum((train_df["log10_reimb2009"] - y_train) ** 2)
+R2_smart_baseline = 1 - SSE_train / SST_train
+
+# Test metrics
+SST_test = np.sum((y_test - baseline) ** 2)
+SSE_test = np.sum((test_df["log10_reimb2009"] - y_test) ** 2)
+OSR2_smart_baseline = 1 - SSE_test / SST_test
+
+## --- Print Performance Metrics ---
+
+print("## Performance Metrics\n")
+print(f"""Linear Regression R^2: {R2_Lr:.3f}
+Linear Regression OSR^2: {OSR2_Lr:.3f}
+Smart Baseline R^2: {R2_smart_baseline:.3f}
+Smart Baseline OSR^2: {OSR2_smart_baseline:.3f}""")
+print("\n" + "="*40 + "\n")
+
+
+## --- Model Summary with Significance ---
+
+def significance_stars(p):
+    if p < 0.001:
+        return '***'
+    elif p < 0.01:
+        return '**'
+    elif p < 0.05:
+        return '*'
+    elif p < 0.1:
+        return '.'
+    else:
+        return ''
+
+def print_summary_with_stars(model):
+    summary_table = model.summary2().tables[1]
+    # statsmodels sometimes uses "P>|z|" instead of "P>|t|"
+    p_col = "P>|z|" if "P>|z%" in summary_table.columns else "P>|t|"
+    summary_table['Signif'] = summary_table[p_col].apply(significance_stars)
+    rounded_table = summary_table.round(4)
+    table_string = rounded_table.to_string(header=True)
+    lines = table_string.split('\n')
+    print("## Linear Model Coefficients")
+    print("=" * len(lines[0]))
+    print(lines[0])
+    print("-" * len(lines[0]))
+    print('\n'.join(lines[1:]))
+    print("=" * len(lines[0]))
+    print("---")
+    print("Significance codes: 0 '***' 0.001 '**' 0.05 '*' 0.1 ' ' 1")
+
+# 5. Call the summary function with the statsmodels object
+print_summary_with_stars(sm_model)
+
+CELL 33 markdown
+## 7. Compare all models
+
+CELL 34 code
+results = pd.DataFrame({
+    "Smart Baseline": [R2_smart_baseline, OSR2_smart_baseline],
+    "CART (small alpha)": [R2_CART_treeSmaller, OSR2_CART_treeSmaller],
+    "CART (base alpha)": [R2_CART_treeFinal,  OSR2_CART_treeFinal],
+    "Linear Regression": [R2_Lr, OSR2_Lr]
+}, index=["R-Squared", "OSR-Squared"])
+
+results

@@ -1,0 +1,313 @@
+{
+  "predefined_alphas": [
+    1.0,
+    100.0,
+    10000.0
+  ],
+  "teacher_rank": 8,
+  "temporal_selected_rank": 4,
+  "temporal_selected_lambda": 0,
+  "random_hybrid_alphas": {
+    "CF + metadata": 1.0,
+    "CF + metadata + timestamp": 1.0
+  },
+  "temporal_hybrid_alphas": {
+    "CF + metadata": 10000.0,
+    "CF + metadata + timestamp": 10000.0
+  },
+  "calendar_timezone": "UTC",
+  "temporal_stack_train_rows": 300064,
+  "temporal_stack_final_rows": 400088,
+  "random_stack": "Instructor out-of-fold rank-8 CF predictions; group validation for Ridge penalty",
+  "temporal_stack": "Two expanding-time CF fits and later validation predictions; no in-sample CF feature",
+  "history_features": "Fit-row timestamps strictly before query timestamp; tied times excluded",
+  "time_feature_caps": "Numeric drift/count/gap clipped to meta-fit observed ranges",
+  "intervals": {
+    "random": {
+      "softImpute": {
+        "improvement_RMSE": 0.02579204987505468,
+        "ci95": [
+          0.019961413249247557,
+          0.03170777370511153
+        ],
+        "resamples": 2000,
+        "cluster": "user; event-weighted RMSE",
+        "users": 3697
+      },
+      "CF + metadata": {
+        "improvement_RMSE": 0.00502225465950068,
+        "ci95": [
+          0.0030775545114828133,
+          0.006886731331226188
+        ],
+        "resamples": 2000,
+        "cluster": "user; event-weighted RMSE",
+        "users": 3697
+      }
+    },
+    "temporal": {
+      "softImpute": {
+        "improvement_RMSE": 0.2245498485337476,
+        "ci95": [
+          0.17417979132503408,
+          0.27977717884908293
+        ],
+        "resamples": 2000,
+        "cluster": "user; event-weighted RMSE",
+        "users": 1209
+      },
+      "CF + metadata": {
+        "improvement_RMSE": 0.030222663434478436,
+        "ci95": [
+          0.011114178925162546,
+          0.05038576040534907
+        ],
+        "resamples": 2000,
+        "cluster": "user; event-weighted RMSE",
+        "users": 1209
+      }
+    }
+  },
+  "all_metrics": [
+    {
+      "protocol": "random_99_1",
+      "model": "Training mean",
+      "scope": "all",
+      "rows": 10003,
+      "users": 3697,
+      "RMSE": 1.1236826297053824,
+      "MAE": 0.9414701518492571,
+      "OSR2": 0.0
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "Training mean",
+      "scope": "warm",
+      "rows": 10002,
+      "users": 3697,
+      "RMSE": 1.1237310091115367,
+      "MAE": 0.9415224363080881,
+      "OSR2": 0.0
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "Training mean",
+      "scope": "cold",
+      "rows": 1,
+      "users": 1,
+      "RMSE": 0.4185209946213213,
+      "MAE": 0.4185209946213213,
+      "OSR2": 0.0
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "softImpute",
+      "scope": "all",
+      "rows": 10003,
+      "users": 3697,
+      "RMSE": 0.9197670652600238,
+      "MAE": 0.7105885680288357,
+      "OSR2": 0.3300099176965554
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "softImpute",
+      "scope": "warm",
+      "rows": 10002,
+      "users": 3697,
+      "RMSE": 0.9193237811187264,
+      "MAE": 0.7103596726647113,
+      "OSR2": 0.33071320164936546
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "softImpute",
+      "scope": "cold",
+      "rows": 1,
+      "users": 1,
+      "RMSE": 3.0,
+      "MAE": 3.0,
+      "OSR2": -50.38164591056663
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "CF + metadata",
+      "scope": "all",
+      "rows": 10003,
+      "users": 3697,
+      "RMSE": 0.8989972700444698,
+      "MAE": 0.7116353061563977,
+      "OSR2": 0.35992714279287863
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "CF + metadata",
+      "scope": "warm",
+      "rows": 10002,
+      "users": 3697,
+      "RMSE": 0.8987509508547596,
+      "MAE": 0.7114776501622375,
+      "OSR2": 0.36033292809838535
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "CF + metadata",
+      "scope": "cold",
+      "rows": 1,
+      "users": 1,
+      "RMSE": 2.2885105597452404,
+      "MAE": 2.2885105597452404,
+      "OSR2": -28.900010711330495
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "CF + metadata + timestamp",
+      "scope": "all",
+      "rows": 10003,
+      "users": 3697,
+      "RMSE": 0.8939750153849692,
+      "MAE": 0.7064670659709495,
+      "OSR2": 0.3670587098812371
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "CF + metadata + timestamp",
+      "scope": "warm",
+      "rows": 10002,
+      "users": 3697,
+      "RMSE": 0.8937225801133487,
+      "MAE": 0.7063072479347797,
+      "OSR2": 0.36747057913691805
+    },
+    {
+      "protocol": "random_99_1",
+      "model": "CF + metadata + timestamp",
+      "scope": "cold",
+      "rows": 1,
+      "users": 1,
+      "RMSE": 2.304967063742377,
+      "MAE": 2.304967063742377,
+      "OSR2": -29.33157419206138
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "Training mean",
+      "scope": "all",
+      "rows": 100021,
+      "users": 1209,
+      "RMSE": 1.089293845992471,
+      "MAE": 0.9024768930128294,
+      "OSR2": 0.0
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "Training mean",
+      "scope": "warm",
+      "rows": 95723,
+      "users": 1179,
+      "RMSE": 1.0889185737565596,
+      "MAE": 0.9019998589458983,
+      "OSR2": 0.0
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "Training mean",
+      "scope": "cold",
+      "rows": 4298,
+      "users": 97,
+      "RMSE": 1.097618480640544,
+      "MAE": 0.9131011675565344,
+      "OSR2": 0.0
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "softImpute",
+      "scope": "all",
+      "rows": 100021,
+      "users": 1209,
+      "RMSE": 1.224646812059325,
+      "MAE": 0.9294947630757884,
+      "OSR2": -0.26395500061406296
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "softImpute",
+      "scope": "warm",
+      "rows": 95723,
+      "users": 1179,
+      "RMSE": 1.234481681465147,
+      "MAE": 0.9360467381273545,
+      "OSR2": -0.28522299796518413
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "softImpute",
+      "scope": "cold",
+      "rows": 4298,
+      "users": 97,
+      "RMSE": 0.9803664826062715,
+      "MAE": 0.7835723089433853,
+      "OSR2": 0.20223663539739778
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "CF + metadata",
+      "scope": "all",
+      "rows": 100021,
+      "users": 1209,
+      "RMSE": 1.0303196269600559,
+      "MAE": 0.8163927268173282,
+      "OSR2": 0.10534860026813919
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "CF + metadata",
+      "scope": "warm",
+      "rows": 95723,
+      "users": 1179,
+      "RMSE": 1.0320604955549766,
+      "MAE": 0.8172268869004495,
+      "OSR2": 0.10170393300620373
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "CF + metadata",
+      "scope": "cold",
+      "rows": 4298,
+      "users": 97,
+      "RMSE": 0.9907554488200009,
+      "MAE": 0.7978147124765599,
+      "OSR2": 0.18523921552014744
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "CF + metadata + timestamp",
+      "scope": "all",
+      "rows": 100021,
+      "users": 1209,
+      "RMSE": 1.0000969635255774,
+      "MAE": 0.7811606919621329,
+      "OSR2": 0.15706494098544
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "CF + metadata + timestamp",
+      "scope": "warm",
+      "rows": 95723,
+      "users": 1179,
+      "RMSE": 1.000532086329567,
+      "MAE": 0.7804609134243954,
+      "OSR2": 0.15574968746167006
+    },
+    {
+      "protocol": "global_time_80_10_10",
+      "model": "CF + metadata + timestamp",
+      "scope": "cold",
+      "rows": 4298,
+      "users": 97,
+      "RMSE": 0.9903565754508594,
+      "MAE": 0.7967458248071416,
+      "OSR2": 0.18589512099220262
+    }
+  ]
+}

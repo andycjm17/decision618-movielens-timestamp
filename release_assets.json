@@ -1,0 +1,24 @@
+{
+  "repository": "andycjm17/decision618-movielens-timestamp",
+  "release_tag": "v2026.10.07",
+  "assets": [
+    {
+      "asset": "fresh_cv_predictions.rds",
+      "path": "course_rebuild_20261007/data/fresh_cv_predictions.rds",
+      "bytes": 145628263,
+      "sha256": "b92865720244128d50f0f0fb9cb27a3c2eff317e77fc1fa085dddf61b7d3bc21"
+    },
+    {
+      "asset": "cv_all_1m.pkl",
+      "path": "course_rebuild_20261007/sources/cv_all_1m.pkl",
+      "bytes": 158435459,
+      "sha256": "e60f656291394079a6fa39b776f92dca375f8cf4168460cfecc5ea6514f212bd"
+    },
+    {
+      "asset": "Decision618_Course_Rebuild_20261007.zip",
+      "path": "archives/Decision618_Course_Rebuild_20261007.zip",
+      "bytes": 87874400,
+      "sha256": "97bccf87a3fe5d6cdb0f6646ded1fe6796dcc9e7c631fba1b2ef6b7129c1fc2a"
+    }
+  ]
+}

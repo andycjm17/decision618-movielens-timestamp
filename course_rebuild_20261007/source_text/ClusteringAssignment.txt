@@ -1,0 +1,499 @@
+CELL 0
+# Clustering Homework Assignment
+
+Your Name: ...
+Date: ...
+
+
+
+CELL 1
+# Problem: Clustering Automobile Customers
+
+CELL 2
+In this problem, we will explore how clustering can be used to help businesses learn more about their customers. We will use the dataset `autoSurvey_2025.csv`, which contains data from a customer survey conducted by a German automobile manufacturer. Survey respondents were customers who had purchased a vehicle from this manufacturer within the previous 3 months, and these customers were asked to rate several different aspects of their purchased automobile as either “important” (1) or “not important” (0). Each observation (row) corresponds to a customer. This dataset contains 793 rows (customers) and 13 columns (variables). There are also two features regarding the demographics of the customer. The variables in the dataset are described in Table 1.
+
+| Variable | Description | 0 | 1 |
+|------------------|------------------|------------------|------------------|
+| `driving_properties` | General driving properties | not important | important |
+| `interior` | Interior design and aesthetics | not important | important |
+| `technology` | Technological features | not important | important |
+| `comfort` | Comfort of seats and interior | not important | important |
+| `reliability` | Reliability and dependability | not important | important |
+| `handling` | Handling and maneuverability | not important | important |
+| `power` | Power and performance of the engine | not important | important |
+| `consumption` | Fuel consumption, i.e. miles per gallon | not important | important |
+| `sporty` | Sports feeling (i.e., sports utility vehicle SUV) | not important | important |
+| `safety` | Safety features | not important | important |
+| `space` | Amount of space | not important | important |
+| `gender` | Gender of the customer | male | female |
+| `household` | Size of the customer’s household | 1-2 people | at least 3 people |
+
+**Table 1**: Variables in the Automobile Customer Dataset
+
+CELL 3
+## (a) Exploratory Analysis
+
+Let's start with some exploratory analysis of the dataset. Let's load the necessary libraries and the dataset.
+
+CELL 4
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+auto = pd.read_csv("autoSurvey_2025.csv", index_col=0)
+
+# Preview data
+auto.head()
+
+CELL 5
+To get a better understanding of the data, let's calculate the means of each column in the entire dataset using the `mean` function.
+
+
+CELL 6
+# Compute column-wise means and sort in descending order
+var_means = auto.mean(numeric_only=True).sort_values(ascending=False)
+
+# Display as a DataFrame for clarity
+var_means_df = pd.DataFrame(var_means, columns=["Variable Means"])
+var_means_df
+
+CELL 7
+**Question 1.** Using the output above, what are the three most important features and three least important features to the survey respondents. Comment on the general demographics (gender/household) of the surveyed customers.
+
+
+CELL 8
+**Answer 1.** *Your answer here.*
+
+
+CELL 9
+Let's investigate whether there are any significant differences between male and female respondents, as well as household size.
+
+CELL 10
+# Average importance score for each feature, grouped by gender
+gender_means = auto.groupby("gender").mean().T
+gender_means
+
+CELL 11
+household_means = auto.groupby("household").mean().T
+household_means
+
+CELL 12
+**Question 2.** Comment on whether there are any significant differences in automobile preferences across the two dimensions above (gender and household size).
+
+CELL 13
+**Answer 2.** *Your answer here.*
+
+CELL 14
+Let's continue by computing the correlation matrix of the dataset.
+
+In Python, this can be done using the `DataFrame.corr()` function from pandas, which calculates pairwise correlation coefficients between all numeric columns.
+
+CELL 15
+# Compute correlation matrix using pandas
+corr_matrix = auto.corr(numeric_only=True)
+
+plt.figure(figsize=(10,8))
+sns.heatmap(
+    corr_matrix,
+    cmap="RdBu_r",
+    center=0,
+    annot=True,
+    fmt=".2f",
+    square=True
+)
+plt.xticks(rotation=45, ha="right", fontsize=10)
+plt.yticks(rotation=0, fontsize=10)
+plt.title("Correlation Matrix", fontsize=14)
+plt.show()
+
+
+CELL 16
+**Question 3.** Are there any significant correlations between variables? How are the performance of K-Means and Hierarchical Clustering (the two methods we will explore in this assignment) affected by correlation between variables?
+
+CELL 17
+**Answer 3.** *Your answer here.*
+
+CELL 18
+**Question 4.** Recall from lecture that normalization of the data is key to successful clustering. In this analysis, we will choose to not normalize our data prior to clustering. Why is this a valid approach for this problem?
+
+CELL 19
+**Answer 4.** *Your answer here.*
+
+CELL 20
+## (b) K-Means with 3 Clusters
+
+CELL 21
+Let's start by running K-Means clustering with 3 clusters.
+
+CELL 22
+from sklearn.cluster import KMeans
+import numpy as np
+import pandas as pd
+
+random_state = 15071
+
+### YOUR CODE HERE ###
+
+# TODO: Run K-Means with 3 clusters, 100 maximum iterations, 10 random initial starts, and the fixed random state
+kmeans_3 = None
+
+# TODO: Fit the model to the auto data
+
+
+### END OF YOUR CODE ###
+
+# Create a version of the data with cluster labels
+auto_k3 = auto.copy()
+auto_k3["km_3"] = kmeans_3.labels_
+
+# Show the size (number of customers) in each cluster
+km_3_sizes = auto_k3["km_3"].value_counts().sort_index()
+km_3_sizes
+
+CELL 23
+To better interpret the clusters, let's compute for the 3 clusters the *mean* of the 13 independent variables. For example, cluster 0 contains customers who said that comfort was important to them 40% of the time.
+
+CELL 24
+# Compute the mean value of each variable for the 3 clusters
+# The mean of each binary variable represents the proportion of customers
+# in that cluster who consider the feature important
+
+cluster_means_k3 = (
+    auto_k3
+    .groupby("km_3")
+    .mean()
+    .T   # transpose so features are rows
+)
+
+cluster_means_k3
+
+
+
+CELL 25
+Let's visualize these means better with a heatmap. In all heatmaps throughout this assignment, **darker values represent larger numbers.**
+
+CELL 26
+
+# Visualize the feature means with a heatmap
+plt.figure(figsize=(6, 4))
+sns.heatmap(
+    cluster_means_k3,
+    cmap="Blues",        # darker = higher mean
+    cbar=True,
+    linewidths=0.5,
+    annot=True,
+    fmt=".2f"
+)
+plt.title("K-Means with 3 Clusters", fontsize=14)
+plt.xlabel("Cluster Assignment")
+plt.ylabel("Feature")
+plt.tight_layout()
+plt.show()
+
+
+CELL 27
+**Question 5.** Interpret these 3 clusters by answering the following questions.
+
+-   What is the overall size of each cluster?
+
+-   What is the demographic makeup of each cluster?
+
+-   Which vehicle characteristics are the most important or least important to each cluster?
+
+-   How might you market automobiles differently to people in each cluster?
+
+CELL 28
+**Answer 5.**
+-   *Your answer here.*
+
+-   *Your answer here.*
+
+-   *Your answer here.*
+
+-   *Your answer here.*
+
+CELL 29
+## (c) Choosing the Number of Clusters
+
+In part (b), we simply chose $k = 3$ clusters, but we could have chosen any number of clusters $k$. Let's use a scree plot to decide how many clusters to choose. For each $k$, the scree plot shows the total sum of squared distances of all points within the same cluster.
+
+CELL 30
+
+# Range of k values to test
+k_values = range(1, 100)
+
+# Compute the total within-cluster sum of squares (inertia) for each k
+sum_squared_distances = []
+for k in k_values:
+    kmeans = KMeans(
+        n_clusters=k,
+        max_iter=100,
+        n_init=10,
+        random_state=random_state
+    )
+    kmeans.fit(auto)
+    sum_squared_distances.append(kmeans.inertia_)  # inertia = total within-cluster sum of squares
+
+# Store results in a DataFrame
+k_results = pd.DataFrame({
+    "k": k_values,
+    "sum_squared_distances": sum_squared_distances
+})
+
+# Plot the scree plot
+plt.figure(figsize=(6, 4))
+plt.plot(k_results["k"], k_results["sum_squared_distances"], marker="o", linestyle="-")
+plt.title("Scree Plot for K-Means", fontsize=14)
+plt.xlabel("Number of Clusters (k)")
+plt.ylabel("Within-Cluster Sum of Squares")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+
+
+CELL 31
+**Question 6.** Discuss the trade-offs between choosing a large $k$ and a small $k$. Which value of $k$ would you choose given the above scree plot?
+
+CELL 32
+
+**Answer 6.** *Your answer here.*
+
+CELL 33
+## (d) Comparing 3 and 10 Clusters
+
+CELL 34
+Let's try running k-means with 10 clusters and plotting the same visualization.
+
+CELL 35
+from sklearn.cluster import KMeans
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+random_state = 15071
+
+### YOUR CODE HERE ###
+
+# TODO: Run K-Means with 10 clusters, 100 maximum iterations, 10 random initial starts, and the fixed random state
+kmeans_10 = None
+
+### TODO: Fit the model to the auto data
+
+
+### END OF YOUR CODE ###
+
+# Create a version of the data with cluster labels
+auto_k10 = auto.copy()
+auto_k10["km_10"] = kmeans_10.labels_
+
+# Show the size (number of customers) in each cluster
+km_10_sizes = auto_k10["km_10"].value_counts().sort_index()
+km_10_sizes
+
+CELL 36
+cluster_means_k10 = (
+    auto_k10
+    .groupby("km_10")
+    .mean()
+    .T   # transpose so features are rows
+)
+
+cluster_means_k10
+
+CELL 37
+
+
+# Visualize the feature means with a heatmap
+plt.figure(figsize=(8, 6))
+sns.heatmap(
+    cluster_means_k10,
+    cmap="Blues",        # darker = higher mean
+    cbar=True,
+    linewidths=0.5,
+    annot=True,
+    fmt=".2f"
+)
+plt.title("K-Means with 10 Clusters", fontsize=14)
+plt.xlabel("Cluster Assignment")
+plt.ylabel("Feature")
+plt.tight_layout()
+plt.show()
+
+CELL 38
+**Question 7**. How might you interpret clusters 6 and 9 above?
+
+CELL 39
+**Answer 7.**  *Your answer here.*
+
+CELL 40
+Let's examine how these 10 clusters relate to the original 3 clusters. Let's use the method `pd.crosstab`, which counts the number of data points that was assigned to a particular cluster in `kmeans_3` and `kmeans_10`. For example, there are 69 customers assigned to cluster 1 in `kmeans_3` and cluster 0 in`kmeans_10`.
+
+CELL 41
+# Create a DataFrame containing both cluster assignments
+cluster_compare = pd.DataFrame({
+    "km_3": kmeans_3.labels_,
+    "km_10": kmeans_10.labels_
+})
+
+# Generate a cross-tabulation
+cluster_table = pd.crosstab(cluster_compare["km_3"], cluster_compare["km_10"])
+
+cluster_table
+
+
+
+CELL 42
+We can visualize how the 3 clusters differ from the 10 clusters with a heatmap.
+
+CELL 43
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Sort columns (x-axis) based on their counts in cluster_0 (row 0 of km_3)
+col_order = cluster_table.loc[0].sort_values(ascending=False).index
+
+# Apply this new column order
+cluster_table_sorted = cluster_table[col_order]
+
+plt.figure(figsize=(6, 6))
+sns.heatmap(cluster_table_sorted, cmap="Purples", annot=True, fmt="d")
+plt.title("Differences Between 3 and 10 Clusters (Columns Sorted by kmeans_3 Cluster 0)")
+plt.xlabel("k = 10 Cluster Assignment (Sorted by Cluster 0 in k=3)")
+plt.ylabel("k = 3 Cluster Assignment")
+plt.show()
+
+
+CELL 44
+**Question 8.** Discuss the relationship between the cluster assignments from `kmeans_10` and `kmeans_3`. As a concrete example, provide an interpretation of clusters 1, 3, 4 and 6 in `kmeans_10` and how they relate to cluster 0 in `kmeans_3`.
+
+CELL 45
+**Answer 8.** *Your answer here.*
+
+CELL 46
+## (e) Hierarchical Clustering
+
+CELL 47
+Now, let's try hierarchical cluster instead of k-means. First, let's build a dendrogram using the `pdist` and `linkage` functions from `scipy`. We use `ward` method to define how distances between clusters are calculated.
+
+CELL 48
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from scipy.spatial.distance import pdist
+import matplotlib.pyplot as plt
+
+
+# Compute pairwise distances between observations
+dist_matrix = pdist(auto, metric='euclidean')
+
+# Perform hierarchical clustering using Ward’s method
+hclust_tree = linkage(dist_matrix, method='ward')
+
+# Plot the dendrogram
+plt.figure(figsize=(10, 6))
+dendrogram(hclust_tree)
+plt.xlabel(None)
+plt.ylabel(None)
+plt.title("Hierarchical Clustering Dendrogram")
+plt.show()
+
+CELL 49
+Let's cut the dendrogram at a certain height to give rise to 3 clusters.
+
+CELL 50
+### YOUR CODE HERE ###
+
+# TODO: Cut the dendrogram into 3 clusters using the fcluster function with the 'maxclust' criterion
+hclust_3 = None
+
+### END OF YOUR CODE ###
+
+# Add cluster labels to the dataframe
+auto_hclust = auto.copy()
+auto_hclust['hclust_3'] = hclust_3
+
+# Compute the mean of each feature for each cluster
+cluster_means = auto_hclust.groupby('hclust_3').mean().T
+
+sns.set_theme(style="white", font_scale=0.9)
+
+# Create clustermap
+g = sns.clustermap(cluster_means,
+                   cmap="Blues",
+                   method="ward",
+                   metric="euclidean",
+                   figsize=(6, 4),
+                   col_cluster=True,
+                   row_cluster=False,
+                   annot=True,
+                   fmt=".2f")
+
+# Add title and adjust layout
+g.fig.suptitle("Hierarchical Clustering with 3 Clusters",
+               fontsize=16, fontweight="bold", y=1.02)
+plt.show()
+
+CELL 51
+# Count number of observations in each cluster
+pd.Series(hclust_3).value_counts().sort_index()
+
+CELL 52
+**Question 9.** Provide an interpretation of these 3 clusters. Are they similar to those from K-Means in `kmeans_3`? If we were to use hierarchical clustering with 2 clusters (i.e., `fcluster(hclust_tree, t=2, criterion='maxclust')`), what would those two clusters be?
+
+CELL 53
+**Answer 9.**  *You answer here.*
+
+CELL 54
+Similar to before, let's also try cutting the tree to generate 10 clusters and compare it to 3 clusters.
+
+CELL 55
+### YOUR CODE HERE ###
+
+# TODO: Cut the dendrogram into 10 clusters using the fcluster function with the 'maxclust' criterion
+hclust_10 = None
+
+### END OF YOUR CODE ###
+
+# Add cluster labels to the dataframe
+auto_hclust = auto.copy()
+auto_hclust['hclust_10'] = hclust_10
+
+# Compute the mean of each feature for each cluster
+cluster_means = auto_hclust.groupby('hclust_10').mean().T
+
+# Create clustermap
+g = sns.clustermap(cluster_means,
+                   cmap="Blues",
+                   method="ward",
+                   metric="euclidean",
+                   figsize=(10, 8),
+                   col_cluster=True,
+                   row_cluster=False,
+                   annot=True,
+                   fmt=".2f")
+
+# Add title and adjust layout
+g.fig.suptitle("Hierarchical Clustering with 3 Clusters",
+               fontsize=16, fontweight="bold", y=1.02)
+plt.show()
+
+CELL 56
+Here is the table showing the relationship between clusters in `hclust_3` and `hclust_10`.
+
+CELL 57
+cluster_compare = pd.DataFrame({
+    "hclust_3": hclust_3,
+    "hclust_10": hclust_10
+})
+
+# Generate a contingency table
+cluster_table = pd.crosstab(cluster_compare["hclust_3"], cluster_compare["hclust_10"])
+cluster_table
+
+CELL 58
+**Question 10.** Using the table above, discuss the hierarchical structure of these 10 clusters. How does this table compare to the one from question 8 for K-Means?
+
+
+CELL 59
+**Answer 10.** *Your answer here.*

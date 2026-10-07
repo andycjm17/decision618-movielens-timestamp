@@ -1,0 +1,319 @@
+{
+  "course": 4169,
+  "retrieved_date": "2026-10-07",
+  "files": [
+    {
+      "canvas_id": 1804607,
+      "name": "BlueBikeAnalysis_dist.ipynb",
+      "bytes": 211952,
+      "sha256": "b27ba5d2408f29c888479766c2be99e1df6624164ca14cbaddc90357589f5058",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804607",
+      "updated_at": "2026-09-07T14:06:42Z"
+    },
+    {
+      "canvas_id": 1801836,
+      "name": "BlueBikeData.ipynb",
+      "bytes": 603746,
+      "sha256": "5b6140ec2c09ed8fbd5dc017c776090abe5351c69abcbc57e36048e1c8c51634",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1801836",
+      "updated_at": "2026-08-28T15:57:12Z"
+    },
+    {
+      "canvas_id": 1804541,
+      "name": "Boosting_dist.ipynb",
+      "bytes": 146494,
+      "sha256": "f61f53897eb18d3a1ba2257a64f7431c847efab21f58f84be9d32dc21a25932a",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804541",
+      "updated_at": "2026-09-06T23:40:55Z"
+    },
+    {
+      "canvas_id": 1807340,
+      "name": "Clustering_solution.ipynb",
+      "bytes": 884965,
+      "sha256": "e6cec8ecfc0d591c4a3637aacb3848825adedfa21305ed49ddb05ee959fe4648",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807340",
+      "updated_at": "2026-09-13T19:22:52Z"
+    },
+    {
+      "canvas_id": 1807318,
+      "name": "ColFil_dist.ipynb",
+      "bytes": 509088,
+      "sha256": "b1ed65bc0a3faaa474a94f22bc468ed2f648a8c9140e5443c3fadc63c66eeb43",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807318",
+      "updated_at": "2026-09-13T18:51:18Z"
+    },
+    {
+      "canvas_id": 1821113,
+      "name": "ContractDesign_dist.ipynb",
+      "bytes": 389789,
+      "sha256": "b95b67bfcd1674a58e2c3a63989d31d3f83a2fbcba8740a68f22245394c83e0e",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1821113",
+      "updated_at": "2026-10-04T19:35:32Z"
+    },
+    {
+      "canvas_id": 1803390,
+      "name": "DaytimeSyllabus2026.pdf",
+      "bytes": 163736,
+      "sha256": "78be6670f09cd6fa4627b773300c78d4e37446132544561e7c460098ef8cc2eb",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1803390",
+      "updated_at": "2026-09-03T12:52:39Z"
+    },
+    {
+      "canvas_id": 1815850,
+      "name": "DeepLearning_dist.ipynb",
+      "bytes": 156807,
+      "sha256": "72a0e50c628f64aaf0d44ae9df7d77b13d3dad28e1e79ac6dc584e669e33166d",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1815850",
+      "updated_at": "2026-09-24T19:50:03Z"
+    },
+    {
+      "canvas_id": 1806716,
+      "name": "FeatEng_Reg.ipynb",
+      "bytes": 38049,
+      "sha256": "86d05b84547900136d0e66f5407ad90d77e1b467858c6007c5dc3d824df09161",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1806716",
+      "updated_at": "2026-09-11T18:49:09Z"
+    },
+    {
+      "canvas_id": 1806718,
+      "name": "FeatEng_Reg_solution.ipynb",
+      "bytes": 438848,
+      "sha256": "f528bd50b052234b4fc3e24bb8330a3ee7797dede87d8708868053875b8391ec",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1806718",
+      "updated_at": "2026-09-28T13:00:05Z"
+    },
+    {
+      "canvas_id": 1820983,
+      "name": "Guestspeaker_VCO at GM.pdf",
+      "bytes": 2906947,
+      "sha256": "dfbfa6adeec6d24b7b26e42d2de360d61e9d243fdeac010f06e1e0a7d3b3270c",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1820983",
+      "updated_at": "2026-10-05T04:53:02Z"
+    },
+    {
+      "canvas_id": 1792823,
+      "name": "Homework_1_airlinenetwork.ipynb",
+      "bytes": 20791,
+      "sha256": "32610ebf71f224cca15bcc4df1ccf45887589719034720552d3ee003ddae7959",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1792823",
+      "updated_at": "2026-08-13T17:26:40Z"
+    },
+    {
+      "canvas_id": 1821120,
+      "name": "Lec10_Opt.pdf",
+      "bytes": 1774344,
+      "sha256": "f1eb92474092f82abf4930e5ecd6cb3122fd3909b55f1395e29c137ce464ef7d",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1821120",
+      "updated_at": "2026-10-05T13:25:25Z"
+    },
+    {
+      "canvas_id": 1803384,
+      "name": "Lec1_2026.pdf",
+      "bytes": 10648732,
+      "sha256": "03b82dae97bd097fcd77a4dcf74008f959692d9572f71bbdda19c0e5962e9bcf",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1803384",
+      "updated_at": "2026-09-03T01:14:41Z"
+    },
+    {
+      "canvas_id": 1804737,
+      "name": "Lec2_fall2026.pdf",
+      "bytes": 9357566,
+      "sha256": "92575d4cd1b9d938ee8e68aa6b46985e9fdf173edacac7be3f2d19ec380baae2",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804737",
+      "updated_at": "2026-09-08T03:08:06Z"
+    },
+    {
+      "canvas_id": 1807924,
+      "name": "Lec4_CART.pdf",
+      "bytes": 4864440,
+      "sha256": "7880a5260e4c2448b35937ee5206a08502c10b229cae3d630c63c00179e7f996",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807924",
+      "updated_at": "2026-09-14T12:54:38Z"
+    },
+    {
+      "canvas_id": 1804401,
+      "name": "LogisticReg_dist.ipynb",
+      "bytes": 374855,
+      "sha256": "0af901a69defb0c28f2d5d1f4e3004d10e046149aa03c7d85c254527a33adf55",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804401",
+      "updated_at": "2026-09-05T13:18:25Z"
+    },
+    {
+      "canvas_id": 1804408,
+      "name": "MedicalClaim_dist.ipynb",
+      "bytes": 636223,
+      "sha256": "2ef6f2180caf27ee79417bdbb4214616eef8df45ab6f9e174ba2d4c8db53c979",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804408",
+      "updated_at": "2026-09-05T13:56:32Z"
+    },
+    {
+      "canvas_id": 1807117,
+      "name": "NYCTaxi_dist.ipynb",
+      "bytes": 2055139,
+      "sha256": "ddcea3cfd2298f40d243e4986115857eb7a848fd1f5c3fdcbe043153e6599ac3",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807117",
+      "updated_at": "2026-09-13T18:49:48Z"
+    },
+    {
+      "canvas_id": 1804410,
+      "name": "Parole_dist.ipynb",
+      "bytes": 1905822,
+      "sha256": "3734fca09ea2e1547bf3327e991ae3076bc360093045611060684df978d79eaa",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804410",
+      "updated_at": "2026-09-05T13:56:40Z"
+    },
+    {
+      "canvas_id": 1804473,
+      "name": "RandomForest_dist.ipynb",
+      "bytes": 1235708,
+      "sha256": "ee3320c14a819852b79c5f1b638b048ee1b957988d8b9aa83370229b0d35136c",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1804473",
+      "updated_at": "2026-09-06T13:11:03Z"
+    },
+    {
+      "canvas_id": 1802343,
+      "name": "RegressionAssignment.ipynb",
+      "bytes": 46646,
+      "sha256": "876bebc77cfb872e2b00d1d7808b417529b2a36776be6ab7b8e965719ed161da",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1802343",
+      "updated_at": "2026-08-31T19:37:24Z"
+    },
+    {
+      "canvas_id": 1802347,
+      "name": "Regression_solutions.ipynb",
+      "bytes": 242401,
+      "sha256": "d346d8f1f019a36f6262900f45aeec1e8392fcf04a93b6316911544654a48b3e",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1802347",
+      "updated_at": "2026-09-14T04:00:05Z"
+    },
+    {
+      "canvas_id": 1801842,
+      "name": "SolarPower_Python.ipynb",
+      "bytes": 1476472,
+      "sha256": "e3671ac3c833adcd1f7e6932248b4a5b6a09f171e4af0d1d663c5a748ff519a0",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1801842",
+      "updated_at": "2026-08-28T15:58:07Z"
+    },
+    {
+      "canvas_id": 1789107,
+      "name": "TermProjectInstructions.pdf",
+      "bytes": 185745,
+      "sha256": "90d985088ed3ab1642a98644986172fa99996a12f9d6c8fdaf65aabd9b3e8b64",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1789107",
+      "updated_at": "2026-09-23T16:48:26Z"
+    },
+    {
+      "canvas_id": 1806694,
+      "name": "TreeBasedMethods.ipynb",
+      "bytes": 54113,
+      "sha256": "fb5879a22c5955d71c818e508f135a44ce780a47dc0829902fafe4e64765bb7a",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1806694",
+      "updated_at": "2026-09-11T18:34:45Z"
+    },
+    {
+      "canvas_id": 1806679,
+      "name": "TreeBasedSolution.ipynb",
+      "bytes": 1852081,
+      "sha256": "51bd947445d24549adf7333e7763e17add5daa7e05fbaa8f9afbf698f3a2706a",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1806679",
+      "updated_at": "2026-09-21T13:00:20Z"
+    },
+    {
+      "canvas_id": 1807298,
+      "name": "cluster_dist.ipynb",
+      "bytes": 621752,
+      "sha256": "477bac86c439304b164c886e8f0201121defd4d8cf5e22a67551fa919e2c98a1",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807298",
+      "updated_at": "2026-09-13T18:50:16Z"
+    },
+    {
+      "canvas_id": 1807319,
+      "name": "cv_all_1m.pkl",
+      "bytes": 158435459,
+      "sha256": "e60f656291394079a6fa39b776f92dca375f8cf4168460cfecc5ea6514f212bd",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807319",
+      "updated_at": "2026-09-13T18:51:50Z"
+    },
+    {
+      "canvas_id": 1805784,
+      "name": "lec3_logistic.pdf",
+      "bytes": 4042286,
+      "sha256": "4054eb1843f8b3034e01aa94655f2f8ce1e9ac932138d99f72e97d9565a2979d",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1805784",
+      "updated_at": "2026-09-10T12:13:00Z"
+    },
+    {
+      "canvas_id": 1809757,
+      "name": "lec5_RandomForests_Boosting.pdf",
+      "bytes": 4745423,
+      "sha256": "13e3cd8a4183f53e41e38eaceda62223f5ba0d45c8bbf57d74051a82b46f189f",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1809757",
+      "updated_at": "2026-09-17T12:44:04Z"
+    },
+    {
+      "canvas_id": 1810821,
+      "name": "lec6_FeatureEngineering_Regularization.pdf",
+      "bytes": 5588027,
+      "sha256": "8fc08251012b5ea1874f497beecff72c3748784373ddc3448a60612acdaf0da8",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1810821",
+      "updated_at": "2026-09-21T01:37:00Z"
+    },
+    {
+      "canvas_id": 1815377,
+      "name": "lec7_clusteringCF.pdf",
+      "bytes": 6098949,
+      "sha256": "636a46009cbe22bffb0ac869930edf58fca2e620f01dce25129f532a72edeeed",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1815377",
+      "updated_at": "2026-09-24T12:56:18Z"
+    },
+    {
+      "canvas_id": 1817391,
+      "name": "lec8_nn.pdf",
+      "bytes": 8732984,
+      "sha256": "c2a899e86e70e4f1e473dfa8494695af1a30337626725cd3ea4b3aee0380f077",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1817391",
+      "updated_at": "2026-09-28T12:53:28Z"
+    },
+    {
+      "canvas_id": 1807320,
+      "name": "movies.dat",
+      "bytes": 171302,
+      "sha256": "9f3e4b8c0980d55819dc9de4727f1feeb3fa57e1d3c58d5a788d1a9755a4c6c7",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807320",
+      "updated_at": "2026-09-26T20:29:09Z"
+    },
+    {
+      "canvas_id": 1807321,
+      "name": "ratings.dat",
+      "bytes": 24594131,
+      "sha256": "506d64ca44484487c11dc2d9a28de5c54948213e6b96285e298afe28d6ea4e0f",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807321",
+      "updated_at": "2026-09-26T20:29:14Z"
+    },
+    {
+      "canvas_id": 1810822,
+      "name": "regularization_dist.ipynb",
+      "bytes": 713837,
+      "sha256": "acfda6d4f992210d34b89d375de00fb2510ed6e6eb613bff3808ec23c38eb04b",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1810822",
+      "updated_at": "2026-09-18T23:48:55Z"
+    },
+    {
+      "canvas_id": 1807322,
+      "name": "users.dat",
+      "bytes": 134368,
+      "sha256": "1dc3a95300cb19f7c10e027daf29b8cdf1d908dab65b5edfb45950aa389a10a3",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807322",
+      "updated_at": "2026-09-26T20:29:19Z"
+    },
+    {
+      "canvas_id": 1807341,
+      "name": "ClusteringAssignment.ipynb",
+      "bytes": 226574,
+      "sha256": "b07380b6de1a4e89e411031937d86d941cfc16bd65cb5808530065ecd197ce9f",
+      "source": "https://fuqua.instructure.com/courses/4169/files/1807341",
+      "updated_at": "2026-09-13T19:22:19Z"
+    }
+  ],
+  "unavailable": []
+}

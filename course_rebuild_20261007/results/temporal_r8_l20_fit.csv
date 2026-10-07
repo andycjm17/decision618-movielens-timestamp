@@ -1,0 +1,2 @@
+"mode","rank","lambda","rows","warm","RMSE","MAE","OSR2","seconds","warnings","package_version","R_version"
+"temporal_grid",8,20,100024,23844,1.04336346830063,0.822523311542222,0.130743342158913,2.504,"","1.4.1","R version 4.0.2 (2020-06-22)"

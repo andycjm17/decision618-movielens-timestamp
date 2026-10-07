@@ -1,0 +1,356 @@
+CELL 0 markdown
+# Classification with Logistic Regression
+
+
+Predicting customer retention (AT&T, T-Mobile, Verizon)
+
+CELL 1 markdown
+# Import libraries and datasets
+
+CELL 2 code
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score, roc_curve
+from sklearn.metrics import confusion_matrix, auc
+import matplotlib.pyplot as plt
+np.random.seed(2025)
+
+CELL 3 code
+churn = pd.read_csv('customerchurn.csv')
+print(churn.info())
+
+
+CELL 4 code
+display(churn)
+
+CELL 5 markdown
+# Predicting Customer Churn
+
+CELL 6 markdown
+Monthly Charges vs Churn
+
+CELL 7 code
+# Creating linear regression graph on MonthlyCharges vs Churn with subset of 300 customers
+subset = churn.sample(n=300, random_state=42)
+
+# Set ggplot-like style (gray background with grid)
+sns.set_style("darkgrid")
+plt.figure(figsize=(10, 5))
+sns.regplot(
+    x="MonthlyCharges", y="Churn", data=subset,
+    ci=None,
+    scatter_kws={"s": 20, "alpha": 0.7, "color": "black"},
+    line_kws={"color": "blue", "linewidth": 2}
+)
+
+plt.title("Churn vs Monthly Charges (Sample of 300 Customers)")
+plt.show()
+
+CELL 8 markdown
+Payment Methods vs Churn
+
+CELL 9 code
+sns.set_style("darkgrid")
+
+plt.figure(figsize=(12, 6))
+ax =sns.histplot(
+    data=churn,
+    x="PaymentMethod",
+    hue="Churn",
+    multiple="stack",
+    shrink=0.8,
+    palette ={0: "#F8766D", 1: "#00BFC4"},
+    hue_order=[0, 1]
+)
+
+plt.xlabel("Payment Method")
+plt.ylabel("Count")
+plt.legend(title="Churn", labels = ["Churn", "No Churn"])
+plt.show()
+
+CELL 10 markdown
+Contract vs Churn
+
+CELL 11 code
+sns.set_style("darkgrid")
+
+plt.figure(figsize=(12, 6))
+ax =sns.histplot(
+    data=churn,
+    x="Contract",
+    hue="Churn",
+    multiple="stack",
+    shrink=0.8,
+    palette ={0: "#F8766D", 1: "#00BFC4"},
+    hue_order=[0, 1]
+)
+
+plt.xlabel("Contract")
+plt.ylabel("Count")
+plt.legend(title="Churn", labels = ["Churn", "No Churn"])
+plt.show()
+
+CELL 12 markdown
+Split data into 30% testing and 70% training
+
+CELL 13 code
+X = churn.drop("Churn", axis=1)   # all columns except Churn
+y = churn["Churn"]                # target column
+
+# Split: 70% training, 30% testing
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=2025, stratify=y
+)
+
+print("Train size:", X_train.shape[0])
+print("Test size:", X_test.shape[0])
+
+CELL 14 code
+display(churn)
+
+CELL 15 code
+display(X_train.sort_index())
+
+CELL 16 code
+display(X_test.sort_index())
+
+CELL 17 markdown
+# Customer Retention Model
+
+CELL 18 code
+# Run this code cell
+def significance_stars(p):
+    if p < 0.001:
+        return '***'
+    elif p < 0.01:
+        return '**'
+    elif p < 0.05:
+        return '*'
+    elif p < 0.1:
+        return '.'
+    else:
+        return ''
+
+def print_summary_with_stars(model):
+    """
+    Print a comprehensive summary for GLM logistic regression models with significance stars.
+    """
+    # Create coefficients table first (needed to measure width)
+    coef_data = {
+        'Coef': model.params,
+        'Std Err': model.bse,
+        'z': model.tvalues,
+        'P>|z|': model.pvalues,
+        '[0.025': model.conf_int()[0],
+        '0.975]': model.conf_int()[1]
+    }
+    coef_table = pd.DataFrame(coef_data)
+    coef_table['Signif'] = coef_table['P>|z|'].apply(significance_stars)
+
+    # Round numeric columns
+    numeric_columns = ['Coef', 'Std Err', 'z', 'P>|z|', '[0.025', '0.975]']
+    for col in numeric_columns:
+        coef_table[col] = coef_table[col].round(4)
+
+    # Figure out max width from the table and some static text
+    table_str = coef_table.to_string()
+    max_width = max(len(line) for line in table_str.split("\n"))
+    # Also compare with titles/labels
+    other_texts = [
+        "Logistic Regression Results",
+        "Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1"
+    ]
+    max_width = max(max_width, *(len(t) for t in other_texts))
+    bar_len = max_width + 5  # add buffer
+
+    def line(char="="):
+        return char * bar_len
+
+    # Print header
+    print(line("="))
+    print("Logistic Regression Results")
+    print(line("="))
+
+    # print(f"Model Family: {model.family.__class__.__name__}")
+    # print(f"Link Function: {model.family.link.__class__.__name__}")
+    # print(f"Method: Maximum Likelihood Estimation (MLE)")
+    print(f"No. Observations: {int(model.nobs)}")
+    print(f"Df Model: {int(model.df_model)}")
+    print(f"Df Residuals: {int(model.df_resid)}")
+
+    print(line("="))
+    print("Coefficients:")
+    print(line("-"))
+    print(table_str)
+    print(line("="))
+    print("Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1")
+    print(line("="))
+
+CELL 19 code
+# Recreate full train/test dataframes
+churn_train = pd.concat([X_train, y_train], axis=1)
+churn_test = pd.concat([X_test, y_test], axis=1)
+display(churn_train.head())
+
+# Build initial model with all variables
+feature_names = X_train.columns.tolist()
+model = smf.glm(formula = f"Churn ~ {' + '.join(feature_names)}", data = churn_train, family = sm.families.Binomial()).fit()
+# model = smf.logit(formula = "Churn ~ MonthlyCharges + SeniorCitizen + PaymentMethod + InternetService + tenure + Contract", data = churn_train).fit()
+model.summary()
+
+CELL 20 code
+print_summary_with_stars(model)
+
+CELL 21 markdown
+$$\alpha = \beta_0 + \beta_1 \cdot x_{i,1} + \beta_2 \cdot x_{i,2} + \cdots + \beta_k \cdot x_{i,k}\\   
+= -0.7589 + 0.0045 \cdot 94.51 + 0.3029 \cdot 1.0 + \cdots + -1.5812 \cdot 1.0 = -2.399$$
+
+
+CELL 22 markdown
+Since `MonthlyCharges` is not significant (no significance stars) let us remove it and create another model without it
+
+CELL 23 code
+feature_names = [col for col in X_train.columns.tolist() if col != "MonthlyCharges"]
+formula = f"Churn ~ {' + '.join(feature_names)}"
+
+model2 = smf.glm(formula=formula, data=churn_train, family=sm.families.Binomial()).fit()
+
+print_summary_with_stars(model2)
+
+CELL 24 markdown
+Since only Electronic Check is important in the `PaymentMethod` variable, let us create a new variable called `ElectronicCheck` which is 1 if True and 0 otherwise.
+
+CELL 25 code
+churn_train_ec = churn_train.copy()
+churn_train_ec["ElectronicCheck"] = (churn_train_ec["PaymentMethod"] == "Electronic check").astype(int)
+churn_train_ec = churn_train_ec.drop(columns=["PaymentMethod"])
+print(churn_train_ec.head(10))
+
+CELL 26 code
+formula = f"Churn ~ SeniorCitizen + InternetService + tenure + ElectronicCheck + Contract"
+model3 = smf.glm(formula=formula, data=churn_train_ec, family=sm.families.Binomial()).fit()
+print_summary_with_stars(model3)
+
+CELL 27 markdown
+# Confusion Matrix
+
+CELL 28 code
+churn_test_ec = churn_test.copy()
+churn_test_ec["ElectronicCheck"] = (churn_test_ec["PaymentMethod"] == "Electronic check").astype(int)
+pred = model3.predict(churn_test_ec)
+churn_test_ec['Pr(Yi=1)'] = pred
+print(pred)
+
+CELL 29 code
+y_pred = (pred>= 0.33).astype(int)
+churn_test_ec['ChurnRisk'] = y_pred
+
+# Make a copy so we don’t overwrite original
+churn_test_display = churn_test_ec.copy()
+
+# Reorder columns: put 'Churn' and 'Churn-Risk' at the front
+cols = ["Churn", "SeniorCitizen"] + [c for c in churn_test_display.columns if c not in ["Churn", "SeniorCitizen"]]
+churn_test_display = churn_test_display[cols]
+
+display(churn_test_display.sort_index())
+
+
+CELL 30 code
+conf_matrix = confusion_matrix(churn_test_ec['Churn'], churn_test_ec['ChurnRisk'])
+conf_matrix
+
+CELL 31 code
+plt.figure(figsize=(6,4))
+sns.heatmap(conf_matrix,
+            annot=True,
+            fmt="d",
+            cbar = False,
+            cmap = "Blues",
+            xticklabels=["Predicted No Churn", "Predicted Churn"],
+            yticklabels=["Actual No Churn", "Actual Churn"])
+plt.title("Confusion Matrix")
+plt.ylabel("Actual")
+plt.xlabel("Predicted")
+plt.show()
+
+CELL 32 markdown
+$$\text{Accuracy} = \frac{\text{Number correct}}{\text{Total number}} = \frac{1217 + 414}{1217 + 332 + 147 + 414} = 0.734$$
+
+CELL 33 code
+tn, fp, fn, tp = 1217, 332, 147, 414
+
+# Compute TPR and FPR
+TPR = tp / (tp + fn)
+FPR = fp / (fp + tn)
+
+print(f"True Positive Rate (TPR): {TPR:.3f}")
+print(f"False Positive Rate (FPR): {FPR:.3f}")
+
+CELL 34 code
+# Table of different TPR, FPR given cutoff value
+fpr, tpr, thresholds = roc_curve(churn_test_ec['Churn'], pred)
+roc_table = pd.DataFrame({
+    "Cutoff Probability": thresholds,
+    "TPR": tpr,
+    "FPR": fpr,
+})
+roc_table = roc_table.sort_values(by="Cutoff Probability", ascending=False).reset_index(drop=True)
+display(roc_table)
+
+CELL 35 markdown
+# ROC Curve and AUC
+
+CELL 36 code
+fpr_roc, tpr_roc, thresholds = roc_curve(churn_test_ec['Churn'], pred)
+
+sns.set_style("whitegrid")
+plt.figure(figsize=(6,6))
+plt.plot(fpr_roc, tpr_roc, color='black', lw=2)
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate (FPR)')
+plt.ylabel('True Positive Rate (TPR)')
+plt.grid(False)
+plt.show()
+
+CELL 37 code
+roc_auc = auc(fpr_roc, tpr_roc)
+plt.figure(figsize=(11,5))
+plt.plot(fpr_roc, tpr_roc, color='black', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+plt.plot([0, 1], [0, 1], color='blue', lw=1, linestyle='--', label='Random Classifier')
+plt.plot([0, 0, 1], [0, 1, 1], color="red", lw=2, linestyle="--", label="Perfect Prediction")
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate (FPR)', fontsize = 14)
+plt.ylabel('True Positive Rate (TPR)', fontsize = 14)
+plt.title('ROC Curve for Customer Churn Prediction')
+plt.legend(loc="lower right")
+plt.grid(True)
+plt.show()
+
+CELL 38 code
+cutoffs = [0.0, 0.10, 0.33, 0.50, 1.0]
+
+rows = []
+for c in cutoffs:
+    y_pred_cutoff = (pred >= c).astype(int)
+    tn, fp, fn, tp = confusion_matrix(churn_test_ec['Churn'], y_pred_cutoff).ravel()
+    tpr = tp / (tp + fn) if (tp + fn) else np.nan  # sensitivity/recall
+    fpr = fp / (fp + tn) if (fp + tn) else np.nan
+
+    rows.append({
+        "Cutoff": c,
+        "TPR": tpr,
+        "FPR": fpr,
+        "TN": tn,
+        "FP": fp,
+        "FN": fn,
+        "TP": tp
+    })
+
+result = pd.DataFrame(rows).sort_values("Cutoff", ascending=False).reset_index(drop=True)
+display(result.style.format({"Cutoff": "{:.2f}", "TPR": "{:.3f}", "FPR": "{:.3f}"}))

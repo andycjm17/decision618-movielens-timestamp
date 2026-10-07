@@ -1,0 +1,8 @@
+                        model   rows factor_dot_max_error saved_max_error
+teacher_rank8   teacher_rank8  10003         2.664535e-15    7.105427e-15
+fresh_selected fresh_selected  10003         2.664535e-15    7.105427e-15
+temporal_final temporal_final 100021         1.776357e-15    7.105427e-15
+               cold_rows cold_max_error
+teacher_rank8          0   0.000000e+00
+fresh_selected         0   0.000000e+00
+temporal_final      4298   5.329071e-15

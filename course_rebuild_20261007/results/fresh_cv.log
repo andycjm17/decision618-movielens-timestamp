@@ -1,0 +1,42 @@
+Completed fresh CV fold 1 of 20
+Completed fresh CV fold 2 of 20
+Completed fresh CV fold 3 of 20
+Completed fresh CV fold 4 of 20
+Completed fresh CV fold 5 of 20
+Completed fresh CV fold 6 of 20
+Completed fresh CV fold 7 of 20
+Completed fresh CV fold 8 of 20
+Completed fresh CV fold 9 of 20
+Completed fresh CV fold 10 of 20
+Completed fresh CV fold 11 of 20
+Completed fresh CV fold 12 of 20
+Completed fresh CV fold 13 of 20
+Completed fresh CV fold 14 of 20
+Completed fresh CV fold 15 of 20
+Completed fresh CV fold 16 of 20
+Completed fresh CV fold 17 of 20
+Completed fresh CV fold 18 of 20
+Completed fresh CV fold 19 of 20
+Completed fresh CV fold 20 of 20
+Fresh 400-fit CV selected rank 9 
+   rank      RMSE       MAE      OSR2
+1     1 0.9856992 0.7690793 0.2213279
+2     2 0.9618812 0.7491897 0.2585043
+3     3 0.9443101 0.7341278 0.2853473
+4     4 0.9337623 0.7244937 0.3012231
+5     5 0.9281196 0.7189934 0.3096430
+6     6 0.9235422 0.7143250 0.3164359
+7     7 0.9204958 0.7114057 0.3209379
+8     8 0.9189560 0.7093320 0.3232080
+9     9 0.9182742 0.7080545 0.3242119
+10   10 0.9199104 0.7086188 0.3218015
+11   11 0.9206458 0.7084864 0.3207167
+12   12 0.9221231 0.7091638 0.3185349
+13   13 0.9245339 0.7104060 0.3149670
+14   14 0.9266370 0.7113356 0.3118468
+15   15 0.9294939 0.7130097 0.3075971
+16   16 0.9318156 0.7142949 0.3041338
+17   17 0.9346415 0.7159475 0.2999067
+18   18 0.9365941 0.7168056 0.2969785
+19   19 0.9392633 0.7183362 0.2929656
+20   20 0.9428246 0.7207025 0.2875939

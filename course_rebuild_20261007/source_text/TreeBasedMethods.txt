@@ -1,0 +1,946 @@
+CELL 0 markdown
+# CART, Random Forest, and Boosting
+
+**Your name:  ...**
+
+**Date: ...**
+
+## This homework assignment contains two problems.
+
+* The first problem is CART for Classification. We continue using the dataset from the Framingham heart study, this time training various CART models to predict which patients will develop CHD.
+
+* The second problem is Random Forest and Boosting for Ames housing prediction problem with a larger dataset with more features.
+
+CELL 1 markdown
+## Problem 1
+
+In this problem, you will construct and evaluate a CART classification tree to predict CHD using the same dataset. Recall that in this dataset, each row corresponds to a patient in the Framingham Heart Study. The dependent variable of interest is `TenYearCHD`, which is 1 if the patient got CHD in 10 years, and 0 otherwise. The independent variables consist of demographic, medical and lifestyle characteristics of the individual, including age, education, cigarettes per day, blood pressure, bmi...etc.
+
+CELL 2 markdown
+### Setup & Imports
+
+First, we'll import all the necessary Python libraries.
+
+CELL 3 code
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import statsmodels.api as sm
+from sklearn.metrics import confusion_matrix, roc_curve, auc, accuracy_score, make_scorer
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Set the default theme for seaborn plots
+sns.set_theme()
+
+CELL 4 markdown
+### Reading in the Data
+
+We read in the data. Here, `TenYearCHD` is the dependent variable (target). We'll split the data 70/30, using `stratify` to maintain the class distribution.
+
+CELL 5 code
+framingham = pd.read_csv('framingham.csv')
+
+# Split the data into features (X) and target (y) first
+X = framingham.drop(columns='TenYearCHD')
+y = framingham['TenYearCHD']
+
+# We use random_state=2025 and test_size=0.3
+X_train_raw, X_test_raw, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=2025, stratify=y
+)
+
+# `sklearn`'s DecisionTreeClassifier requires categorical features to be one-hot encoded.
+
+# Identify categorical columns (object or category)
+cat_cols = X_train_raw.select_dtypes(include=['object', 'category']).columns.tolist()
+
+# One-hot encode
+X_train = pd.get_dummies(X_train_raw, columns=cat_cols, drop_first=True)
+X_test = pd.get_dummies(X_test_raw, columns=cat_cols, drop_first=True)
+
+# Align columns - this ensures test set has same columns as train set
+X_train, X_test = X_train.align(X_test, join='left', axis=1, fill_value=0)
+
+X_train.sort_index().head()
+
+CELL 6 markdown
+### (a): CART with No Loss Matrix
+
+Let's start by training a simple CART model with a `ccp_alpha` value of $0.0035$ and not specifying a loss matrix. If we do not specify a loss matrix, CART will treat false positives and false negatives equally. Note that throughout this problem, we will say that predicting 1 is positive and 0 is negative.
+
+CELL 7 code
+cart_equal_loss = # YOUR CODE HERE
+cart_equal_loss.fit(X_train, y_train)
+
+# We use plot_tree from sklearn
+plt.figure(figsize=(16, 10))
+plot_tree(
+    cart_equal_loss,
+    feature_names=list(X_train.columns),
+    class_names=["No CHD", "CHD"],
+    impurity=False,
+    filled=True,
+    rounded=True,
+    fontsize=20
+)
+plt.title("CART with ccp_alpha=0.0035 (Equal Loss)")
+plt.show()
+
+CELL 8 markdown
+**Question 1.** Provide an interpretation of the tree above. Under what conditions does the tree predict that a patient will develop CHD in 10 years?
+
+**Answer 1.** YOUR ANSWER HERE.
+
+CELL 9 markdown
+Now, let's visualize the tree in a bit more detail. We'll use `proportion=True` to show the percentage of samples in each class at the node.
+
+CELL 10 code
+plt.figure(figsize=(20, 12))
+plot_tree(
+    cart_equal_loss,
+    feature_names=list(X_train.columns),
+    class_names=["No CHD", "CHD"],
+    impurity=False,
+    filled=True,
+    rounded=True,
+    proportion=True,  # Shows proportions instead of counts
+    fontsize = 20
+)
+plt.title("Detailed CART (ccp_alpha=0.0035)")
+plt.show()
+
+CELL 11 markdown
+In the plot above:
+* `samples = ...` shows the percentage of the *total* training data in that node.
+* `value = [X, Y]` shows the *proportion* of training samples in that node belonging to "No CHD" (X) and "CHD" (Y).
+* `class = ...` shows the majority class prediction for that node.
+
+**Example.** For example consider the leftmost leaf node in the plot (`age` $\leq 48.5$). This leaf node contains $48.9 \%$ of all patients (`samples` = $48.9\%$) and the `value` array `[0.929, 0.071]` tells us that $7\%$ of patients in this node develop CHD.
+
+Have a look at the recitation for a more detailed description of the values shown on `sklearn`'s `DecisionTreeClassifier` tree!
+
+CELL 12 markdown
+**Question 2**. Which leaf node above has the highest proportion of patients with CHD? What percentage of patients in the training dataset does this model predict will develop CHD?
+
+**Answer 2.** YOUR ANSWER HERE.
+
+CELL 13 markdown
+### (b) Adding in a Loss Matrix
+
+Incorrectly classifying a person who gets CHD (False Negatives, class 1) is more costly. We'll set the cost of FNs as 5 and FPs as 1.
+
+In `sklearn`, we do this using the `class_weight` parameter: `class_weight={0: 1, 1: 5}`.
+
+CELL 14 code
+loss_weights = {0: 1, 1: 5}
+
+cart_with_loss = # YOUR CODE Here
+cart_with_loss.fit(X_train, y_train)
+
+plt.figure(figsize=(12, 8))
+plot_tree(
+    cart_with_loss,
+    feature_names=list(X_train.columns),
+    class_names=["No CHD", "CHD"],
+    impurity=False,
+    filled=True,
+    rounded=True,
+    fontsize=16
+)
+
+plt.title("CART with ccp_alpha=0.02 and 5:1 Loss Matrix")
+plt.show()
+
+plt.figure(figsize=(12, 8))
+plot_tree(
+    cart_with_loss,
+    feature_names=list(X_train.columns),
+    class_names=["No CHD", "CHD"],
+    impurity=False,
+    filled=True,
+    rounded=True,
+    fontsize=16,
+    proportion=True
+)
+plt.title("CART with ccp_alpha=0.02 and 5:1 Loss Matrix, with proportions")
+plt.show()
+
+CELL 15 markdown
+**Question 3.** What percent of all patients in the training set does `cart_with_loss` predict will develop CHD? Between `cart_with_loss` and `cart_equal_loss`, which one do you expect will have a higher false positive rate on the testing dataset? Why?
+
+**Answer 3.** YOUR ANSWER HERE.
+
+CELL 16 markdown
+### (c) Cross Validation to Optimize `ccp_alpha`
+
+We continue to use the 5:1 cost. We'll run a 10-fold cross-validation to find the best `ccp_alpha`.
+
+We will use `DecisionTreeClassifier(class_weight=loss_weights)` as our base estimator and optimize for 'Accuracy' in `GridSearchCV`.
+
+To find a `ccp_alpha` that performs well out-of-sample, let's run 10-fold cross validation on `ccp_alpha` candidate values ranging from $0.001$ to $0.06$ in increments of $0.001$ (that is, `np.arange(0.001, 0.0601, 0.001)`). Then, let's plot the average loss across the 10 folds for each of our ccp_alpha candidate values.
+
+CELL 17 code
+LossMatrix = np.array([[0, 1],
+                       [5, 0]])
+
+def calculate_loss(cm, loss_matrix):
+    total_loss = float((cm * loss_matrix).sum())
+    n = int(cm.sum())
+    return total_loss / n
+
+def raw_avg_loss(y_true, y_pred, loss_matrix=LossMatrix):
+    cm = confusion_matrix(y_true, y_pred)
+    total_loss = calculate_loss(cm, loss_matrix)
+    return total_loss
+
+def custom_avg_loss_scorer():
+    """Returns a make_scorer object for GridSearchCV using the raw_avg_loss function."""
+    return make_scorer(lambda y_true, y_pred: raw_avg_loss(y_true, y_pred), greater_is_better=False)
+
+loss_scorer = custom_avg_loss_scorer()
+
+CELL 18 code
+loss_weights = {0: 1, 1: 5}
+
+# Using your specified range for ccp_alpha
+param_grid = # YOUR CODE HERE
+
+# Base estimator with class_weight
+dt_cv = # YOUR CODE HERE
+
+grid = GridSearchCV(
+    dt_cv,
+    param_grid,
+    cv= # YOUR CODE HERE
+    scoring= # YOUR CODE HERE
+    n_jobs=-1
+)
+grid.fit(X_train, y_train)
+# HINT: Use the custom 'loss_scorer'
+
+# 4. Extract results
+# mean_test_score is the average *negative* loss
+neg_loss_values = grid.cv_results_['mean_test_score']
+avg_loss_values = -neg_loss_values # Negate it back to get positive loss
+cp_values = grid.cv_results_['param_ccp_alpha'].data.astype(float)
+
+# 5. Store results
+cv_results = pd.DataFrame({
+    'ccp_alpha': cp_values,
+    'AvgLoss': avg_loss_values
+})
+
+# 6. Plot the results
+plt.figure(figsize=(10, 6))
+plt.plot(cv_results['ccp_alpha'], cv_results['AvgLoss'], linewidth=2, marker='o')
+plt.xlabel("ccp_alpha", fontsize=20)
+plt.ylabel("Average Loss", fontsize=20)
+plt.title("Cross-Validation Loss", fontsize=20)
+plt.show()
+
+# Print the cp values
+print(cv_results['ccp_alpha'])
+
+CELL 19 markdown
+**Question 4.** Comment on the graph above. Is this what you expected to see? What is the best value of `ccp_alpha`? Is it guaranteed that this value of `ccp_alpha` will achieve the best accuracy on the testing data?
+
+**Answer 4.** YOUR ANSWER HERE.
+
+CELL 20 markdown
+**Question 5.** What would be the pros and cons of running 100-fold cross validation instead of 10-fold cross validation? Explain your reasoning.
+
+**Answer 5.** YOUR ANSWER HERE.
+
+CELL 21 markdown
+### (d) Best Tree and Performance Comparison
+
+Let's visualize the best tree. We'll take the optimal `ccp_alpha` from our `GridSearchCV` and train a new model.
+
+CELL 22 code
+# We get the best_cp from the grid search
+
+best_cp = # YOUR CODE HERE
+
+print(f"Best ccp_alpha found: {best_cp}")
+
+best_tree = # YOUR CODE HERE # HINT: Remember to use previous class weights
+best_tree.fit(X_train, y_train)
+
+plt.figure(figsize=(18, 10))
+plot_tree(
+    best_tree,
+    feature_names=list(X_train.columns),
+    class_names=["No CHD", "CHD"],
+    impurity=False,
+    filled=True,
+    rounded=True,
+    proportion=True,
+    fontsize=16
+)
+plt.title(f"Best CV Tree (ccp_alpha={best_cp:.4f})")
+plt.show()
+
+CELL 23 markdown
+**Probabilities with CART.** CART can also provide probabilities. For all patients in a leaf node, CART predicts a probability equal to the *proportion of patients* in that leaf node with CHD.
+
+CELL 24 code
+# .predict_proba() returns probabilities for [class 0, class 1]
+# We select the probabilities for class 1 with [:, 1]
+cart_probs = best_tree.predict_proba(X_test)[:, 1]
+
+print("CART Probabilities (first 5):")
+print(cart_probs[:5])
+
+CELL 25 markdown
+Let's compare this to a Logistic Regression's probabilities.
+
+CELL 26 code
+# YOUR CODE HERER: logistic regression
+
+# You can optionally print the full summary table from statsmodels for more details
+# print(lr_results.summary())
+
+CELL 27 code
+# Calculate ROC data
+fpr_lr, tpr_lr, _ = roc_curve(y_test, lr_probs)
+auc_lr = auc(fpr_lr, tpr_lr)
+
+fpr_cart, tpr_cart, _ = roc_curve(y_test, cart_probs)
+auc_cart = auc(fpr_cart, tpr_cart)
+
+# Plot ROC
+plt.figure(figsize=(10, 7))
+
+# Logistic Regression Line
+sns.lineplot(x=fpr_lr, y=tpr_lr,
+             label=f"Logistic Regression AUC = {auc_lr:.3f}",
+             color='blue', linewidth=2)
+
+# CART Line
+sns.lineplot(x=fpr_cart, y=tpr_cart,
+             label=f"CART AUC = {auc_cart:.3f}",
+             color='green', linewidth=2)
+
+# Baseline Line
+sns.lineplot(x=[0, 1], y=[0, 1],
+             label="Baseline (AUC = 0.5)",
+             color='red', linestyle="--", linewidth=2)
+
+plt.xlabel("False Positive Rate", fontsize=16)
+plt.ylabel("True Positive Rate", fontsize=16)
+plt.title("ROC Curves for Models", fontsize=20)
+plt.legend(fontsize=12)
+plt.show()
+
+CELL 28 markdown
+**Question 6.** : Comment on ROC curves and the AUC values above. Overall, which model (logistic regression or CART) would you think is more useful to a doctor or medical practitioner?
+
+**Answer 6.** YOUR ANSWER HERE.
+
+CELL 29 markdown
+## Problem 2.
+
+We revisit the Ames housing prediction problem with a larger dataset with more features. We construct random forest and boosted tree models to predict SalePrice while performing cross validation to optimize the model parameters.
+
+CELL 30 code
+# Import all necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+
+from sklearn.model_selection import train_test_split, GridSearchCV, KFold
+from sklearn.tree import DecisionTreeRegressor, plot_tree
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.metrics import r2_score
+
+# Set consistent styling for plots
+sns.set_theme(style="whitegrid")
+
+CELL 31 markdown
+In this problem, we will look at a more comprehensive version of the
+Ames, Iowa Housing Prices dataset. Recall that the dataset describes
+sales of 2,830 properties in the town of Ames, Iowa, from 2006 to 2010.
+In Homework 2, we modeled housing prices using 11 independent variables.
+The expanded dataset in this assignment contains 23 variables, some of
+which are numerical and others are categorical.
+
+The variables included in the amended dataset are described in **Table
+2**. These variables describe the nature of the home in both
+quantitative terms (square feet, lot size, number of rooms, etc.) and
+qualitative terms (building materials used, garage type, home style,
+etc.).
+
+#### Table 1: Ames dataset variables
+
+| Variable     | Description                                            |
+|--------------|--------------------------------------------------------|
+| LotArea      | Lot size in square feet                                |
+| BldgType     | Type of dwelling                                       |
+| HouseStyle   | Style of dwelling                                      |
+| YearBuilt    | Original construction date                             |
+| YearRemodAdd | Remodel date                                       |
+| RoofStyle    | Type of roof                                           |
+| BsmtFinSF1   | Type 1 finished square feet                            |
+| BsmtUnfSF    | Unfinished square feet of basement area                |
+| Electrical   | Electrical system                                      |
+| GrLivArea    | Above ground living area square feet                   |
+| FullBath     | Full bathrooms above grade                           |
+| HalfBath     | Half baths above grade                                 |
+| BedroomAbvGr | Number of bedrooms above basement level                |
+| TotRmsAbvGrd | Total rooms above grade (excluding bathrooms)          |
+| Fireplaces   | Number of fireplaces                                   |
+| GarageYrBlt  | Year garage was built                                  |
+| GarageCars   | Size of garage in car capacity                       |
+| GarageArea   | Size of garage in square feet                          |
+| WoodDeckSF   | Wood deck area in square feet                          |
+| OpenPorchSF  | Open porch area in square feet                         |
+| PoolArea     | Pool area in square feet                               |
+| YrSold       | Year Sold                                              |
+| SalePrice    | The property’s sale price in dollars (target variable) |
+
+CELL 32 markdown
+Let's load our datasets, perform the usual train/test split, and define
+the functions `calculate_osr2` for use later.
+
+CELL 33 code
+# Define a seed for reproducibility
+R_STATE = 144
+
+# Load the dataset
+ames = pd.read_csv('AmesExtended.csv')
+
+# --- Preprocessing ---
+# Models require all data to be numeric. We'll one-hot encode categorical variables.
+# We will use get_dummies, which handles 'object' or 'category' dtypes.
+# drop_first=True helps reduce multicollinearity.
+ames_processed = pd.get_dummies(ames, drop_first=True)
+
+# Separate features (X) and target (y)
+X = ames_processed.drop('SalePrice', axis=1)
+y = ames_processed['SalePrice']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=R_STATE)
+
+# Define the custom OSR2 function
+def calculate_osr2(y_true, y_pred, y_train):
+    """
+    Calculates the Out-of-Sample R-squared (OSR2)
+    using the training set's mean as the baseline.
+    """
+    sse = np.sum((y_true - y_pred)**2)
+    sst_baseline = np.sum((y_true - y_train.mean())**2)
+
+    # Handle potential division by zero
+    if sst_baseline == 0:
+        return np.nan
+
+    return 1 - (sse / sst_baseline)
+
+# Display the first few rows of the training data
+print(X_train.head())
+print(y_train.head())
+
+CELL 34 markdown
+In this problem, we will build a large variety of models. We'll use the
+dataframe `results` to keep track of our model's performance.
+
+CELL 35 code
+# Initialize the results DataFrame
+results = pd.DataFrame(
+    data={
+        'model_name': ['Linear Regression', 'CART with CV', 'Random Forest (Default)', 'Random Forest with CV', 'Boosting (Default)', 'Boosting with CV'],
+        'r2': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+        'osr2': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]
+    }
+)
+
+results
+
+CELL 36 markdown
+## (a) Linear Regression
+
+Let's start with linear regression. Build a simple linear regression
+model and print out a summary of the model.
+
+CELL 37 code
+# Define helper functions for printing stars
+def significance_stars(p):
+    """Returns the corresponding significance star string based on the p-value."""
+    if p < 0.001:
+        return '***'
+    elif p < 0.01:
+        return '**'
+    elif p < 0.05:
+        return '*'
+    elif p < 0.1:
+        return '.'
+    else:
+        return ''
+
+def print_summary_with_stars(model):
+    """
+    Prints a customized summary table from statsmodels OLS results
+    including a column for significance stars.
+    """
+    # Use summary2 to get a DataFrame representation of the results table
+    summary_table = model.summary2().tables[1]
+
+    # Create the significance column
+    summary_table['Signif'] = summary_table['P>|t|'].apply(significance_stars)
+
+    # Round all numeric columns to 4 decimal places for clean printing
+    rounded_table = summary_table.round(4)
+
+    # Get the string representation of the table with header
+    table_string = rounded_table.to_string(header=True)
+
+    # Split the string into lines for formatting
+    lines = table_string.split('\n')
+
+    # Print the formatted table
+    print("=" * len(lines[0]))
+    print(lines[0])
+    print("-" * len(lines[0]))
+    print('\n'.join(lines[1:]))
+    print("=" * len(lines[0]))
+    print(f"R-squared: {model.rsquared:.4f}")
+
+CELL 38 code
+# --- (a) Linear Regression ---
+
+# We use statsmodels to get a detailed summary
+# We must add a constant (intercept) to the X data for statsmodels
+X_train_sm = sm.add_constant(X_train)
+
+# Fit the OLS (Ordinary Least Squares) model
+lin_reg = # YOUR CODE HERE
+
+# Print the summary
+print_summary_with_stars(lin_reg)
+
+# Prepare the test data (add constant) for later prediction
+# We align the columns to ensure they match the training data,
+# which handles any potential missing dummy variables (though unlikely here)
+X_test_sm = sm.add_constant(X_test, has_constant='add')
+X_test_sm = X_test_sm.reindex(columns=X_train_sm.columns, fill_value=0)
+
+CELL 39 markdown
+Use the code below to calculate the In-Sample R2 and out-of-sample R2,
+then append them onto `results`.
+
+CELL 40 code
+# Make predictions using the statsmodels model
+y_pred_train_lr = lin_reg.predict(X_train_sm)
+y_pred_test_lr = lin_reg.predict(X_test_sm)
+
+# Calculate R2 and OSR2
+# We can get the in-sample R2 directly from the model's attributes
+r2_lr = lin_reg.rsquared
+osr2_lr = calculate_osr2(y_test, y_pred_test_lr, y_train)
+
+# Add to results
+results.loc[0, 'r2'] = r2_lr
+results.loc[0, 'osr2'] = osr2_lr
+
+results
+
+CELL 41 markdown
+------------------------------------------------------------------------
+
+**Question 1.** : According to the linear regression model, what are
+some variables that affect a property's sale price?
+
+**Answer 1.**: YOUR ANSWER HERE
+
+CELL 42 markdown
+## (b) CART
+
+Use 10-fold cross validation to find a CART model that has the optimal `ccp_alpha` value. Test out `ccp_alpha` values from 0 to $10^8$ in increments of $10^7$, i.e. `np.arange(0, 1e8, 1e7)`.
+
+CELL 43 code
+# Define the parameter grid
+# np.arange is exclusive of the stop value
+param_grid_cart = {
+    'ccp_alpha': np.arange(0, 1e8, 1e7)
+}
+
+# Initialize the GridSearchCV object
+cart_cv = GridSearchCV(
+    estimator = # YOUR CODE HERE
+    param_grid = # YOUR CODE HERE
+    cv = 10,
+    scoring = 'r2'
+)
+
+# Fit the model
+cart_cv.fit(X_train, y_train)
+
+# Display results
+cart_cv_results = pd.DataFrame(cart_cv.cv_results_)
+print(cart_cv_results[['param_ccp_alpha', 'mean_test_score', 'std_test_score']])
+
+# Display the best parameter
+print("\nBest ccp_alpha:", cart_cv.best_params_)
+
+CELL 44 markdown
+Using the optimal cross-validated `ccp_alpha` value, train a CART model called
+`cart_best`. Let's add its performance to our dataframe `results`.
+
+CELL 45 code
+# Get the best model from the grid search
+# GridSearchCV automatically re-fits the best model on the entire training set
+cart_best = cart_cv.best_estimator_
+
+# Make predictions
+y_pred_train_cart = cart_best.predict(X_train)
+y_pred_test_cart = cart_best.predict(X_test)
+
+# Calculate R2 and OSR2
+r2_cart = r2_score(y_train, y_pred_train_cart)
+osr2_cart = calculate_osr2(y_test, y_pred_test_cart, y_train)
+
+# Add to results
+results.loc[1, 'r2'] = r2_cart
+results.loc[1, 'osr2'] = osr2_cart
+
+results
+
+CELL 46 code
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
+# 1. Get the best model from the grid search
+best_tree = cart_cv.best_estimator_
+
+# 2. Set up a large figure (trees can be wide)
+plt.figure(figsize=(25, 12))
+
+# 3. Plot the tree
+plot_tree(
+    best_tree,
+    feature_names=list(X_train.columns),  # Use this if X_train is a DataFrame
+    filled=True,                    # Colors nodes based on predicted value
+    rounded=True,                   # Rounds the corners of the nodes
+    fontsize=10
+)
+
+plt.title(f"Best Decision Tree (ccp_alpha={cart_cv.best_params_['ccp_alpha']})")
+plt.show()
+
+CELL 47 markdown
+## (c) Random Forest
+
+Now, let's try a random forest model.
+
+### Default Values
+
+First, let's train a model with its default parameters and no cross
+validation for parameter tuning.
+
+CELL 48 code
+# Initialize and fit the default Random Forest model
+rf_model = # YOUR CODE HERE
+rf_model.fit(X_train, y_train)
+
+# Make predictions
+y_pred_train_rf = rf_model.predict(X_train)
+y_pred_test_rf = rf_model.predict(X_test)
+
+# Calculate R2 and OSR2
+r2_rf = r2_score(y_train, y_pred_train_rf)
+osr2_rf = calculate_osr2(y_test, y_pred_test_rf, y_train)
+
+# Add to results
+results.loc[2, 'r2'] = r2_rf
+results.loc[2, 'osr2'] = osr2_rf
+
+results
+
+CELL 49 markdown
+### Cross Validation
+
+Now, let's run cross validation to find the best value of `max_features`. Use 5-fold cross validation to find the best value out of the numbers from 1 to 16 in increments of 3. Let's set the number of trees to be 100, to reduce the run-time.
+
+CELL 50 code
+# Define the parameter grid
+# We use 6 values: 1, 4, 7, 10, 13, 16
+param_grid_rf = {
+    'max_features': [1, 4, 7, 10, 13, 16]
+}
+
+# Initialize the GridSearchCV object
+rf_cv = GridSearchCV(
+    estimator = # YOUR CODE HERE
+    param_grid = # YOUR CODE HERE
+    cv = 5,
+    scoring = 'r2'
+)
+
+# Fit the model
+rf_cv.fit(X_train, y_train)
+
+# Display results
+rf_cv_results = pd.DataFrame(rf_cv.cv_results_)
+print(rf_cv_results[['param_max_features', 'mean_test_score', 'std_test_score']])
+
+CELL 51 markdown
+------------------------------------------------------------------------
+
+**Question 2.** In the code above, what is the total number of CART
+models that are fit? Show your work.
+
+**Answer 2.** YOUR ANSWER HERE
+
+CELL 52 markdown
+Let's take a look at how the value of `max_features` affects our cross-validated $R^2$.
+
+CELL 53 code
+# Plot the results
+plt.figure(figsize=(10, 6))
+sns.lineplot(
+    data=rf_cv_results,
+    x='param_max_features',
+    y='mean_test_score',
+    marker='o'
+)
+plt.xlabel('max_features')
+plt.ylabel('Cross-Validated R-squared')
+plt.title('Random Forest CV Performance by max_features')
+plt.show()
+
+CELL 54 markdown
+------------------------------------------------------------------------
+
+**Question 3.**. Why is it important to tune `max_features`? (i.e., what happens
+if you set it too high or too low?)
+
+**Answer 3.** YOUR ANSWER HERE
+
+CELL 55 markdown
+Let's take this optimal value of `max_features` and create a final Random Forest
+model using it. Compute its performance and add it to the dataframe
+`results`.
+
+CELL 56 code
+# Get the best model from the grid search
+rf_best = # YOUR CODE HERE
+
+# Make predictions
+y_pred_train_rf_best = rf_best.predict(X_train)
+y_pred_test_rf_best = rf_best.predict(X_test)
+
+# Calculate R2 and OSR2
+r2_rf_best = r2_score(y_train, y_pred_train_rf_best)
+osr2_rf_best = calculate_osr2(y_test, y_pred_test_rf_best, y_train)
+
+# Add to results
+results.loc[3, 'r2'] = r2_rf_best
+results.loc[3, 'osr2'] = osr2_rf_best
+
+results
+
+CELL 57 markdown
+Finally, let's examine the feature importance from this model `rf_best`.
+Run the following code to generate this graph.
+
+CELL 58 code
+# Get feature importances
+importances = rf_best.feature_importances_
+features = X_train.columns
+
+# Create a DataFrame for plotting
+importance_df = pd.DataFrame({
+    'Feature': features,
+    'Importance': importances
+}).sort_values(by='Importance', ascending=False)
+
+# Plot the top 25 features
+plt.figure(figsize=(10, 10))
+sns.barplot(
+    data=importance_df.head(25),
+    x='Importance',
+    y='Feature',
+    color='steelblue'
+)
+plt.title('Top 25 Feature Importance (Random Forest)')
+plt.xlabel('Importance Score')
+plt.ylabel('Features')
+plt.show()
+
+CELL 59 markdown
+**Question 4.** Compare the important features from random forest with
+the significant variables from Linear Regression. Do they roughly match?
+
+**Answer 4.** YOUR ANSWER HERE
+
+CELL 60 markdown
+## (d) Boosting
+
+Finally, let's use boosted trees.
+
+### Default Parameters
+
+Again, we start with the default parameters. Train this model and add its performance metrics to
+`results`.
+
+CELL 61 code
+# Initialize and fit the default Gradient Boosting model
+boosted_tree = # YOUR CODE HERE
+boosted_tree.fit(X_train, y_train)
+
+# Make predictions
+y_pred_train_boost = boosted_tree.predict(X_train)
+y_pred_test_boost = boosted_tree.predict(X_test)
+
+# Calculate R2 and OSR2
+r2_boost = r2_score(y_train, y_pred_train_boost)
+osr2_boost = calculate_osr2(y_test, y_pred_test_boost, y_train)
+
+# Add to results
+results.loc[4, 'r2'] = r2_boost
+results.loc[4, 'osr2'] = osr2_boost
+
+results
+
+CELL 62 markdown
+### Cross Validation
+
+Now let's do some parameter tuning using cross validation. Let's keep `learning_rate` and `min_samples_leaf` at their default values of 0.1 and 10 respectively. Let's search over `n_estimators` in [100, 500, 1000, 3000] and
+`max_depth` in [1, 3, 5, 7, 9]. To save computation time, let's just run 3-fold cross validation.
+
+CELL 63 code
+# Define the parameter grid
+param_grid_gbm = {
+    'n_estimators': # YOUR CODE HERE
+    'max_depth': # YOUR CODE HERE
+}
+
+# Initialize the base estimator with the specified non-default parameters
+gbm_base_estimator = GradientBoostingRegressor(
+    learning_rate=0.1,
+    min_samples_leaf=10,
+    random_state=R_STATE
+)
+
+# Initialize the GridSearchCV object
+gbm_cv = GridSearchCV(
+    estimator = # YOUR CODE HERE
+    param_grid = # YOUR CODE HERE
+    cv=3,
+    scoring='r2',
+    verbose=0
+)
+
+# Fit the model (this may take a few minutes)
+gbm_cv.fit(X_train, y_train)
+
+# Display results
+gbm_cv_results = pd.DataFrame(gbm_cv.cv_results_)
+print(gbm_cv_results[['param_max_depth', 'param_n_estimators', 'mean_test_score']])
+
+CELL 64 markdown
+------------------------------------------------------------------------
+
+**Question 5.** In running this cross validation over the parameter
+grid, how many CART models did we build in total?
+
+**Answer 5.** YOUR ANSWER HERE
+
+CELL 65 markdown
+Let's see how the various parameters performed by plotting a heat map of $R^2$.
+
+CELL 66 code
+# Pivot the results for the heatmap
+heatmap_data = gbm_cv_results.pivot(
+    index='param_max_depth',
+    columns='param_n_estimators',
+    values='mean_test_score'
+)
+
+# Create the heatmap
+plt.figure(figsize=(12, 8))
+sns.heatmap(
+    heatmap_data,
+    annot=True,
+    fmt=".4f",
+    cmap="vlag", # Use a diverging colormap
+    linewidths=.5
+)
+plt.xlabel('Number of Trees (n_estimators)')
+plt.ylabel('Interaction Depth (max_depth)')
+plt.title('Heatmap of Cross-Validated R-squared for Boosting')
+plt.show()
+
+CELL 67 markdown
+------------------------------------------------------------------------
+
+**Question 6.** Discuss the impact of `max_depth` and `n_estimators` on the cross-validated R2. Are there any signs of overfitting or underfitting?
+
+**Answer 6.** YOUR ANSWER HERE
+
+CELL 68 markdown
+Let's see what the best parameters was.
+
+CELL 69 code
+print(gbm_cv.best_params_)
+
+CELL 70 markdown
+Train a model with the best parameter values and add its R2/OSR2 to our
+results dataframe.
+
+CELL 71 code
+# Get the best model from the grid search
+opt_boost = # YOUR ANSWER HERE
+
+# Make predictions
+y_pred_train_boost_best = opt_boost.predict(X_train)
+y_pred_test_boost_best = opt_boost.predict(X_test)
+
+# Calculate R2 and OSR2
+r2_boost_best = r2_score(y_train, y_pred_train_boost_best)
+osr2_boost_best = calculate_osr2(y_test, y_pred_test_boost_best, y_train)
+
+# Add to results
+results.loc[5, 'r2'] = r2_boost_best
+results.loc[5, 'osr2'] = osr2_boost_best
+
+results
+
+CELL 72 markdown
+## (e) Model Comparison and Discussion
+
+Great work! We now have the performance for 6 different models. Let's
+discuss the results.
+
+CELL 73 code
+# Set model_name as index for better readability
+results.set_index('model_name', inplace=True)
+print(results.round(4))
+
+CELL 74 markdown
+------------------------------------------------------------------------
+**Question 7.** Comment on the performance of all 6 models. In
+particular please address:
+
+1.  The value of ensemble learning
+
+2.  The value of parameter tuning
+
+3.  Tradeoffs in terms of running time and interpretability.
+
+**Answers 7.** YOUR ANSWER HERE
+
+------------------------------------------------------------------------
+
+**Question 8.** For each of the following use-cases, please say which model (in rows 1-6) would be the best choice. Justify your answers.
+
+1.  You are a property developer who refurbishes properties through new construction and upgrades to maximize the resale value. You want a model where you can easily tell whether, for example, adding an extra fireplace or adding an extra bathroom will be more impactful to a property's predicted value. What model would you choose?
+2.  You are testifying in court in a litigation case involving unfair housing prices in the real estate market, and you will need to defend your methodology if asked. You need to explain exactly how your model made its predictions to a lay audience of jurors. To ensure you can provide satisfactory reasoning, what model would you use to determine housing prices?
+3.  You utilize data-driven models to estimate property values for a real-estate firm, advising your clients on asking prices and bidding price strategies to maximize their gain. You must provide daily updates to your clients using new price data that comes in on a daily basis, so your model cannot take too long to run. Which model would you use to help inform your recommendations?
+
+**Answers 8.** YOUR ANSWER HERE

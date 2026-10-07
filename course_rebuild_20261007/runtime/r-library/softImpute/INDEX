@@ -1,0 +1,18 @@
+Incomplete              create a matrix of class 'Incomplete'
+Incomplete-class        Class '"Incomplete"'
+SparseplusLowRank-class
+                        Class '"SparseplusLowRank"'
+biScale                 standardize a matrix to have optionally row
+                        means zero and variances one, and/or column
+                        means zero and variances one.
+complete                make predictions from an svd object
+deBias                  Recompute the '$d' component of a
+                        '"softImpute"' object through regression.
+lambda0                 compute the smallest value for 'lambda' such
+                        that 'softImpute(x,lambda)' returns the zero
+                        solution.
+softImpute              impute missing values for a matrix via
+                        nuclear-norm regularization.
+splr                    create a 'SparseplusLowRank' object
+svd.als                 compute a low rank soft-thresholded svd by
+                        alternating orthogonal ridge regression

@@ -1,0 +1,18 @@
+{
+  "all_20_metric_rows_reproduced": true,
+  "selected_rank": 8,
+  "folds": 20,
+  "train_rows": 990206,
+  "test_rows": 10003,
+  "seed": 144,
+  "first_test_rows": [
+    99,
+    238,
+    283,
+    363,
+    417
+  ],
+  "cache_reused_not_400_models_retrained": true,
+  "original_R_seed_not_set": true,
+  "cache_sha256": "e60f656291394079a6fa39b776f92dca375f8cf4168460cfecc5ea6514f212bd"
+}

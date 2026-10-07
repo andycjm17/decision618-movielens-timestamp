@@ -1,0 +1,1242 @@
+PDF PAGE 1
+Deep LearningData Analytics for BusinessProfessor Peng Sun
+Introduction to Neural Networks
+Data Analytics for Business -- Deep Learning1
+
+PDF PAGE 2
+Announcements
+Data Analytics for Business -- Deep Learning2
+•Next class: Wednesday 8am @ Dansby Classroom•Thursday: No class
+
+PDF PAGE 3
+What happens when we take a linear function of  linear functions?
+Data Analytics for Business -- Deep Learning3
+ 𝑔	=	5𝑎	+	7𝑏	–	3𝑐  ℎ	=	–3𝑎	+	𝑏	+	2.5𝑐Suppose 𝑧	=	3𝑔	+	2ℎThen … 𝑧	=	9𝑎	+	23𝑏	–	4𝑐“A linear function of  linear functions is (just) another linear function”
+
+PDF PAGE 4
+Sigmoid functionSigmoid function: 
+0
+0.5
+1
+-5-4-3-2-1012345
+Data Analytics for Business -- Deep Learning6
+
+PDF PAGE 5
+012345
+-5-4-3-2-1012345
+Data Analytics for Business -- Deep Learning7
+•ReLU
+max(0,𝑎)
+
+PDF PAGE 6
+Linear Regression
+Data Analytics for Business -- Deep Learning8
+Actual Solar radiation =  0.2262    + 0.6757 × Rad Forecast    + 0.006541 × Temp    − 0.002779 × Humidity    + 0.003281 × Wind U    − 0.005324 × Wind V    − 0.0001515 × Cloud Cover
+
+PDF PAGE 7
+Linear Regression: sumproduct
+Data Analytics for Business -- Deep Learning9
+Actual Solar radiation =  0.2262    + 0.6757 × Rad Forecast    + 0.006541 × Temp    − 0.002779 × Humidity    + 0.003281 × Wind U    − 0.005324 × Wind V    − 0.0001515 × Cloud Cover
+
+PDF PAGE 8
+Technology Using Deep Learning
+Data Analytics for Business -- Deep Learning10
+Translation
+Medical Imaging
+Self-Driving Cars
+Generative AI
+Voice Assistants
+Summarization
+What do all these use-cases have in common?
+
+PDF PAGE 9
+Structured vs. Unstructured Data
+Data Analytics for Business -- Deep Learning11
+•Structured Data – data which can be naturally stored in an excel spreadsheet or SQL database.Independent VariablesTargetAgeBMIGlucoseBlood PressureInsulinDiabetes5033.61487222013126.685669303223.31836430112128.189669403343.11374016813025.6116741020263178508812935.31157032005330.5197705431
+
+PDF PAGE 10
+Structured vs. Unstructured Data
+Data Analytics for Business -- Deep Learning12
+•Unstructured Data – data which is not so readily represented as entries in a table/matrix/spreadsheet
+“It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, ”
+
+
+PDF PAGE 11
+Raw Form of  Unstructured Data
+Data Analytics for Business -- Deep Learning13
+•Unstructured data may also come in an excel file, but the individual features are not meaningful.
+Pixel NumberSpecies123…16,384American Robinff9f3fed9f4ffd9f3cfdfefdBluejayf3f4f1e3d5f1e3d5f12fff2fNorthern Cardinal0fff2f0fff2f0fff2f0fff2f
+
+PDF PAGE 12
+Most Data is Unstructured
+Data Analytics for Business -- Deep Learning14
+•Unstructured data vastly outnumbers structured data.•720,000 hours of  videos are uploaded to YouTube each day.•100 billion text messages daily through WhatsApp, Messenger…etc.•5.3 billion photos are taken every day on smartphones or cameras. 
+How can we make predictions from unstructured data?
+
+PDF PAGE 13
+Running Example: Handwriting
+•Modified National Institute of  Standard and Technology Dataset (MNIST)•70,000 grayscale images of  handwritten digits (0, 1, 2, 3, …, 9)•28 pixels by 28 pixels each (784 pixels per image) •Widely used for benchmarking in computer vision (i.e., image processing) •Why is handwriting recognition important?
+Data Analytics for Business -- Deep Learning15
+
+PDF PAGE 14
+How might we classify images?
+Data Analytics for Business -- Deep Learning16
+Birds à SpeciesHandwriting à Digits
+Let’s think through how we might do this with traditional predictive models (e.g., Logistic Regression, CART)
+
+PDF PAGE 15
+Attempt 1: Traditional Predictive Models on Raw Data
+Data Analytics for Business -- Deep Learning17
+•Turn images into tables with columns as pixel intensities: •BW Image: Pixel 1 intensity, Pixel 2 intensity…etc. •Color Image: Pixel 1 RGB, Pixel 2 RGB, …etc.•Run a logistic regression model.•Independent Variable = Pixel Intensities •Dependent Variable = Species / Digit
+Pixel Number16,384…321Species
+fdfefdfd9f3ced9f4fff9f3fAmerican Robin 2fff2fe3d5f1e3d5f1f3f4f1Bluejay
+0fff2f0fff2f0fff2f0fff2fNorthern Cardinal
+
+PDF PAGE 16
+Attempt 1 Performs Poorly
+Data Analytics for Business -- Deep Learning18
+It is very challenging for a model to predict the digit or bird species directly from the pixel intensities. •Complex relationships between pixels. •Pixel 42 on its own provides no information. •Pixels 42, 237, 1208…etc. together provide little information.•A large patch of  pixels together provides more information.•Complex properties which define each label class.•So many different handwriting styles for each number (e.g., do you loop your 2?)•Identifying bird species is even hard for a humanPredicting species/digits from pixels feels like jumping into the deep end.
+
+PDF PAGE 17
+Attempt 2: Defining Features
+Data Analytics for Business -- Deep Learning20
+•Leverage domain knowledge to define features of  interest. •Train traditional models to extract these features, a much more manageable task than predicting the digit outright.
+Image NumberCorrect LabelNumber of  LoopsHas Vertical Straight Line?Has Horizontal Straight Line…182NoNo…221NoYes…………………10,00091YesNo…
+
+
+PDF PAGE 18
+Defining Features for Birds
+Data Analytics for Business -- Deep Learning21
+
+
+PDF PAGE 19
+Two-Stage Pipeline
+Data Analytics for Business -- Deep Learning22
+•This two-stage pipeline involves transforming the raw data into useful features (a representation), then applying a final model. •Disadvantages to this Approach: •Requires human knowledge to define the features •Requires human labeling to train models 1 and 2. 
+Number of  LoopsHas Vertical Straight Line?Has Horizontal Straight Line2NoNo
+Prediction: 8Model 1Extract FeaturesModel 2Make final prediction
+
+PDF PAGE 20
+What is Different About Deep Learning?
+Data Analytics for Business -- Deep Learning23
+•A deep learning model is a type of  predictive model that transforms input data through a sequence of  interconnected layers.•Each layer learns patterns in the data in a hierarchical fashion•Designed for prediction tasks involving unstructured data.
+Number of  LoopsHas Vertical Straight Line?Has Horizontal Straight Line2NoNo
+Prediction: 8Model 1Extract FeaturesModel 2Make final predictionModel 3Model with Transformations
+
+
+PDF PAGE 21
+Traditional vs. Deep Learning Models
+Data Analytics for Business -- Deep Learning24
+Linear Regression, CART, Random Forest…etc.
+Input FeaturesOutput
+Input FeaturesOutput
+Transformed FeaturesTransformed Features
+…Neural Network
+Traditional Predictive Model
+Deep Learning Model
+
+PDF PAGE 22
+•Neural networks were developed in the 1950’s, but why did deep learning only take off  after the 2010’s? 1.Big Data. Availability of  enormous datasets to train the models (Wikipedia, Twitter…etc.)2.Hardware. Graphics Processing Units (GPUs)3.Algorithms. Improved algorithms for training neural networks
+Why Now?
+Data Analytics for Business -- Deep Learning25
+
+
+PDF PAGE 23
+Deep Learning Lecture Overview
+Data Analytics for Business -- Deep Learning26
+•Introduction to (Feed-Forward) Neural Networks •Predictions. How does a feed-forward neural networks make predictions?•Setup and Training. How does one learn the weights of  a NN?•Basic image and text classification 
+•Modern Deep Learning Architectures•Convolutional Neural Networks•Word and Sentence Embeddings•Transfer Learning
+
+PDF PAGE 24
+Re-View of  Linear and Logistic RegressionThe “original” neural network
+Feed Forward Neural Networks
+Data Analytics for Business -- Deep Learning27
+
+PDF PAGE 25
+Predict Prices of  Used Toyota Corollas
+Data Analytics for Business -- Deep Learning28
+•Linear regression model to predict the price of  a used Toyota Corolla•Dependent variable: Price (in Euros) of  a used Toyota Corolla•Independent variables: •Age of  vehicle (in months) •Kilometers driven (“mileage”)
+
+PDF PAGE 26
+Simple linear regression example•Linear regression model coefficients:
+Price	=	20,483	–154∗age	–.017∗kilometersData Analytics for Business -- Deep Learning29
+================================================================================Regression Results================================================================================R-squared: 0.7900No. Observations: 1436================================================================================Coefficients:--------------------------------------------------------------------------------                Coef.  Std.Err.         t  P>|t|      [0.025      0.975] SignifIntercept  20483.1135  140.0473  146.2585    0.0  20208.3938  20757.8333    ***Age         -154.1492    2.7363  -56.3342    0.0   -159.5168   -148.7815    ***KM            -0.0165    0.0014  -12.1302    0.0     -0.0191     -0.0138    ***================================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1================================================================================
+
+PDF PAGE 27
+Linear Regression as a Network•Here is a network portrayal ofPrice	=20,483	–154∗age	–.017∗kilometers
+age
+km 21,483–154∗age	–.017∗km−154∗age
+−.017∗km
+CB
+A
+Data Analytics for Business -- Deep Learning30
+20,483 
+
+PDF PAGE 28
+Weights and Biases
+•Neural networks have their own terminology (sigh) …•Multipliers on the values from each node are the weights•Additive shift is called the bias
+Data Analytics for Business -- Deep Learning31
+age
+km 21,483–154∗age	–.017∗km−154∗age
+−.017∗km
+CB
+A 20,483 
+
+PDF PAGE 29
+Prediction with network description•What is the predicted price of  a 5-month old Toyota Corolla (relative to August 2004) that has been driven 4000 kilometers?
+age = 5
+km = 4000 
+20,483 – 154*age – .017*km= 21,483 +(-770)+ (-68)= 20,645 
+=	−770=	(−154)(5)	−154∗age	
+=	−68=	(−.017)(4000)	−.017∗km	
+CB
+A
+Data Analytics for Business -- Deep Learning32
+20,483 
+
+PDF PAGE 30
+“The model”
+Data Analytics for Business -- Deep Learning33
+•“The model” is Price	=	20,483	–154∗age	–.017∗kilometers•Weights (– 154, – .017) and bias (20,483) computed to minimize sum square error
+age
+km 21,483–154∗age	–.017∗km−154∗age
+−.017∗km
+CB
+A 20,483 
+
+PDF PAGE 31
+Network for General Linear Regression•Model equation:  𝑦=12+5𝑥1+13𝑥2+⋯+6𝑥𝑘
+x1
+x2 12+5𝑥1+13𝑥2+⋯+6𝑥𝑘5x1
+6xk
+k+12
+1
+kxk
+13x2
+Data Analytics for Business -- Deep Learning34
+12 
+
+PDF PAGE 32
+Network for Logistic Regression•Model equation: 
+x1
+x2
+3x1
+17xk
+k+12
+1
+kxk
+-9x2
+Data Analytics for Business -- Deep Learning35
+11
+
+PDF PAGE 33
+Describing a Neural Network
+•Activation function (of  a node) •Layers andNetwork “shape” or “structure”
+Data Analytics for Business -- Deep Learning36
+
+PDF PAGE 34
+The activation function of  a node is the arithmetic that is done at that node in the network
+Activation functions
+Data Analytics for Business -- Deep Learning37
+
+PDF PAGE 35
+Activation functions for a linear regression model
+•Every activation function is a linear function of  the input value, for instance  𝑓=12+5𝑥1+13𝑥2+⋯+6𝑥𝑘
+x1
+x2 12+5𝑥1+13𝑥2+⋯+6𝑥!
+5x1
+6xkxk
+13x2
+Data Analytics for Business -- Deep Learning38
+12
+
+PDF PAGE 36
+Activation functions for a logistic regression model
+•Here the activation functions of  the input nodesare linear, and the activation function of  the ouput nodeis the sigmoid function
+x1
+x2
+3x1
+17xkxk
+-9x2
+Data Analytics for Business -- Deep Learning39
+1111+𝑒-""#$%!-&%"#⋯#"(%#
+
+PDF PAGE 37
+Activations functions for a more general model
+Hmm, this is starting to look complicated. What does the final function look like?
+x1
+x2
+x3 1.2
+2
+Data Analytics for Business -- Deep Learning40
+1.47
+
+PDF PAGE 38
+General Model, continued
+Data Analytics for Business -- Deep Learning41
+x1
+x2
+x3 1.2×max(0,𝑥3	)
+2𝑥1
+1.4
+
+
+PDF PAGE 39
+Common Activation FunctionsReLU
+0
+0.5
+1
+-5-4-3-2-1012345
+Data Analytics for Business -- Deep Learning42
+-5-4-3-2-1012345
+-5-4-3-2-1012345
+012345
+-5-4-3-2-1012345
+SigmoidLinearRectified Linear Unit
+
+PDF PAGE 40
+Remarks on Activation Functions•The activation function is a crucial part of  the neural network methodology because it is where more complex functional forms (nonlinear ones in particular) are composed•Without the activation function, neural networks would just reduce to an unnecessarily complicated representation of  standard linear regression •Historically, sigmoid and hyperbolic tangent activation functions were prevalent for hidden nodes•Surprisingly, the ReLU activation function has become the primary choice in recent years for all nodes except the input nodes and the output node•ReLU also results in better behavior in optimization routines (but this is not so well-understood) Data Analytics for Business -- Deep Learning43
+
+PDF PAGE 41
+Layers and Network Structure
+Data Analytics for Business -- Deep Learning44
+
+PDF PAGE 42
+Deep Learning vs Neural Network 
+Data Analytics for Business -- Deep Learning45
+•The term neural network is broadly used to describe pretty much any deep learning model.•The original neural network is now called a feed forward neural network•There are many other types of  neural networks (later in class)
+Feed-Forward Neural Network
+Convolutional Neural Network
+
+PDF PAGE 43
+Feed Forward Neural Network
+Data Analytics for Business -- Deep Learning46
+•Intuition. Many linear/logistic regressions applied sequentially 
+InputsRaw FeaturesOutputPrediction
+Intermediate Values
+
+PDF PAGE 44
+Notational Shorthand and Terminology
+Data Analytics for Business -- Deep Learning47
+•Let’s simplify the notation and define some terminology.•Layers: the stages of  the input as it is transformed (input, hidden, output)•Neuron (circles): nodes in each layer where computation is performed.
+Input LayerHidden LayerOutput Layer
+Weights are not shown above for cleanness. You can imagine each arrow corresponds to a coefficient/weight. Each neuron has a bias too. 
+
+PDF PAGE 45
+Making Predictions Example
+Data Analytics for Business -- Deep Learning48
+Input LayerHidden layerOutput layer
+2.3
+10.2
+0.5
+0.20.3-0.1
+-0.3
+0.2
+0.5-0.3-0.15
+-0.20.05-0.10.1
+
+PDF PAGE 46
+Making Predictions Example
+Data Analytics for Business -- Deep Learning49
+Input LayerHidden layerOutput layer
+2.3
+10.2
+0.5-0.1
+0.20.10.3-0.1
+-0.3
+0.2
+0.5
+1.87  à 1.87
+3.03 à 3.03
+-0.06 à 0
+
+PDF PAGE 47
+Making Predictions Example
+Data Analytics for Business -- Deep Learning50
+Input LayerHidden layerOutput layer
+1.87
+3.03
+0-0.3-0.15
+-0.20.05
+-1.23 à 0.226 
+
+PDF PAGE 48
+Many Hidden Layers
+Data Analytics for Business -- Deep Learning51
+•Typically, a neural network will have numerous hidden layers.
+Input LayerRaw FeaturesOutputPrediction
+Hidden Layers Intermediate Transformations
+. . .
+. . .
+
+PDF PAGE 49
+Why the Name “Neural Network”?
+Impulse
+Data Analytics for Business -- Deep Learning52
+•In the brain, the dendrites of  one neuron connect to the axons of  other neurons at synapses, where highly activated synapses convey the information to other neurons•This is a physical neural network. Please do not read too much into the analogy…
+
+PDF PAGE 50
+Summary
+Data Analytics for Business -- Deep Learning53
+•A feed forward neural network takes an input and passes it through multiple ____, each of  which consists of  one or more ____. •Each ____ performs a weighted sum based on a set of  ____ and a ____.•This weighted sum is then passed through an ____ function that introduces non-linearity. 
+
+
+PDF PAGE 51
+Summary
+Data Analytics for Business -- Deep Learning54
+•A feed forward neural network takes an input and passes it through multiple layers, each of  which consists of  one or more neurons. •Each neuron performs a weighted sum based on a set of  weights and a bias.•This value is then passed through an activation function that introduces non-linearity. 
+
+
+PDF PAGE 52
+Setting Up a Neural Network
+Data Analytics for Business -- Deep Learning55
+
+PDF PAGE 53
+Setting up a Neural Network
+Data Analytics for Business -- Deep Learning56
+Suppose I have a dataset and a prediction task that I would like to apply a neural network to. What do I need to do? Step 1. Specify the architecture1.How many hidden layers?2.How many neurons in each hidden layer? 3.What activation functions for each neuron? Step 2. Train the model: find weights and biases 1.Randomly initialize weights and biases 2.Define a loss function depending on your task 3.Use gradient descent to optimize the loss function. Decide when to stop optimizing.
+
+PDF PAGE 54
+Aside: Multi-Class Classification
+Data Analytics for Business -- Deep Learning57
+•In this course so far, we’ve only looked at binary classification (1/0, parole/no parole, diabetes/no diabetes). •Models provide a probability that the target is 1.•Uses the sigmoid function•Multi-class classification involves classifying into more than 2 classes (digits, bird species).•Models provide a probability for each class (which sum up to 1). •Uses the softmax function (see next page)Predicted Probability for Each Digit01234567890.110.020.030.020.080.550.10.060.030
+
+PDF PAGE 55
+Softmax Activation Function
+Data Analytics for Business -- Deep Learning58
+Binary classification: sigmoid function11+𝑒!"=𝑒"𝑒"+1=𝑒"𝑒"+𝑒#
+Generalize to multiple types: ensure that the sum of  the category probabilities equals one, the softmax activation function is used at the output node to create nonnegative numbers that sum to 1.
+
+
+PDF PAGE 56
+Specify the Architecture
+Data Analytics for Business -- Deep Learning59
+•The input and outputs are fixed, but everything in the middle can be customized.Output LayerProbability input is a 0Probability input is a 1
+Probability input is a 9
+Input LayerPixel 1
+Pixel 2
+Pixel 784
+?How many layers?How many neurons in each layer?What activations?
+
+PDF PAGE 57
+Example: 2 Hidden Layers
+Data Analytics for Business -- Deep Learning60
+•Add two hidden layers, one with 64 neurons and another with 32 neurons. Choose ReLU for all neurons.
+Pixel 1
+Pixel 2
+Pixel 784
+Probability input is a 0Probability input is a 1Probability input is a 9
+…
+Output Layer(10)Input Layer (784)Hidden Layers(64)            (32) 
+
+PDF PAGE 58
+This is Easy to Do in Python
+Data Analytics for Business -- Deep Learning61
+•TensorFlow from Google makes it easy to code up neural networks.from keras import Sequential from keras.layers import Input, Dense model = Sequential([ Input(shape=(784,)),  Dense(64, activation='relu’), Dense(32, activation='relu’), Dense(10, activation=‘softmax’),])
+
+
+PDF PAGE 59
+Number of  Weights
+Data Analytics for Business -- Deep Learning62
+•How many weights and intercepts are in this model?•Input to Layer 1: 784 * 64 + 64  = 50,640•Layer 1 to Layer 2: 64 * 32 + 32 = 2080•Layer 2 to Output: 32 * 10 + 10 = 330
+Pixel 1
+Pixel 2
+Pixel 784
+Probability input is a 0
+Probability input is a 1
+Probability input is a 9
+…
+53,050 Weights!
+(32) (64) (784) (10) 
+
+PDF PAGE 60
+Finding the Best Weights
+Data Analytics for Business -- Deep Learning63
+Data:
+Model Structure: 
+“Compute the best fit”
+Here is the best fit I could find:
+
+
+PDF PAGE 61
+Define a Loss Function
+Data Analytics for Business -- Deep Learning64
+•What differentiates a good model (i.e., good weights) from a bad model (i.e., bad weights?)?•A loss function measures the discrepancy (or error) between your model’s predictions and the target values. •We want models to minimize the loss on the training data
+Regression: Squared Error lossClassification: Cross-Entropy lossmin
+1
+n
+n
+∑
+i=1
+(yi− ˆyi)
+2
+min
+1
+n
+n
+∑
+i=1
+−log( pyi
+)
+
+PDF PAGE 62
+Maximum Likelihood
+Data Analytics for Business -- Deep Learning65
+𝑝): probability that the i-th prediction is correctmin−1𝑛ln	𝑝"+ln	𝑝*+⋯+ln	𝑝+=max1𝑛ln	𝑝"+ln	𝑝*+⋯+ln	𝑝+=max1𝑛ln𝑝"𝑝*…𝑝+Equivalent tomax	ln𝑝"𝑝*…𝑝+Equivalent tomax	𝑝"𝑝*…𝑝+𝑝"𝑝*…𝑝+: likelihood that all predictions are correct
+
+PDF PAGE 63
+Optimizing Weights
+Data Analytics for Business -- Deep Learning68
+•Start with a model with randomly initialized weights. •The model is making random guesses. Output is garbage.•Make predictions on the training dataset and measure the loss. •Change the weights slightly to improve the loss on the training data•This is done through gradient descent and backpropagation.•Repeat until satisfied.
+
+
+PDF PAGE 64
+Gradient Descent, illustrated
+Data Analytics for Business -- Deep Learning70
+loss
+
+
+PDF PAGE 65
+Setting up a Neural Network
+Data Analytics for Business -- Deep Learning72
+Suppose I have a dataset and a prediction task that I would like to apply a neural network to. What do I need to do? Step 1. Specify the architecture1.How many hidden layers?2.How many neurons in each hidden layer? 3.What activation functions for each neuron? Step 2. Train the model: find weights and biases 1.Randomly initialize weights and biases 2.Define a loss function depending on your task 3.Use gradient descent to optimize the loss function. Decide when to stop optimizing.
+
+PDF PAGE 66
+Image and Text Classification
+Data Analytics for Business -- Deep Learning73
+
+PDF PAGE 67
+Let’s Apply Neural NetworksMNIST DatasetMovie Review Sentiment Analysis
+Data Analytics for Business -- Deep Learning74
+5
+2
+"A delightful surprise! The humor was spot-on, and the emotional depth caught me off guard. I’ll be rewatching this one for sure.”
+Positive
+Negative"What a waste of time. The acting was wooden, the script was laughable, and the story went nowhere. I wouldn’t recommend this to anyone."
+
+PDF PAGE 68
+Grayscale Images
+Data Analytics for Business -- Deep Learning75
+We’ll talk about color images in the next lecture.
+[0, 0, 0, ….., 3, …., 240, …, 0,0,0]
+Pixels 1 to 784:
+
+PDF PAGE 69
+Results:  CART and Random Forest
+Data Analytics for Business -- Deep Learning76
+Prediction ModelError Rate(%)Accuracy (%)CART12.187.9Random Forest3.196.9
+With each image converted to a 784-element vector of  numbers and a categorical dependent variable that takes on 10 values, we can easily construct CART and Random Forest models
+Both CART and Random Forest do respectably well. Why do you think they work well here? Let’s see how a Neural Network does . . . 
+
+PDF PAGE 70
+A Neural Network for Digit Recognition
+Data Analytics for Business -- Deep Learning78
+Input Layer1 Hidden Layer Output layer
+…
+10 nodes256 nodes784 nodes
+𝑥"
+𝑥(,-
+̂𝑝.
+𝑦"
+𝑦.
+𝑦& ̂𝑝&
+̂𝑝"softmax
+…
+203,264 weights and 266 bias coefficients to determine 
+
+PDF PAGE 71
+Results: one-hidden-layer neural net
+Data Analytics for Business -- Deep Learning79
+•A simple Neural Network with one hidden layer decreases Random Forest’s error rate from 3.1% to 2.1%•Let us add a second hidden layer to try to decrease the error rate even further . . . 
+Prediction ModelError Rate (%)Accuracy(%)Logistic Regression——CART12.187.9Random Forest3.196.9Neural Network(with one hidden layer)2.197.9
+Logistic regression performs no better than random guessing.
+
+PDF PAGE 72
+Confusion Matrices
+Data Analytics for Business -- Deep Learning80
+CARTNeural Network
+
+PDF PAGE 73
+Neural Network with two hidden layers
+Data Analytics for Business -- Deep Learning81
+Adding a second hidden layer did not help at all
+Prediction ModelError Rate (%)Accuracy(%)CART 12.187.9Random Forest3.196.9Neural Network with one hidden layer2.197.9Neural Network with two hidden layers2.297.8
+Input Layer2Hidden Layer 
+…
+10 nodes256 nodes
+784 nodes
+!!
+!"#$
+"̂%
+$!
+$%
+$& "̂&
+"̂!softmax
+…
+256 nodes
+
+PDF PAGE 74
+How Can We Do Better?
+Data Analytics for Business -- Deep Learning82
+•Downsides of  Feed-Forward NN•2 Layers => ~268,000 weights, difficult to optimize•Pixels that are adjacent to each other in the image are not treated as such.•Sensitive to zooming in/out, shifting the digit around.
+•New idea: Convolutional Neural Networks •Neural networks specifically designed for image processing
+Vs.
+
+PDF PAGE 75
+IMDB Review Sentiment Analysis
+Data Analytics for Business -- Deep Learning83
+•50,000 reviews in total (25,000 positive, 25,000 negative) •Each review is a free-form English text string. •The target of  interest is whether the review expresses a positive or negative sentiment towards the movie.
+"A delightful surprise! The humor was spot-on, and the emotional depth caught me off guard. I’ll be rewatching this one for sure.”
+Positive
+
+PDF PAGE 76
+Cleaning + Bag of  Words Vectorization 
+Data Analytics for Business -- Deep Learning84
+Each row is a movie review (5000 in total) Each column is a word (only the top 1000 words)The values are how many times the word appears in the review.
+
+
+PDF PAGE 77
+Our Neural Network
+Data Analytics for Business -- Deep Learning85
+Hidden Layers
+…
+Input Layer(1000)x1x2
+x1000
+…
+Output Layer
+…ableabout
+zerba
+(64)(32)(1)
+
+PDF PAGE 78
+Results
+Data Analytics for Business -- Deep Learning86
+•Neural network with 2 hidden layers does the best here.•Can we do even better?•New idea: word and sentence embeddings. (Using numbers to capture the “meaning” of  words)
+Prediction ModelError Rate (%)Accuracy(%)Logistic Regression / CART28.4%71.6%Random Forest18.2%81.8%Neural Network with one hidden layer16.6%83.4%Neural Network with two hidden layers14.1%85.9%
+
+PDF PAGE 79
+Trade-Offs
+Data Analytics for Business -- Deep Learning87
+AspectNeural NetworksTraditional Models (e.g., Logistic Regression)Performance on Unstructured DataExcels at learning representations, extracting useful featuresStruggles to detect complex patterns
+InterpretabilityData RequirementsComputational ResourcesTraining Time
+Often considered "black box" modelsTypically easier to interpret, coefficients indicate feature importanceGenerally requires large datasetsCan work well with smaller datasetsTypically require more computational power including GPU’s Less computationally intensiveTraining can take days/weeks and much powerGenerally faster to train
+
+PDF PAGE 80
+Convolutional Neural Networks
+88Data Analytics for Business -- Deep Learning
+
+PDF PAGE 81
+Convolution Operation
+Data Analytics for Business -- Deep Learning89
+Let us do a “sum product” for two matrices:13203-1-1-11221716425*
+=  1*2 + 3*2 + 2*1 + 0*7 + 3*1 – 1* 6 – 1*4 – 1*2 + 1*5 = 6This is called a convolution operation.
+
+PDF PAGE 82
+Convolution Operation(one more time) 
+Data Analytics for Business -- Deep Learning90
+Let us do another “sum product” for two matrices:4-112101-2313203-1-1-12*
+This is called a convolution operation.=  4*1 + (-1)*3 + 1*2 + 2*0 + 1*3 + 0*(-1)+ 1*(-1) + (-2)*(-1) + 3*2 = 13
+
+PDF PAGE 83
+Grayscale Images as a List of  Numbers
+91
+We’ll talk about color images later.
+[0, 0, 0, ….., 3, …., 240, …, 0,0,0]
+Pixels 1 to 784:Data Analytics for Business -- Deep Learning
+
+PDF PAGE 84
+Feed Forward NN for Digit Recognition
+92
+Input Layer(784)Hidden Layer(256) Output Layer(10)
+…𝑥"
+𝑥(,- 𝑦"
+𝑦.
+𝑦&
+Probability input is a 0
+Probability input is a 1
+Probability input is a 9
+Pixel Intensities
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 85
+Performance Was Solid
+93
+•Solid performance, but how can we do better?
+Prediction ModelError Rate (%)Accuracy(%)Logistic Regression——CART12.187.9Random Forest3.196.9Neural Network(with one hidden layer)2.197.9
+Logistic regression performs no better than random guessing.Data Analytics for Business -- Deep Learning
+
+PDF PAGE 86
+How Can We Do Better?
+94
+•Downsides of  Feed-Forward NN•1 Hidden Layer => ~200,000 weights, difficult to optimize•Spatial information is lost: pixels have some proximity to each other that the neural network does not use.•Sensitive to zooming in/out, shifting the digit around.
+•Idea: Convolutional Neural Networks •Neural networks specifically designed for image processing•Think about this as “feature engineering”
+Vs.
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 87
+Spatial Information is Lost
+95
+[0, 0, 0, ….., 3, …., 240, …, 0,0,0]
+These pixels are close together
+No longer all close togetherData Analytics for Business -- Deep Learning
+
+
+PDF PAGE 88
+Convolutional Neural Networks
+96
+•Filters, Convolution and Pooling•Filters: A small pattern that one hopes to “find” in the image•Convolution: An operation that finds all instances of  the filter in the image. •Pooling: Condense information •More Complex CNN Architectures•Multiple convolution layers and pooling layers that progressively extract higher level features from the image.
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 89
+Filters and the Convolution Operation
+97
+•The convolution operator takes as input an image and a small filter (typically a small square matrix of  numbers). •It generates another image which intuitively captures where the small filters appears in the image. A sort of  heatmap.000000000000010000000110000001110000001010000000010000000010000000010000000010000000010000000010000011111110000000000
+-510-510-510
+Image
+*Filter
+?Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 90
+0
+Performing a Convolution
+98
+•Slide the filter across the image, taking sum-products•Apply a ReLU to get rid of  any negative values.*•Continue row by row, generating another image.000000000000010000000110000001110000001010000000010000000010000000010000000010000000010000000010000011111110000000000
+-510-510-510
+*In deep learning, we always add the ReLU to convolution, but by default convolution does not have ReLU.
+*
+Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 91
+00
+Performing a Convolution
+99
+•Slide the filter across the image, taking sum-products•Apply a ReLU to get rid of  any negative values.*•Continue row by row, generating another image.000000000000010000000110000001110000001010000000010000000010000000010000000010000000010000000010000011111110000000000
+-510-510-510
+*In deep learning, we always add the ReLU to convolution, but by default convolution does not have ReLU.
+*
+Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 92
+001
+Performing a Convolution
+100
+•Slide the filter across the image, taking sum-products•Apply a ReLU to get rid of  any negative values.*•Continue row by row, generating another image.000000000000010000000110000001110000001010000000010000000010000000010000000010000000010000000010000011111110000000000
+-510-510-510
+*In deep learning, we always add the ReLU to convolution, but by default convolution does not have ReLU.
+*
+Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 93
+0010000
+Performing a Convolution
+101
+•Slide the filter across the image, taking sum-products•Apply a ReLU to get rid of  any negative values.*•Continue row by row, generating another image.000000000000010000000110000001110000001010000000010000000010000000010000000010000000010000000010000011111110000000000
+-510-510-510
+*In deep learning, we always add the ReLU to convolution, but by default convolution does not have ReLU.
+*
+Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 94
+00100000100000020000002000000103000000300000030000003000000300010000001000000
+Performing a Convolution
+102
+•Slide the filter across the image, taking sum-products•Apply a ReLU to get rid of  any negative values.*•Continue row by row, generating another image.000000000000010000000110000001110000001010000000010000000010000000010000000010000000010000000010000011111110000000000
+-510-510-510
+*In deep learning, we always add the ReLU to convolution, but by default convolution does not have ReLU.
+*
+Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 95
+Different Filters Detect Different Features in the Image
+103
+-510-510-510
+000111-5-5-5
+000000000 000010000 000011000 000011100 000010100 000010000 000010000 000010000 000010000 000010000 000010000 011111110 000000000
+*
+000000000 000010000 000011000 000011100 000010100 000010000 000010000 000010000 000010000 000010000 000010000 011111110 000000000
+*
+0000100 0000010 0000020 0000020 0003010 0003000 0003000 0003000 0003000 0000001 0000001
+0000000 0000000 0000000 0000011 0000000 0000000 0000000 0000000 0000000 0000000 2333332
+0000100 0000010 0000020 0000020 0003010 0003000 0003000 0003000 0003000 0000001 0000001
+0000000 0000000 0000000 0000011 0000000 0000000 0000000 0000000 0000000 0000000 2333332
+Vertical Edges are Detected
+Horizontal Edges are Detected
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 96
+Convolution Layer
+104
+A convolution layer consists of  one or more filters. It takes as input an image and produces as output the convolution with each filter.
+-510-510-510
+000111-5-5-5
+011-501-5-50
+00000000000000100000022000001120000002000000200000020000002000000000001000000
+Input
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 97
+105
+•Pooling (also called down-sampling or subsampling layers) reduce the size of  each image/heatmap coming out of  a convolutional layer
+•In 2x2 max-pooling, we take the maximum value from each 2x2 box. Average pooling is also possible.
+Pooling
+2314010994358151058535252469177
+4310910535
+2x2 max pooling
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 98
+Max Pooling Example
+106
+•Condense the information in the new image.001000010000020000020000010300000300000300000300000300100000
+110230130030000000000000000110000000000000000000000000000000000000000233333
+100033
+2x2 max pooling
+3x3 max pooling
+Vertical Line Heatmap
+Horizontal Line Heatmap
+There exists a horizontal line somewhere in the bottom leftData Analytics for Business -- Deep Learning
+
+PDF PAGE 99
+Max Pooling Layer
+107
+•A Max Pooling Layer take as input a set of  images and applies max pooling to each one.000100 000010 000020 000020 003010 003000 003000 003000 003000 000001
+000000 000000 000011 000000 000000 000000 000000 000000 000000 333332
+02
+32
+31
+01
+00
+33
+. . .
+. . .
+3x3 Max Pool Layer
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 100
+Pooling Extracts Features
+108
+•We can now treat these numbers as features in a feed-forward neural network.02
+32
+31
+01
+00
+33
+3x3 Max Pool Layer
+A strong horizontal line is detected at the bottom left and bottom right of  the image.
+No vertical line detected in the top right of  the image.Vertical Edges Heatmap
+Horizontal Edges Heatmap
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 101
+109
+0123456789
+Input ImageConvolutional LayerHeatmapMax Pooling LayerFlattenOutput
+This part is just a feed-forward neural network with hidden layers
+. . .
+. . .
+. . .
+. . .
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 102
+Previous Example
+110
+•The previous slide showed an example with 4 filters that detect horizontal, vertical, diagonal and anti-diagonal lines respectively. •The resulting heatmaps show the prevalence of  these 4 types of  lines in each part of  the original image. •The pooling layer condenses this information down to 4 values (top-right, top-left, bottom-right, bottom-left) for each of  the 4 heatmaps. •These 16 values are flattened into a list of  16 features. Those features can be passed through a feed-forward neural network to get probabilities. 
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 103
+Optimizing the Filters
+111
+•How do we find the optimal filters? •Treat the numbers in each filter like weights and learn them from data, just like we learned the weights of  a feed-forward neural network. •Optimization will simultaneously find: •The best filters •The best weights/bias for the feed-forward neural network that makes the digit 0-9 prediction.
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 104
+Analogy from Collaborative Filtering
+Collaborative Filtering and Clustering
+•We did not specify the “architypes.”  Instead, we let the optimization process to determine the architypes and •𝑺𝒂,𝒎: rating of  movie 𝑚 by archetype 𝑎•𝑤',": weight of  archetype 𝑎 in the composition of  user 𝑢 •Let us compute these values to minimize the sum of  squared residuals, namely the difference between observed and predicted user-movie ratings for all user-movie pairs in the observed ratings
+112
+𝑤$,&,𝑆&,'
+
+PDF PAGE 105
+CNN Performance
+113
+•CNN’s further reduced the error rate (2.2% to 1.4%)•Can we do even better?
+Prediction ModelError Rate (%)Accuracy(%)CART 12.187.9Random Forest3.196.9Neural Network with one hidden dense layer2.197.9Neural Network with two hidden dense layers2.297.8Neural Network with one Convolutional layer of  32 filters, plus one dense hidden layer1.498.6
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 106
+Why Stop at 1 Convolution?
+115
+•Let’s treat the heatmap as another image!•This will allow us to detect more complex features. •First convolution layer: horizontal, vertical, diagonal lines •Second convolution layer: loops, curves•Third convolution layer: complex objects like faces (example below)
+Input Image Output
+Data Analytics for Business -- Deep Learning
+00000000000000100000022000001120000002000000200000020000002000000000001000000
+
+
+PDF PAGE 107
+Chaining Convolution Layers
+116Data Analytics for Business -- Deep Learning
+
+PDF PAGE 108
+Aside: Color Images
+117
+RedGreenBlue
+•A color image has 3 channels. •You can think of  this image with dimensions 1024 x 1024 x 3 Data Analytics for Business -- Deep Learning
+
+
+PDF PAGE 109
+118
+•If  our input is a color image, (with 3 channels) then our filters will be a “cube” rather than a square. It will have dimension 𝑘×𝑘×3. •The other aspects of  the convolution operation are unchanged: sliding window sum-product + ReLU.•The resulting heatmap still tells us where this cube appears often in the image.
+Applying a Convolutional Filter to a Color Image
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 110
+First Convolution + Pooling
+119
+-510-510-510
+000111-5-5-5
+011-501-5-50
+00000000000000100000022000001120000002000000200000020000002000000000001000000
+Input
+Convolution Layer
+2x2 Max Pool Layer000 001 000 000 333
+000 002 031 030 001
+011 032 031 030 000
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 111
+First Convolution + Pooling
+120
+01-501-501-5
+000111-5-5-5
+11010-50-5-5
+00000000000000100000022000001120000002000000200000020000002000000000001000000
+Input
+Convolution Layer
+2x2 Max Pool Layer000001000000333
+000002031030001
+011032031030000
+000 002 031 030 001
+011 032 031 030 000
+000 001 000 000 333
+Output
+Image with 3 channels
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 112
+Second Convolution: 2 Filters
+121
+01-501-501-5
+-5-52 110-5-51
+110 10-50-5-5
+01-501-501-5
+-5-52 110-5-51
+-5-52110-5-51
+000 002 031 030 001
+011 032 031 030 000
+000 001 000 000 333
+Input
+Convolution Layer
+Heatmaps
+Since the input image has 3 channels, each filters also has 3 channels.Data Analytics for Business -- Deep Learning
+To next layer
+
+PDF PAGE 113
+123
+Modern CNNs
+Source: https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53
+2021 – CNNs use many more filters
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 114
+Example
+124Data Analytics for Business -- Deep Learning
+VGG-16 is a particular CNN trained by researchers at Oxford.Trained on ImageNet: 14 million images in 20,000 categories(e.g., strawberry, balloon)
+
+PDF PAGE 115
+CNN with Three Convolutional Layers
+125•The error rate has dropped below 1% 
+Prediction ModelError Rate (%)Accuracy(%)CART 12.187.9Random Forest3.196.9Neural Network with one hidden dense layer2.197.9Neural Network with two hidden dense layers2.297.8Neural Network with one Convolutional layer of  32 filters, plus one dense hidden layer1.498.6Neural Network with three Convolutional layers, two Pool layers, and  one dense layer0.999.1
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 116
+Beyond CNN
+Data Analytics for Business -- Deep Learning126
+•Modern alternatives to VGG-16•ResNet-50 / ResNet-101: Allowing deeper networks with far fewer parameters (e.g., ResNet-50 has ~26M parameters).•EfficientNet-B0 to B7: Outperforming older networks while remaining lightweight.•ConvNeXt: Adopting design choices from Vision Transformers (ViTs).
+
+PDF PAGE 117
+Capturing the meaning of  languageText Embeddings 
+127Data Analytics for Business -- Deep Learning
+
+PDF PAGE 118
+Recall: from Collaborative Filtering
+Collaborative Filtering and Clustering
+UserArchetype123456789John0.70.1………………0.2Isabel0.81.6………………-0.3Charles0.2-0.6………………1.1Paul………………………Rahul………………………Jose0.20.30.10.9-0.3-0.40.8-0.80.7…………………………
+Each user is characterized by 9 weights across archetypes
+128𝑊0,2: theweightofuser𝑢forarchetype 𝑎For example, in the above table:  𝑊()*+,,=0.3 and  𝑊()*+,-	=0.7
+
+PDF PAGE 119
+Alternative interpretation
+Data Analytics for Business -- Deep Learning129
+•Each viewer is represented by a 9-dimensional vector•Or, a point in a 9-dimensional space•Collaborative filtering is a method to “learn from data” a representation of  such a 9-dimensional space, and where each viewer sits in such a space•“Word Embedding”: representing each word as a point in a high-dimensional space•Deep learning methods “learn from data” both a representation of  a high-dimensional space, and where each word sits in such a space
+
+PDF PAGE 120
+Motivating ApplicationProduct Search
+130
+Product Bwaterproof  winter boots Product Dlightweight fleece jacketProduct Awinter fleece glovesProduct Cski sports jacket
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 121
+To a Computer…
+131
+Product B冬季防水冬靴Product D轻质羊毛夹克Product A冬季羊毛手套Product C滑雪运动夹克
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 122
+Simple Approach: Bag of  Words
+132
+111000000010110000110001000001000110001100001
+waterproofwinterjacketfleeceglovesbootsskisportslightweightqueryABCD
+Data Analytics for Business -- Deep Learning
+The query is most similar to product B
+
+PDF PAGE 123
+Why Bag of  Words Can Fail
+133
+•Bag of  words treats each word as its own entity, like if  it were a word in a foreign language you did not know.•To calculate similarity between two phrases, simply count the number of  similar phrases (e.g., waterproof  winter jacket vs. winter fleece gloves)•Keyword matching: Treating each word as its own entity. •Find the product which matches the largest number of  words from query.•This approach fails to capture the meaning of  words (synonyms). 
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 124
+Encoding the Meaning of  Text
+134
+•It would be nice to know how “similar” two words are.
+jacketfleece
+hoodiesweaterparkashoebootgloves
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 125
+Encoding the Meaning of  Text
+135
+•It would be nice to know how “similar” two words are.•In a two-dimensional space…
+jacketfleecehoodiesweaterparkashoebootgloves
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 126
+Word and Sentence Embeddings
+136
+•Word Embeddings•Assigning a vector (list of  numbers) to each word. The embedding captures (abstractly) the meaning of  the word. •Words with similar meaning should have vectors that are close. •Words with opposite meanings should have vectors that are far apart.•Sentence Embeddings •Obtain a vector that captures the meaning of  a sentence. •Often obtained through averaging the word embeddings
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 127
+Word Embeddings
+137
+•For each word in the English language, assign to it a list of  numbers. •Typically a long list of  numbers (300+ numbers) 
+•You can think of  each number as: •GPS Coordinates: A “location” for each word. •Features: (uninterpretable) features for each word. 
+Winter à [0.34, -0.45, …, 2.74, -0.02]Summer à [0.33, 0.27, …, 2.70, -1.02]
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 128
+Word Embeddings in 2-Dimensions
+138
+Winter à [0.34, -0.45]
+Winter
+Sports
+Summer
+Swim
+Ski
+Snowboard
+x
+y
+Distances (closeness in meaning)
+WordxyWinter0.34-0.45Summer0.330.27Ski-0.02-0.47Snowboard-0.05-0.51Sports-0.55-0.08Swim-0.28-0.14
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 129
+Word Embeddings in 3 Dimensions
+139
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 130
+How can Word Embeddings Help?
+140
+Product Bwaterproof  winter boots Product Dlightweight fleece jacketProduct Awinter fleece glovesProduct Cski sports jacket
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 131
+“Sentence” Embedding by Averaging the Word Embeddings
+141
+Product Cski sports jacket
+WordxyWaterproof-0.65-0.46Winter0.090.44Jacket-0.12-0.47Ski-0.62-0.17Sports0.19-0.08………à [-0.18, -0.21]
+à [-0.19, -0.16]
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 132
+Calculate Distance Between Query and Products
+142
+waterproof  winter jacket
+[-0.55, -0.64][0.07, -0.51]
+[-0.51, 0.24][0.05, 0.54]
+[-0.38, -0.49]
+Data Analytics for Business -- Deep Learning
+lightweight fleece jacket
+ski sports jacket
+waterproof  winter boots
+winter fleece gloves
+
+
+PDF PAGE 133
+How to Obtain Word Embeddings?
+Data Analytics for Business -- Deep Learning143
+•The short answer… you download them from Google, Stanford, Meta…etc. •Organizations who have spent hours if  not days finding embeddings that best represent the English language by reading lots and lots of  text (Wikipedia, news articles, books…etc.)•Well... how did these organizations build these embeddings? 
+
+PDF PAGE 134
+How to Obtain Word Embeddings
+144
+•The key challenge is to evaluate the quality of  some word embeddings.•If  we can evaluate, then we can generate using optimization. 
+This is GoodThis is Bad
+WordxyWinter0.34-0.45Summer0.330.27Ski-0.02-0.47Snowboard-0.05-0.51Sports-0.55-0.08Swim-0.28-0.14
+WordxyWinter0.34-0.15Summer0.350.24Ski-0.220.27Snowboard-0.450.49Sports-0.891.09Swim-0.382.34
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 135
+How to Obtain Word Embeddings
+145
+•The key challenge is to evaluate the quality of  some word embeddings.•If  we can evaluate, then we can generate using optimization. 
+This is GoodThis is Bad
+Winter
+Sports
+Summer
+Swim
+Ski
+Snowboard
+x
+y
+Winter
+Sports
+Summer
+Swim
+Ski
+Snowboard
+x
+y
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 136
+How do we know if  two words are related?
+146
+•"You can understand a word by the company it keeps.”•A word’s meaning can be inferred from words that it often occurs near.•For example:•Ski, snowboard, winter, sports often occur in the same sentence. •Summer and winter often occur in the same sentence •Winter and swim probably don’t occur so often. Same for ski and summer.•A good embedding model should assign distances that align to this observation. •There are numerous ways to define this mathematically.
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 137
+Pre-Trained Embedding Models
+147Data Analytics for Business -- Deep Learning
+MethodOrganizationTraining Corpus# of  WordsWord2VecGoogleNews articles100 BillionGloVe(Global Vectors)StanfordWikipedia + internet pages (common crawl)840 BillionFastTextMeta AI ResearchWikipedia + internet pages (common crawl)600 BillionEach word embedding model is based on a different metric that is optimized. The embeddings are pre-trained on a large corpus of  documents, something that only a corporation has the resources to do.
+
+PDF PAGE 138
+Each Embedding Model 
+Data Analytics for Business -- Deep Learning148
+•Each embedding model outputs a vector for each word in the English language. a    à  [-2.34, -0.56, … 3.19]aardvark   à  [8.34, -7.46, … -5.19]…zebra   à  [9.19, -5.55, … 1.84]zygote   à  [-3.14, -2.06, … 0.49]Facts about Word2Vec Embeddings•Size: 3 million unique word/phrases •Dimensionality: 300 dimensions per word•File size: ~3.4GB•Includes phrases (like "New_York")•Case-sensitive (e.g., "Apple" and "apple" have different vectors)
+
+PDF PAGE 139
+Semantle https://semantle.com/
+149
+•Semantle is a Wordle-like game where you try to guess a secret word. •Every time you make a guess, you are told a similarity score between your guess and the secret word.•These scores are determined by Word2Vec.
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 140
+Contextual Embeddings
+150Data Analytics for Business -- Deep Learning
+Word2Vec 
+Transformer
+Hot [0.23, -0.58, …, 2.10]
+the
+lunch
+is
+hot
+[1.23, 1.58, …, 0.10]
+[2.22, -0.50, …, -2.10]
+[5.43, -3.33, …, -5.10]
+[-8.23, -0.69, …, -7.11]
+Hot always has the same embedding
+hot’s embedding changes based on its neighboring words (context).
+
+PDF PAGE 141
+IMDB Review Sentiment Analysis
+Data Analytics for Business -- Deep Learning151
+•50,000 reviews in total (25,000 positive, 25,000 negative) •Each review is a free-form English text string. •The target of  interest is whether the review expresses a positive or negative sentiment towards the movie.
+"A delightful surprise! The humor was spot-on, and the emotional depth caught me off guard. I’ll be rewatching this one for sure.”
+Positive
+
+PDF PAGE 142
+Cleaning + Bag of  Words Vectorization 
+Data Analytics for Business -- Deep Learning152
+Each row is a movie review (5000 in total) Each column is a word (only the top 1000 words)The values are how many times the word appears in the review.
+
+
+PDF PAGE 143
+Bag of  Words NN
+Data Analytics for Business -- Deep Learning153
+Hidden Layers
+…
+Input Layer(1000)x1x2
+x1000
+…
+Output Layer
+…ableabout
+zerba
+(64)(32)(1)
+
+PDF PAGE 144
+Word2Vec/Transformer Embedding NN
+Data Analytics for Business -- Deep Learning154
+Hidden LayersInput Layer(300) Output Layer
+Feature 1Feature 2
+Feature 300
+(64)(32)(1)
+…
+x1x2
+x300
+…
+…
+(x1, … ,x300) is the average embedding of  all words in the review.
+
+PDF PAGE 145
+Sentiment Classification Results
+Data Analytics for Business -- Deep Learning155
+Prediction ModelError Rate (%)Accuracy(%)Logistic Regression / CART28.4%71.6%Random Forest18.2%81.8%Neural Network with one hidden layer16.6%83.4%Neural Network with two hidden layers14.1%85.9%NN using Word2Vec embedding14.1%85.9%NN using BERT embedding12.3%87.7%•Word2Vec does not do better overall, but can achieve this performance with fewer training examples (next slide).•BERT does better because it takes into context (e.g., sarcasm).
+
+PDF PAGE 146
+Number of  Examples Needed
+156
+•Although Word2Vec and BERT do not improve the overall performance much, they work well with much fewer examples.Data Analytics for Business -- Deep Learning
+
+
+PDF PAGE 147
+Trade-Offs
+157
+AspectNeural NetworksTraditional Models (e.g., Logistic Regression)Performance on Unstructured DataExcels at learning representations, extracting useful featuresStruggles to detect complex patterns
+InterpretabilityData RequirementsComputational ResourcesTraining Time
+Often considered "black box" modelsTypically easier to interpret, coefficients indicate feature importanceGenerally requires large datasetsCan work well with smaller datasetsTypically require more computational power including GPU’s Less computationally intensiveTraining can take days/weeksGenerally faster to train
+Data Analytics for Business -- Deep Learning
+
+PDF PAGE 148
+Pre-Trained Models
+158Data Analytics for Business -- Deep Learning
+ImageNet
+Wikipedia
+
+PDF PAGE 149
+Transfer Learning and Fine-Tuning
+Data Analytics for Business -- Deep Learning159
+•Pre-trained models learns general knowledge from a massive dataset (like Word2Vec learning English from Wikipedia, VGG from ImageNet)•The model is great at general-purpose task like embedding text or classifying images.•This model has an easier time learning specific tasks:•Classifying images that were not in ImageNet •Text that is not publicly available on the internet•Taking an existing  pre-trained model as a starting point. Fine-Tune it to your specific application.•Requires much less data than training from scratch•Preserves general knowledge while learning task-specific patterns
+
+PDF PAGE 150
+Conclusion
+Data Analytics for Business -- Deep Learning160
+•Convolutional neural networks and word embeddings are two deep learning architectures designed specifically for image and text data. They typically outperform using “generic” approaches like feed forward neural networks. •CNN’s are based on the convolution operator, which generates a heatmap of  where a small patch of  pixels (the filter) occurs in the image. •Word embeddings capture the meaning of  words and sentences by using high-dimensional vectors, where distances between vectors encode similarity in meaning. 

@@ -1,0 +1,4 @@
+"model","rows","factor_dot_max_error","saved_max_error","cold_rows","cold_max_error"
+"teacher_rank8",10003,2.66453525910038e-15,7.105427357601e-15,0,0
+"fresh_selected",10003,2.66453525910038e-15,7.105427357601e-15,0,0
+"temporal_final",100021,1.77635683940025e-15,7.105427357601e-15,4298,5.32907051820075e-15

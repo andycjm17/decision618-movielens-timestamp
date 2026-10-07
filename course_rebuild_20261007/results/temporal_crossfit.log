@@ -1,0 +1,12 @@
+                     mode rank lambda   rows warm      RMSE       MAE      OSR2
+elapsed temporal_crossfit    4      0 150035 3723 0.9909123 0.7902866 0.2019831
+        seconds warnings package_version                    R_version
+elapsed   1.261                    1.4.1 R version 4.0.2 (2020-06-22)
+                     mode rank lambda   rows  warm    RMSE       MAE       OSR2
+elapsed temporal_crossfit    4      0 150029 34503 1.13717 0.8801489 0.02285194
+        seconds warnings package_version                    R_version
+elapsed   2.022                    1.4.1 R version 4.0.2 (2020-06-22)
+                     mode rank lambda   rows  warm    RMSE       MAE       OSR2
+elapsed temporal_crossfit    4      0 150029 34503 1.13717 0.8801489 0.02285194
+        seconds warnings package_version                    R_version
+elapsed   2.022                    1.4.1 R version 4.0.2 (2020-06-22)

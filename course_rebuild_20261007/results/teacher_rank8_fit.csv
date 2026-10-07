@@ -1,0 +1,2 @@
+"mode","rank","lambda","rows","warm","RMSE","MAE","OSR2","seconds","warnings","package_version","R_version"
+"teacher",8,0,10003,10002,0.919767065260024,0.710588568028836,0.330009917696555,3.314,"","1.4.1","R version 4.0.2 (2020-06-22)"

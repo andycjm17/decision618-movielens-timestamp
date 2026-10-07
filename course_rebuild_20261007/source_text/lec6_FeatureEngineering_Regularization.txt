@@ -1,0 +1,973 @@
+PDF PAGE 1
+FEATUREENGINEERINGANDREGULARIZATION
+Decision618 Data Analytics for Business
+Adding and Selecting Features in Linear RegressionProf. Peng Sun
+
+
+PDF PAGE 2
+Reminder
+Feature Engineering and Regularization1
+•Wednesday office hour: 2-3pm
+
+PDF PAGE 3
+Part I: Feature EngineeringNYC Taxi Ride Prediction
+
+
+PDF PAGE 4
+BacktoLinear Regression
+Feature Engineering and Regularization3
+Boxplot of  Actual Radiation By Hour
+Hour
+Actual Radiation (kW/m2)
+Non-LinearitiesReal-world data often includes “bends” and ”interactions”. Variable SelectionModel includes many insignificant variables, making it hard to interpret.
+
+
+PDF PAGE 5
+The Big Picture
+Feature Engineering and Regularization4
+ProblemLinear regression is limited in modeling power
+SolutionFeature Engineering
+ProblemHow do we know which new features (variables) to create?
+SolutionJust try adding a bunch of  new features. 
+ProblemMy model has too many variables. It’s hard to interpret and often overfits.
+SolutionRegularization
+
+
+PDF PAGE 6
+Feature Engineering
+Feature Engineering and Regularization5
+•NYC Taxi Rides Dataset and Baseline Models•Feature Engineering: “Non-Linear” Regression•Interaction Terms •Piece-wise•Polynomial 
+Goal: Demonstrate how feature engineering can allows us to capture non-linear relationships using linear regression.
+
+PDF PAGE 7
+NYC Taxi Rides Dataset and Baseline ModelsFeature Engineering for Non-Linear RegressionInteraction Terms Piece-wisePolynomial Variable Selection Methods 
+NYC Taxi Rides Dataset
+Feature Engineering and Regularization6
+
+PDF PAGE 8
+New York City Taxi Data
+Feature Engineering and Regularization7
+•The New York City Taxi & Limousine Commission (NYCTLC) maintains a complete database of  yellow cab rides•Over 170 million rides per year→Granular information on mobility patterns: temporal patterns, spatial patterns, fares, etc.→This information is central to many business & policy decisions
+
+
+PDF PAGE 9
+Aggregate Ride Data
+Feature Engineering and Regularization8
+𝒌: # of independent variables (small 𝒌); 𝒏: # of observations (large 𝒏)
+𝒏=𝟑𝟒,𝟗𝟒𝟎
+…                …           …              …              …                   …    …             …       …
+
+
+PDF PAGE 10
+Cleaned Dataset Structure
+Feature Engineering and Regularization9
+•Hour•15 minute intervals from 0.00 (midnight) to 23.75 (11:45pm)•Day of  Week •Weekday (Monday – Thursday) •Friday •Saturday •Sunday •Pickups: Total number of  passenger pickups •Test-Train Split•Train: February 2018•Test: March 2018
+
+
+PDF PAGE 11
+Pickups Overall (All Days of  the Week)
+Feature Engineering and Regularization10
+
+
+PDF PAGE 12
+Pickups by Day of  the Week
+Feature Engineering and Regularization11
+
+
+PDF PAGE 13
+Baseline Models 
+Feature Engineering and Regularization12
+•Baseline 1. Linear Regression with Hour Only 𝑦=𝛽)+𝛽*+,-%𝑥*+,-•Baseline 2. Linear Regression with Hour + Day of  Week (Categorical) 𝑦=𝛽)+𝛽*+,-%𝑥*+,-	+𝛽.-/%𝑥.-/	+𝛽012%𝑥012	+𝛽0,3%𝑥0,3
+The reference level is weekday
+
+PDF PAGE 14
+Baseline 1: Hour Only
+Feature Engineering and Regularization13
+model_hour = smf.ols(“pickups ~ hour”, data = nyc_train).fit()==================================================================Regression Results==================================================================R-squared: 0.48No. Observations: 2688==================================================================Coefficients:------------------------------------------------------------------             Coef.  Std.Err.     t  P>|t|   [0.025   0.975] SignifIntercept  1341.51     41.92  32.0    0.0  1259.30  1423.71    ***hour        153.09      3.05  50.2    0.0   147.11   159.06    ***==================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1==================================================================
+
+PDF PAGE 15
+Baseline 1: Hour Only
+Feature Engineering and Regularization14
+
+
+PDF PAGE 16
+Baseline 2: LinReg with Hour and Day
+Feature Engineering and Regularization15
+•Adding Day of  Week to Our Model:•Weekday will be our reference level. WeekdayFriSatSun10001000…………01000100…………0001
+Hour5.005.25…12.5012.75…23.75
+Pickups234134…622575…117
+DayWeekdayWeekday…FridayFriday…Sunday
+
+
+PDF PAGE 17
+Baseline 2: LinReg with Hour and Day
+Feature Engineering and Regularization16
+model_day = smf.ols(“pickups ~ hour + day”, data = nyc_train).fit()=========================================================================Regression Results=========================================================================R-squared: 0.50No. Observations: 2688=========================================================================Coefficients:-------------------------------------------------------------------------                   Coef.  Std.Err.      t  P>|t|   [0.025   0.975] SignifIntercept        1337.98     44.95  29.77   0.00  1249.84  1426.11    ***day[T.Friday]     327.46     61.41   5.33   0.00   207.05   447.86    ***day[T.Saturday]   117.56     61.41   1.91   0.06    -2.85   237.96      .day[T.Sunday]    -420.31     61.41  -6.84   0.00  -540.72  -299.90    ***hour              153.09      3.00  51.09   0.00   147.21   158.96    ***=========================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1=========================================================================
+
+PDF PAGE 18
+Baseline 2: LinReg with Hour and Day
+Feature Engineering and Regularization17
+
+
+PDF PAGE 19
+Model Performance
+Feature Engineering and Regularization18
+ModelNumber of  ParametersIn-sample R2Out-of-sample R2LR with hour20.480.47LR with hour + day50.500.48
+
+PDF PAGE 20
+Improvement Opportunities
+Feature Engineering and Regularization19
+•Observation 1. Each day of  the week should be treated separately, i.e. the best-fit line for each day of  the week should have different slopes, in addition to having different intercepts.•Solution 1: Adding interaction terms between hour and day of  the week.
+•Observation 2. A single line is just not a good fit. Allow the curve to “bend” by:•Solution 2a: Breaking up the x-axis into segments (AM rush hour, PM rush hour…etc.)•Solution 2b: Adding higher-order polynomial terms (x2, x3…etc.)•Solution 2: Put them together! 
+
+PDF PAGE 21
+NYC Taxi Rides Dataset and Baseline ModelsFeature Engineering for Non-Linear RegressionInteraction Terms Piece-wisePolynomial 
+Feature Engineering
+Feature Engineering and Regularization20
+
+PDF PAGE 22
+What is Feature Engineering?
+Feature Engineering and Regularization21
+•Creating new variables from existing variables to help a model identify patterns in the data. •Linear regression still fits a “line”, but to features that can be non-linear version of  the original features. •For example, predicting a patient’s healthcare cost from their height and weight. •Calculate BMI (height / weight^2) as a new feature. Healthcare CostsHeightWeight………………………
+BMI………
+
+PDF PAGE 23
+Different slopes for different days of  the week.Adding Interaction Terms
+Feature Engineering and Regularization22
+
+PDF PAGE 24
+Interaction between Hour and Day
+Feature Engineering and Regularization23
+
+
+PDF PAGE 25
+What are Interaction Terms?
+Feature Engineering and Regularization24
+•In vanilla linear regression, all variables are independent. •Changing x1 by 1 results a 𝛽! change to y regardless of  other variables. 𝑦=𝛽"+𝛽!%𝑥!+𝛽#%𝑥#
+•Add the product of  two variables as a new variable.𝑦=𝛽"+𝛽!%𝑥!+𝛽#%𝑥#+𝛽!#%𝑥!%𝑥#
+A 1 unit increase in 𝑥! changes 𝑦 by: 𝛽!+𝛽!"&𝑥" A 1 unit increase in 𝑥" changes 𝑦 by:𝛽"+𝛽!"&𝑥!
+New variable 𝑥!"
+
+PDF PAGE 26
+Adding New Variables
+Feature Engineering and Regularization25
+•Add 3 new variables/columns by multiplying the hour column (black) by each of  the day columns (orange) to get the new interaction columns (maroon) FriSatSun000000………100100………001001
+Hour:FriHour:SatHour:Sun000000………12.500012.7500………0023.550023.75
+Hour5.005.25…12.5012.75…23.5023.75
+
+PDF PAGE 27
+Linear Regression with New Vars.
+Feature Engineering and Regularization26
+model_interaction = smf.ols(“pickups ~ hour + day + hour_Fri  + hour_Sat + hour_Sun”, data = nyc_train).fit()========================================================================Regression Results========================================================================R-squared: 0.54No. Observations: 2688========================================================================Coefficients:------------------------------------------------------------------------                   Coef.  Std.Err.      t  P>|t|  [0.025   0.975] SignifIntercept        1072.70     52.30  20.51   0.00  970.16  1175.25    ***day[T.Friday]     228.76    116.94   1.96   0.05   -0.54   458.06      .day[T.Saturday]   607.03    116.94   5.19   0.00  377.74   836.33    ***day[T.Sunday]    1045.81    116.94   8.94   0.00  816.51  1275.10    ***hour              175.42      3.80  46.12   0.00  167.97   182.88    ***hour_Fri            8.31      8.51   0.98   0.33   -8.37    24.99       hour_Sat          -41.22      8.51  -4.85   0.00  -57.90   -24.54    ***hour_Sun         -123.46      8.51 -14.52   0.00 -140.14  -106.78    ***========================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1========================================================================
+
+PDF PAGE 28
+Different Slopes for Different Days
+Feature Engineering and Regularization27
+For Weekday: •1072 + 175 * hour•For Friday: •Y = 1072 + 175 hour + 228 + 8.3 * hour_Fri •1300 + 183.3 * hour •For Saturday: •Y = 1072 + 175 * hour + 607 – 41 * hour_Sat•1679 + 134 * hour •For Sunday: •Y = 1072 + 175 * hour + 1045 – 123 * hour_Sun•2117 + 52 * hour 
+Y = 1072 + 175 ⋅ hour     + 228 ⋅ Friday  + 607 ⋅ Sat  + 1045 ⋅ Sun     + 8.3 ⋅ hour_Friday  – 41 ⋅ hour_Sat  – 123 ⋅ hour_Sun
+
+
+PDF PAGE 29
+Model Performance
+Feature Engineering and Regularization29
+ModelNumber of  ParametersIn-sample R2Out-of-sample R2LR with hour20.480.47LR with hour + day50.500.48LR with hour * day interaction80.540.52
+
+PDF PAGE 30
+Let’s focus on each day separately
+Feature Engineering and Regularization30
+•By adding these interaction columns (hour * Friday, hour * Saturday, hour * Sun), we are essentially performing regression for each of  the 4 days of  the week (Weekday, Fri, Sat, Sun) separately. •Let’s now focus on weekday and see how to improve our fit there.•Then we will put it all together for weekday, Friday, Saturday, Sunday.
+
+PDF PAGE 31
+Improvement Opportunities
+Feature Engineering and Regularization31
+•Observation 1. The line for each day of  the week should have different slopes, in addition to having different intercepts.•Solution 1: Adding interaction terms between hour and day of  the week.•Observation 2. A single line is just not a good fit. Allow the curve to “bend” by:•Solution 2a: Breaking up the x-axis into segments (AM rush hour, PM rush hour…etc.)•Solution 2b: Adding higher-order polynomial terms (x2, x3…etc.)•Solution 2: Put them together!
+
+PDF PAGE 32
+A Line is a Poor Fit
+Feature Engineering and Regularization32
+
+
+PDF PAGE 33
+How to incorporate “bends” in the line. 1.Piece-Wise 2.Polynomial 3.Putting them Together 
+Beyond A Single Line
+Feature Engineering and Regularization33
+
+PDF PAGE 34
+Piece-wise Line (Line with Bends)
+Feature Engineering and Regularization34
+
+
+PDF PAGE 35
+How do we do this?
+Feature Engineering and Regularization35
+•Use our domain knowledge: •0:00 – 5:00  Night   (decreasing) •5:00 – 9:00  Morning  (sharply increasing)•9:00 – 19:00 Daytime   (slight increase) •19:00 – 23:59 Evening   (decreasing)•Add 3 dummy variables into the dataset, one for each break point. Transform the “Hour” variable into the following 3: •Hour_after_5 = Number of  hours since 5am •Hour_after_9 = Number of  hours since 9am •Hour_after_19 = Number of  hours since 7pm•Each dummy variable is 0 before its time (e.g., if  hour = 7, then Hour_after_9 = 0), then counts the number of  hours since that time.
+
+PDF PAGE 36
+Adding Variables
+Feature Engineering and Regularization36
+Hour0.002.004.006.007.008.0010.00…16.0018.0020.0022.00
+Pickups260014008701700400038004200…4000480051004400
+Hour_after_5Hour_after_9Hour_after_190000000001.00002.00003.00005.001.000………11.007.00013.009.00015.0011.001.0017.0013.003.00
+Night
+Morning
+Day
+Evening
+5:00
+9:00
+19:00
+
+PDF PAGE 37
+Output with Additional Variables
+Feature Engineering and Regularization37
+model_pl = smf.ols(“pickups ~ hour + hour_after_5 + hour_after_9 + hour_after_19”, data = nyc_train_weekday).fit()======================================================================Regression Results======================================================================R-squared: 0.85No. Observations: 1536======================================================================Coefficients:----------------------------------------------------------------------                 Coef.  Std.Err.      t  P>|t|  [0.025   0.975] SignifIntercept      1099.65     62.41  17.62    0.0  977.24  1222.07    ***hour           -105.77     18.49  -5.72    0.0 -142.03   -69.51    ***hour_after_5    934.08     32.40  28.83    0.0  870.53   997.64    ***hour_after_9   -747.45     21.74 -34.37    0.0 -790.10  -704.80    ***hour_after_19  -354.13     21.78 -16.26    0.0 -396.85  -311.40    ***======================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1======================================================================
+
+PDF PAGE 38
+Bending the Line
+Feature Engineering and Regularization38
+𝑦=1099−105&𝑥#$%&+934 &𝑥#$%&_()*+&_,−747&𝑥#$%&_()*+&_-−354&𝑥#$%&_()*+&_!-
+
+PDF PAGE 39
+Bending the Line
+Feature Engineering and Regularization39
+0
+20003000
+5000
+1000
+6000
+4000
+5:000:009:0019:0024:00
+Slope -105Pickups
+Hour
+Slope 829
+Slope 82Slope -272+934-747-354
+Intercept1099
+𝑦=1099−105&𝑥#$%&+934 &𝑥#$%&_()*+&_,−747&𝑥#$%&_()*+&_-−354&𝑥#$%&_()*+&_!-
+
+PDF PAGE 40
+Example in Excel
+Feature Engineering and Regularization40
+Regression Coefficients1099-105934-747-354(Intercept)HourHour since 5Hour since 9Hour since 19Predicted YDifference100001099011000994-10512000889-10513000784-10514000679-10515000574-105161001403829172002232829183003061829194003890829110510397282111620405482112730413682113840421882114950430082115106043828211611704464821171280454682118139046288211914100471082120151114438-272121161224166-272
+Sum-product of  regression  coefficients and each row of  data.
+
+
+PDF PAGE 41
+More Generally…
+Feature Engineering and Regularization41
+•The prediction line starts at hour 0 at b0•From hour 0 to 5, the prediction line has slope b1•From hour 5 to 9, the prediction line has slope b1 + b5•From hour 9 to 19, the prediction line has slope b1 + b5 + b9•From hour 19 to 24, the prediction line has slope b1 + b5 + b9 + b19
+•Important for later: Note that if  b5 = 0, then the line does not “bend” at 5am…
+y= b0 − b1 ·xhour + b5 ·xhour after 5 − b9 ·xhour after 9 − b19 ·xhour after 19
+
+PDF PAGE 42
+Other Possible Breaking Points
+Feature Engineering and Regularization42
+
+
+PDF PAGE 43
+How should I Choose the Best Breaking Points?
+Feature Engineering and Regularization43
+=======================================================================Regression Results=======================================================================R-squared: 0.94No. Observations: 1536=======================================================================Coefficients:-----------------------------------------------------------------------                 Coef.  Std.Err.      t  P>|t|   [0.025   0.975] SignifIntercept      1828.91     76.75  23.83   0.00  1678.35  1979.47    ***hour           -878.49    113.90  -7.71   0.00 -1101.90  -655.08    ***hour_after_1    536.01    193.58   2.77   0.01   156.30   915.72     **hour_after_2    110.64    183.26   0.60   0.55  -248.83   470.12       hour_after_3    217.38    182.65   1.19   0.23  -140.89   575.65       hour_after_4     75.62    182.61   0.41   0.68  -282.58   433.82       hour_after_5    882.78    182.61   4.83   0.00   524.58  1240.97    ***hour_after_6    734.45    182.61   4.02   0.00   376.26  1092.65    ***hour_after_7   -335.57    182.61  -1.84   0.07  -693.76    22.63      .hour_after_8  -1497.03    182.61  -8.20   0.00 -1855.23 -1138.84    ***hour_after_9   -439.79    182.61  -2.41   0.02  -797.99   -81.60      *hour_after_10   344.96    182.61   1.89   0.06   -13.23   703.16      .hour_after_11   636.18    182.61   3.48   0.00   277.98   994.37    ***hour_after_12  -476.22    182.61  -2.61   0.01  -834.41  -118.02     **hour_after_13   380.17    182.61   2.08   0.04    21.98   738.37      *hour_after_14   120.60    182.61   0.66   0.51  -237.60   478.79       hour_after_15  -907.25    182.61  -4.97   0.00 -1265.44  -549.05    ***hour_after_16   619.22    182.61   3.39   0.00   261.03   977.42    ***hour_after_17  1016.96    182.61   5.57   0.00   658.77  1375.16    ***hour_after_18 -1199.01    182.61  -6.57   0.00 -1557.21  -840.82    ***hour_after_19  -513.61    182.61  -2.81   0.00  -871.81  -155.41     **hour_after_20   634.94    182.62   3.48   0.00   276.72   993.16    ***hour_after_21  -164.00    182.82  -0.90   0.37  -522.62   194.61       hour_after_22  -999.81    186.27  -5.37   0.00 -1365.19  -634.43    ***hour_after_23  -179.79    238.15  -0.75   0.45  -646.93   287.36       =======================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1=======================================================================
+
+PDF PAGE 44
+Model Performance for Weekday
+Feature Engineering and Regularization44
+ModelNumber of  ParametersIn-sample R2Out-of-sample R2Linear with no bends20.5740.546Linear with 3 Bends (5, 9, 19)50.8500.789Linear with 4 Bends (5, 8, 11, 19)60.9140.858Linear with 23 Bends (All Hours)250.9380.882
+
+PDF PAGE 45
+How to incorporate “bends” in the line. 1.Piece-wise 2.Polynomial 
+Polynomial Regression
+Feature Engineering and Regularization45
+
+PDF PAGE 46
+Polynomial Regression
+Feature Engineering and Regularization46
+•Polynomial: 𝑦=𝛽)+𝛽4%𝑥+𝛽5%𝑥5+⋯+𝛽6%𝑥6•A line is a polynomial of  degree 1 •A polynomial of  degree 𝑑 can “bend” 𝑑−1 times. 
+𝑦=16−20=𝑥−4=𝑥!𝑦=−24+50=𝑥−35=𝑥!+10=𝑥"+𝑥#
+
+PDF PAGE 47
+Creating Polynomial Features
+Feature Engineering and Regularization47
+Hour0.002.004.006.00
+Pickups260014008701700
+Hour2
+0.004.0016.0036.00
+Hour3
+0.008.0064.00216.00
+•Create polynomial features and then run vanilla linear regression.
+𝑦=𝛽.+𝛽!&𝑥#$%& 𝑦=𝛽.+𝛽!&𝑥#$%&+𝛽"&𝑥#$%&" 𝑦=𝛽.+𝛽!&𝑥#$%&+𝛽"&𝑥#$%&"+𝛽/&𝑥#$%&/
+
+PDF PAGE 48
+Degree 1 Polynomial
+Feature Engineering and Regularization48
+
+
+PDF PAGE 49
+Degree 2 Polynomial
+Feature Engineering and Regularization49
+
+
+PDF PAGE 50
+Degree 3 Polynomial
+Feature Engineering and Regularization50
+
+
+PDF PAGE 51
+Degree 5 Polynomial
+Feature Engineering and Regularization51
+
+
+PDF PAGE 52
+Degree 10 Polynomial
+Feature Engineering and Regularization52
+
+
+PDF PAGE 53
+Model Performance for Weekday
+Feature Engineering and Regularization53
+ModelNumber of  ParametersIn-sample R2Out-of-sample R2Linear with no bends20.5740.546Linear with 3 Bends (5, 9, 19)50.8500.789Linear with 4 Bends (5, 8, 11, 19)60.9140.858Linear with 23 Bends (All Hours)250.9380.882Polynomial (Degree = 2)30.7190.671Polynomial (Degree = 3)40.7590.697Polynomial (Degree = 5)60.8680.816Polynomial (Degree = 10)110.9090.857
+
+PDF PAGE 54
+Combining Piecewise + Polynomial
+Feature Engineering and Regularization54
+•Although a high-degree polynomial can capture the curvy behavior of  our data, it is generally better practice to use polynomials of  lower degree. •Reason 1: Interpretability/Simplicity •Reason 2: Stability, less prone to overfittingC𝑦=1904−2033=𝑥+2092=𝑥!−1232=𝑥"+373.9=𝑥#	−62.19=𝑥$+6.089=𝑥%+0.3617=𝑥&+.0128=𝑥'−.0002509=𝑥(+.000002077=𝑥)*
+•Let’s combine the two ideas! •1. Piecewise (dividing the x-axis into regions)•2. Using (slightly) higher-order polynomials in each region
+
+PDF PAGE 55
+Piecewise Quadratic Fit
+Feature Engineering and Regularization55
+
+
+PDF PAGE 56
+Combining Piecewise + Polynomial
+Feature Engineering and Regularization56
+Piecewisehour hourhour_after_5hour_after_9, hour_after_19,
+Polynomialhour hourhour2, hour3, hour4,
+Piecewise + Polynomialhour hour   hour2   hour3hour_since_5  (hour_since_5)2 (hour_since_5)3…hour_since_9  (hour_since_9)2 (hour_since_9)3hour_since_19  (hour_since_19)2 (hour_since_19)3
+
+
+PDF PAGE 57
+Model Performance for Weekday
+Feature Engineering and Regularization57
+ModelNumber of  ParametersIn-sample R2Out-of-sample R2Linear with no bends20.5740.546Linear with 3 Bends (5, 9, 19)50.8500.789Linear with 4 Bends (5, 8, 11, 19)60.9140.858Linear with 23 Bends (All Hours)250.9380.882Polynomial (Degree = 2)30.7190.671Polynomial (Degree = 3)40.7590.697Polynomial (Degree = 5)60.8680.816Polynomial (Degree = 10)110.9090.857Piecewise Quadratic (5, 9, 19)120.9170.865
+
+PDF PAGE 58
+AdvancedTopic(Optional): Splines 
+Feature Engineering and Regularization58
+•A piecewise quadratic fit like the one we saw above is likely not smooth, i.e. contains sharp corners at the break points. •Splines Idea: Adding constraints to the coefficients so that the derivative stays constant between regions. •This is an advanced topic and brings us outside the world of  “feature engineering for non-linear regression”. 
+
+PDF PAGE 59
+Spline with Degree 2 Polynomials
+Feature Engineering and Regularization59
+
+
+PDF PAGE 60
+Spline with Degree 4 Polynomials
+Feature Engineering and Regularization60
+
+
+PDF PAGE 61
+Overall model for all days of  the weekPutting it all Together
+Feature Engineering and Regularization61
+
+PDF PAGE 62
+Piecewise Linear
+Feature Engineering and Regularization62
+
+
+PDF PAGE 63
+Piecewise Quadratic
+Feature Engineering and Regularization63
+
+
+PDF PAGE 64
+Model Performance on All Days
+Feature Engineering and Regularization64
+ModelNumber of  ParametersIn-sample R2Out-of-sample R2LR with hour20.480.47LR with hour + day50.500.48LR with hour * day interaction80.540.52Piecewise Lines (3 breaks) 240.870.82Piecewise Quadratics (3 breaks)480.930.88
+
+PDF PAGE 65
+Feature Engineering Multiple Variables
+Feature Engineering and Regularization65
+•In the NYC taxi example, there was only 1 numeric variable (hour). •All feature engineering concepts we discussed can be applied independently to multiple numeric variables. For example:•Piecewise quadratic for temperature •Piecewise linear for humidity•Piecewise linear for hour•Interaction term for pair: temperature * humidity •Interaction term for the triple: temperature * humidity * hour
+
+PDF PAGE 66
+We can’t go “too crazy” with feature engineering.But we must be careful…
+Feature Engineering and Regularization66
+
+PDF PAGE 67
+Performance vs. Model Complexity
+Feature Engineering and Regularization67Model complexity (# Variables)
+Unseen Data
+Training Data
+ErrorUnderfitting: Model cannot capture the richness of  the data
+Overfitting: Model captures idiosyncrasies of  training data
+“Sweet spot”
+
+PDF PAGE 68
+Performance vs. Model Complexity
+Feature Engineering and Regularization68
+
+
+PDF PAGE 69
+The Big Picture Again
+Feature Engineering and Regularization69
+ProblemLinear regression is limited in modeling power
+SolutionFeature Engineering
+ProblemHow do we know which new features (variables) to create?
+SolutionJust try adding a bunch of  new features. 
+ProblemMy model has too many variables. It’s hard to interpret and often overfits.
+SolutionRegularization
+
+
+PDF PAGE 70
+Conclusion on Feature Engineering
+Feature Engineering and Regularization70
+•Feature engineering (adding new variables from existing variables) is a powerful technique that allows linear regression to capture non-linear relationships. •We saw 3 types of  non-linearities: interaction terms, piecewise, and polynomial.•Feature engineering is challenging because one needs to have domain knowledge to know what features to try. •If  we just add features ad-hoc, we obtain models that are complex, hard to interpret, and likely overfit. 
+ProblemLinear regression is limited in modeling power
+SolutionFeature Engineering
+
+
+PDF PAGE 71
+Part II: RegularizationDiabetes Prediction
+
+
+PDF PAGE 72
+An Optimization Problem, Shrinkage, and Coefficient Profile
+Feature Engineering and Regularization72
+
+PDF PAGE 73
+minI!,I"𝑏4−15+2𝑏5+25+𝜆%𝑏45+𝑏55
+An optimization problem
+Feature Engineering and Regularization73
+l Optimal Solution(b1)2 + (b2)2 b1 b20 1.00-2.005.001 0.50-1.332.032 0.33-1.001.113 0.25-0.800.704 0.20-0.670.485 0.17-0.570.3510 0.09-0.330.1215 0.06-0.240.0620 0.05-0.180.0430 0.03-0.130.0240 0.02-0.100.0150 0.02-0.080.011000.01-0.040.00
+
+PDF PAGE 74
+“Coefficient Profile”
+Feature Engineering and Regularization74
+l
+
+
+PDF PAGE 75
+Recall Big Picture of  theTwoLectures
+Feature Engineering and Regularization75
+ProblemLinear regression is limited in modeling power
+SolutionFeature Engineering
+ProblemHow do we know which new features (variables) to create?
+SolutionJust try adding a bunch of  new features. 
+ProblemMy model has too many variables. It’s hard to interpret and often overfits.
+SolutionRegularization
+
+
+PDF PAGE 76
+The Big Picture
+Feature Engineering and Regularization76
+ProblemLinear regression is limited in modeling power
+SolutionFeature Engineering
+ProblemHow do we know which new features (variables) to create?
+SolutionJust try adding a bunch of  new features. 
+ProblemMy model has too many variables. It’s hard to interpret and often overfits.
+SolutionRegularization
+
+
+PDF PAGE 77
+Regularization
+Feature Engineering and Regularization77
+•Diabetes Prediction Dataset and Feature Engineering •Recap on Value of  Simple Models: Overfitting•Regularization Paradigm•Balancing between Two Objectives•Linear Regression with Best Subset Selection (BSS) Penalty•Cross-Validation for Picking Lambda•Regularization Implementation•Computational Tractability•LASSO and Ridge Penalties 
+
+PDF PAGE 78
+Questions to Keep in Mind
+Feature Engineering and Regularization78
+1.Value of  Simple Models•Why are simple models less prone to overfitting than complex models? 2.Regularization Paradigm•How does regularization conceptually allow us to balance between two objectives: model fit and complexity? •How do we choose the optimal balance between the two (i.e., choice of  lambda)?3.Regularization in Practice•How is regularization used in practice with LASSO and Ridge penalties? 
+
+PDF PAGE 79
+Diabetes Dataset and Preprocessing 
+Feature Engineering and Regularization79
+
+PDF PAGE 80
+Obesity in the United States
+Feature Engineering and Regularization80
+•Obesity has become increasingly prevalent in the United States, with major implications for health and life expectancy
+Source: Center for Disease Control, Behavioral Risk Factor Surveillance System
+No Data          <10%           10%–14%.            15%–19%           20%–24%          25%–29%           ≥30% 
+199020002010Prevalence of  Self-Reported Obesity Among U.S. Adults by State
+
+PDF PAGE 81
+Diabetes in the United States
+Feature Engineering and Regularization81
+•Diabetes is a metabolic disorder characterized by high blood sugar•In 2022, 37.3 million Americans had diabetes and 96 million had prediabetes•1.5 million Americans are diagnosed with diabetes every year•Diabetes has been the 7th leading cause of  death in the United States (non-COVID)
+Source: American Diabetes Association
+Rates of diagnosed diabetes in adults in the United States
+
+PDF PAGE 82
+Diabetes Prediction
+Feature Engineering and Regularization82
+•Significant health benefits when diabetes is treated early→Thus the need for accurate and reliable prediction models to diagnose diabetes and anticipate its progression over time
+•Electronic Health Records•Demographics and personal characteristics: age, weight, etc.•Medical history: medication, allergies, immunization, lab tests, etc.•other billing information→Use of  demographic and clinical data to predict diabetes
+
+PDF PAGE 83
+Diabetes Dataset 
+Feature Engineering and Regularization83
+•Dataset* : a sample of  442 patients with diabetes•Dependent variable Y: quantitative measure of  disease progression one year after baseline•Independent Variables:•age•sex•bmi (body mass index)•map (mean arterial pressure)•tc (total cholesterol)•ldl (low density lipoprotein level – “bad cholesterol”)•hdl (high density lipoprotein level – “good cholesterol”)•tch (ratio of  triglycerides divided by hdl)•ltg (low-tension glaucoma)•glu (glucose level) …* Source: https://hastie.su.domains/StatLearnSparsity_files/DATA/diabetes.html    
+
+PDF PAGE 84
+Diabetes Dataset
+Feature Engineering and Regularization84
+𝒌: # of independent variables (𝒌=𝟏𝟎); 𝒏: # of observations (𝒏=𝟒𝟒𝟐)
+𝒏=𝟒𝟒𝟐
+yagesexbmimaptcldlhdltchltgglu015159232.110115793.2384.004.868717548121.687183103.2703.003.8969214172230.59315693.6414.004.6785320624125.384198131.4405.004.8989413550123.0101192125.4524.004.298059723122.68913964.8612.004.1968613836222.09016099.6503.003.958276366226.2114255185.0564.554.2592811060232.183179119.4424.004.4894931029130.08518093.4434.005.38881010122118.69711457.6462.003.9583116956228.085184144.8326.003.58771217953123.792186109.2623.004.30811318550226.297186105.4494.005.06881411861124.091202115.4723.004.2973………………………………43717860228.2112185113.8424.004.989343810447224.975225166.0425.004.4410243913260224.999.67162106.6433.774.139544022036130.095201125.2424.795.13854415736119.671250133.2973.004.6092
+
+PDF PAGE 85
+Feature Engineering
+Feature Engineering and Regularization85
+•Unlike the NYC Taxicab example, we do not have domain knowledge here. So, let’s just try adding a bunch of  features! •We can go “fishing” for good features to consider in our model•We can take existing features like age and bmi and create lots of  new features such as: •age2 •bmi2 •age * bmi •…etc.•May not look scientific, but we might discover some relationships and then try to understand them…
+
+PDF PAGE 86
+Diabetes Dataset with New Features
+Feature Engineering and Regularization86
+𝒌: # of independent variables (𝒌=𝟔𝟒); 𝒏: # of observations (𝒏=𝟒𝟒𝟐)
+𝒏=𝟒𝟒𝟐
+yagegluage^2glu^2age:glultg:glu015159…873481…75695133…422.8017548…692304…47613312…268.53214172…855184…72256120…397.19320624…89576…79212136…435.24413550…802500…64004000…343.2459723…68529…46241564…284.90613836…821296…67242952…324.0076366…924356…84646072…390.86811060…943600…88365640…420.87931029…88841…77442552…473.841010122…83484…68891826…327.95116956…773136…59294312…275.931217953…812809…65614293…348.631318550…882500…77444400…445.511411861…733721…53294453…313.21……………………………43717860…933600…86495580…463.4743810447…1022209…104044794…453.1643913260…953600…90255700…392.0744022036…851296…72253060…436.044415736…921296…84643312…422.75
+
+PDF PAGE 87
+Adding Quadratic and Interaction Terms
+Feature Engineering and Regularization87
+•Quadratic and interaction terms allow extra flexibility in modeling with our given features •Quadratic terms ( age^2 , bmi^2 , … )•If  the effects of  age increase with age, then age^2 is a better feature variable•Note that for binary variables (specifically, sex in our dataset), quadratic terms do not add value.  We therefore will add  10 - 1 = 9  quadratic terms•Interaction terms ( age*bmi , sex*bmi , … )•If  the effects of  bmi also depend on age or sex , then age*bmi is a useful feature variable•We have 10*9/2 = 45 interaction terms  •Now the total number of  feature variables is  64 = 10 + 9 + 45  •Note that models that incorporate quadratic and/or interaction terms are still linear regression models!  (They are linear in the original and the newly created variables)•Multicollinearity is likely to be an issue when we add these new variables …
+
+PDF PAGE 88
+Centering and Scaling the Independent Variables
+Feature Engineering and Regularization88
+•The (regularization) methods we will learn today work best when the regression coefficients are comparable in terms of  scale.  This is accomplished by “standardizing” the variables…•We re-center each independent variable column by subtracting its sample mean, and then re-scaling it so that the variance in each column is 1.0  (or choose any value that is the same for each variable)•This yields the “standardized” dataset shown on the next slide.•You should accept that such re-centering and scaling yields a completely equivalent linear regression model and that we can easily undo the scaling and re-centering at the end.
+
+PDF PAGE 89
+Standardized Expanded Diabetes Dataset
+Feature Engineering and Regularization89
+𝒌: # of independent variables (𝒌=𝟔𝟒); 𝒏: # of observations (𝒏=𝟒𝟒𝟐)
+𝒏=𝟒𝟒𝟐
+yagegluage^2glu^2age:glultg:glu01510.0381…-0.0176-0.0149…-0.0275…-0.0303…-0.0278175-0.0019…-0.0922-0.0413…0.0880…-0.0114…0.104021410.0853…-0.02590.0916…-0.0224…-0.0647…-0.02233206-0.0891…-0.00940.1036…-0.0307…0.0034…-0.025041350.0054…-0.0466-0.0408…-0.0012…-0.0209…0.0087597-0.0927…-0.09630.1157…0.0990…0.1844…0.05786138-0.0455…-0.0384-0.0036…-0.0112…0.0237…0.02707630.0635…0.00310.0324…-0.0318…-0.0109…-0.023081100.0417…0.0113-0.0096…-0.0301…-0.0047…-0.02429310-0.0709…-0.01350.0505…-0.0293…0.0061…-0.039010101-0.0963…-0.03420.1283…-0.0154…0.0584…0.021811690.0272…-0.0591-0.0279…0.0173…-0.0511…0.0920121790.0163…-0.0425-0.0365…-0.0064…-0.0307…0.0051131850.0054…-0.0135-0.0408…-0.0293…-0.0169…-0.0311141180.0453…-0.0756-0.0038…0.0488…-0.0919…0.0271………………………………4371780.0417…0.0072-0.0096…-0.0312…-0.0085…-0.0164438104-0.0055…0.0445-0.0408…-0.0040…-0.0207…-0.03684391320.0417…0.0155-0.0096…-0.0285…-0.0008…-0.0352440220-0.0455…-0.0259-0.0036…-0.0224…0.0111…-0.043744157-0.0455…0.0031-0.0036…-0.0318…-0.0184…-0.0211
+
+PDF PAGE 90
+Training/Testing (Random Sampling)
+Feature Engineering and Regularization90
+Full Dataset (𝒏=𝟒𝟒𝟐) 70% Training Set (𝒏=𝟑𝟎𝟗)
+30% Testing Set (𝒏=𝟏𝟑𝟑)
+yageage^2age:glultg:glu01510.0381…-0.0149…-0.0303…-0.0278175-0.0019…-0.0413…-0.0114…0.104021410.0853…0.0916…-0.0647…-0.02233206-0.0891…0.1036…0.0034…-0.025041350.0054…-0.0408…-0.0209…0.0087597-0.0927…0.1157…0.1844…0.05786138-0.0455…-0.0036…0.0237…0.02707630.0635…0.0324…-0.0109…-0.023081100.0417…-0.0096…-0.0047…-0.02429310-0.0709…0.0505…0.0061…-0.039010101-0.0963…0.1283…0.0584…0.021811690.0272…-0.0279…-0.0511…0.0920121790.0163…-0.0365…-0.0307…0.0051131850.0054…-0.0408…-0.0169…-0.0311141180.0453…-0.0038…-0.0919…0.0271………………………4371780.0417…-0.0096…-0.0085…-0.0164438104-0.0055…-0.0408…-0.0207…-0.03684391320.0417…-0.0096…-0.0008…-0.0352440220-0.0455…-0.0036…0.0111…-0.043744157-0.0455…-0.0036…-0.0184…-0.0211
+yageage^2age:glultg:glu175-0.0019…-0.0413…-0.0114…0.10403206-0.0891…0.1036…0.0034…-0.025041350.0054…-0.0408…-0.0209…0.00876138-0.0455…-0.0036…0.0237…0.02709310-0.0709…0.0505…0.0061…-0.039010101-0.0963…0.1283…0.0584…0.0218121790.0163…-0.0365…-0.0307…0.0051131850.0054…-0.0408…-0.0169…-0.0311………………………438104-0.0055…-0.0408…-0.0207…-0.03684391320.0417…-0.0096…-0.0008…-0.0352
+yageage^2age:glultg:glu01510.0381…-0.0149…-0.0303…-0.027821410.0853…0.0916…-0.0647…-0.0223597-0.0927…0.1157…0.1844…0.05787630.0635…0.0324…-0.0109…-0.023081100.0417…-0.0096…-0.0047…-0.024211690.0272…-0.0279…-0.0511…0.0920141180.0453…-0.0038…-0.0919…0.0271………………………4371780.0417…-0.0096…-0.0085…-0.0164440220-0.0455…-0.0036…0.0111…-0.043744157-0.0455…-0.0036…-0.0184…-0.0211
+
+PDF PAGE 91
+Manual Variable Selection Attempts**
+Feature Engineering and Regularization91
+Bottom Line: Challenging
+
+PDF PAGE 92
+=====================================================================Regression Results=====================================================================R-squared: 0.63No. Observations: 309=====================================================================Coefficients:---------------------------------------------------------------------           Coef.  Std.Err.      t  P>|t|     [0.025     0.975] Signifconst     154.25      3.19  48.32   0.00     147.96     160.53    ***age       138.81     83.03   1.67   0.10     -24.74     302.36      .sex      -196.66     85.21  -2.31   0.02    -364.51     -28.81      *bmi       560.60    109.43   5.12   0.00     345.06     776.13    ***map       290.25     93.48   3.10   0.00     106.12     474.37     **tc       -989.91  79936.43  -0.01   0.99 -158443.41  156463.58       ldl       867.34  70258.28   0.01   0.99 -137522.78  139257.45       hdl        39.14  29883.58   0.00   1.00  -58823.56   58901.84       tch      -227.84    341.15  -0.67   0.50    -899.81     444.13       ltg       953.54  26282.71   0.04   0.97  -50816.41   52723.49       glu         6.75     90.36   0.07   0.94    -171.24     184.74       age^2      57.78     89.11   0.65   0.52    -117.73     233.30       bmi^2      75.77    109.61   0.69   0.49    -140.14     291.68       map^2       2.75     87.48   0.03   0.97    -169.55     175.06       tc^2     6829.26   8926.69   0.77   0.44  -10753.94   24412.46       ldl^2    3384.14   6815.31   0.50   0.62  -10040.20   16808.49       hdl^2     876.36   1933.42   0.45   0.65   -2931.97    4684.69       tch^2     994.60    745.45   1.33   0.18    -473.74    2462.93       ltg^2    1330.03   2231.47   0.60   0.55   -3065.36    5725.42       glu^2      73.43    122.21   0.60   0.55    -167.29     314.16       age:sex   197.89     94.25   2.10   0.04      12.25     383.53      *age:bmi    76.33    101.98   0.75   0.45    -124.54     277.20       age:map   -22.65     98.77  -0.23   0.82    -217.21     171.90       age:tc   -332.06    852.22  -0.39   0.70   -2010.70    1346.58       age:ldl   142.85    702.48   0.20   0.84   -1240.86    1526.56       age:hdl   289.05    365.61   0.79   0.43    -431.10    1009.20       age:tch   182.45    282.37   0.65   0.52    -373.74     738.64       age:ltg   134.72    302.24   0.45   0.66    -460.61     730.05       age:glu    96.67    105.15   0.92   0.36    -110.45     303.80       sex:bmi   138.81    105.59   1.31   0.19     -69.16     346.79       
+Regression model with all 64 variables
+Feature Engineering and Regularization92
+sex:map    32.68     96.08   0.34   0.73    -156.57     221.92       sex:tc    348.81    698.05   0.50   0.62   -1026.17    1723.79       sex:ldl  -193.31    557.69  -0.35   0.73   -1291.81     905.18       sex:hdl  -212.97    319.61  -0.67   0.51    -842.52     416.57       sex:tch  -443.91    258.23  -1.72   0.09    -952.55      64.73      .sex:ltg   -10.86    280.11  -0.04   0.97    -562.61     540.89       sex:glu     0.30     94.19   0.00   1.00    -185.22     185.83       bmi:map    79.39    116.60   0.68   0.50    -150.29     309.07       bmi:tc   -127.41    773.81  -0.16   0.87   -1651.61    1396.79       bmi:ldl     7.64    663.40   0.01   0.99   -1299.08    1314.35       bmi:hdl    20.03    388.28   0.05   0.96    -744.78     784.84       bmi:tch  -131.95    285.97  -0.46   0.64    -695.25     431.34       bmi:ltg   133.08    312.92   0.43   0.67    -483.28     749.44       bmi:glu    30.94    111.23   0.28   0.78    -188.16     250.04       map:tc    642.07    894.05   0.72   0.47   -1118.96    2403.10       map:ldl  -256.76    741.11  -0.35   0.73   -1716.54    1203.03       map:hdl  -275.41    407.82  -0.68   0.50   -1078.71     527.88       map:tch  -197.56    268.03  -0.74   0.46    -725.51     330.39       map:ltg  -140.10    349.06  -0.40   0.69    -827.65     547.46       map:glu  -100.73    115.58  -0.87   0.38    -328.40     126.94       tc:ldl  -9404.01  14973.95  -0.63   0.53  -38898.70   20090.69       tc:hdl  -3024.36   4709.81  -0.64   0.52  -12301.44    6252.72       tc:tch  -1193.33   2203.49  -0.54   0.59   -5533.61    3146.96       tc:ltg  -4067.04  17321.79  -0.23   0.81  -38186.36   30052.28       tc:glu   -472.50    704.68  -0.67   0.50   -1860.53     915.53       ldl:hdl  1927.49   3940.76   0.49   0.63   -5834.76    9689.74       ldl:tch   499.21   1796.47   0.28   0.78   -3039.35    4037.78       ldl:ltg  2901.50  14432.49   0.20   0.84  -25526.67   31329.68       ldl:glu   294.32    579.10   0.51   0.61    -846.36    1434.99       hdl:tch   598.99   1260.17   0.48   0.63   -1883.21    3081.19       hdl:ltg  1203.76   6051.16   0.20   0.84  -10715.42   13122.94       hdl:glu   400.05    386.88   1.03   0.30    -362.00    1162.09       tch:ltg  -128.66    882.48  -0.15   0.88   -1866.91    1609.58       tch:glu   393.55    326.49   1.21   0.23    -249.56    1036.65       ltg:glu   185.62    329.55   0.56   0.57    -463.51     834.75       =====================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1=====================================================================
+
+PDF PAGE 93
+What if  we just use the four variables identified as significant?
+Feature Engineering and Regularization93
+===================================================================Regression Results===================================================================R-squared: 0.45No. Observations: 309===================================================================Coefficients:-------------------------------------------------------------------             Coef.  Std.Err.      t  P>|t|   [0.025   0.975] SignifIntercept   150.99      3.38  44.65   0.00   144.34   157.65    ***sex         -40.02     72.41  -0.55   0.58  -182.50   102.47       bmi         856.93     74.82  11.45   0.00   709.71  1004.16    ***map         391.68     79.25   4.94   0.00   235.73   547.63    ***age:sex    3949.77   1496.48   2.64   0.01  1005.00  6894.55     **===================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1===================================================================
+smf.ols(formula="y ~ sex + bmi + map + age:sex", data=train).fit()
+
+PDF PAGE 94
+Simple model using only 6 measurements of  cholesterol, ldl, etc.
+Feature Engineering and Regularization94
+smf.ols(formula="y ~ tc + ldl + hdl + tch + ltg + glu", data=train).fit()==================================================================Regression Results==================================================================R-squared: 0.37No. Observations: 309==================================================================Coefficients:------------------------------------------------------------------            Coef.  Std.Err.      t  P>|t|   [0.025   0.975] SignifIntercept  152.97      3.59  42.63   0.00   145.91   160.03    ***tc        -491.12    566.42  -0.87   0.39 -1605.75   623.50       ldl        371.52    456.99   0.81   0.42  -527.78  1270.82       hdl       -184.79    292.68  -0.63   0.53  -760.74   391.16       tch        -39.42    231.81  -0.17   0.87  -495.58   416.74       ltg        923.14    234.29   3.94   0.00   462.08  1384.19    ***glu        161.50     89.19   1.81   0.07   -14.01   337.00      .==================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1==================================================================
+
+PDF PAGE 95
+“Backward elimination” of  variables
+Feature Engineering and Regularization95
+oFindthevariable whose elimination decreasesR2 the least.oRemoveit.oKeepdoingthatuntilallvariablesaresignificant.
+=================================================================Regression Results=================================================================R-squared: 0.59No. Observations: 309=================================================================Coefficients:-----------------------------------------------------------------           Coef.  Std.Err.      t  P>|t|   [0.025   0.975] Signifconst     153.99      2.97  51.91   0.00   148.15   159.82    ***bmi       700.84     75.21   9.32   0.00   552.82   848.86    ***map       256.57     70.00   3.67   0.00   118.80   394.34    ***tc       -183.19     76.42  -2.40   0.02  -333.59   -32.79      *ltg       715.10    100.78   7.10   0.00   516.77   913.44    ***tch^2     285.66     98.73   2.89   0.00    91.34   479.97     **ltg^2     623.49    204.98   3.04   0.00   220.06  1026.91     **age:sex   206.58     65.01   3.18   0.00    78.64   334.52     **age:glu   174.21     68.66   2.54   0.01    39.09   309.33      *sex:bmi   176.54     70.62   2.50   0.01    37.54   315.53      *sex:tch  -200.66     78.39  -2.56   0.01  -354.94   -46.37      *map:tc    184.11     69.22   2.66   0.01    47.87   320.34     **tc:ltg  -1042.26    309.00  -3.37   0.00 -1650.39  -434.13    ***ldl:ltg   702.48    231.26   3.04   0.00   247.34  1157.61     **hdl:ltg   497.87    136.32   3.65   0.00   229.58   766.16    ***=================================================================Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1=================================================================
+
+PDF PAGE 96
+Performance Assessment
+Feature Engineering and Regularization96
+ModelNumber of  VariablesR2OSR2
+Linear Regression Model (all vars)640.63080.3399Significant Vars Only40.44670.3115The six blood measurements60.36660.3880Backward elimination reduced model140.58510.3582•Model with 64 variables is grossly overfitting the training data. •Models with fewer variables overfit less.•Note: training/testing gap is large for all models. Our test set only has 100 rows in total, so this could indicate that the testing set is “harder” to predict for some reason.•How can we obtain the best OSR2? We must balance in-sample R2 and model complexity (number of  variables). 
+
+PDF PAGE 97
+Sneak Peak
+Feature Engineering and Regularization97
+•Best model has a moderate number of  variables. •But these variables and their coefficients are optimized to reduce overfitting. •Overfitting is caused by not just the number of  variables, but also their coefficient values. 
+ModelNumber of  VariablesR2OSR2
+Linear Regression Model (all vars)640.63080.3399Significant Vars Only40.44670.3115The six blood measurements60.36660.3880Backward elimination reduced model140.58510.3582Best Model160.56220.4439
+
+PDF PAGE 98
+Sneak Peak
+Feature Engineering and Regularization98
+ModelNumber of  VariablesR2OSR2
+Linear Regression Model (all vars)640.63080.3399Significant Vars Only40.44670.3115The six blood measurements60.36660.3880Backward elimination reduced model140.58510.3582LASSO-2.94160.56220.4439LASSO-2.94 is the solution to the following augmented least squares problem:
+min+!…+"P-.)
+/𝑦-−𝑏*+𝑏)𝑥-)+𝑏!𝑥-!+⋯+𝑏0𝑥-0!+2.94⋅P1.)
+0𝑏1
+
+PDF PAGE 99
+Variable Selection
+Feature Engineering and Regularization99
+•These diabetes linear regression models illustrate the challenge in performing variable selection – choosing which variables/features to be used to build a model
+•Variable selection is particularly important for datasets containing very many variables (𝑘≈𝑛, or even 𝑘>𝑛)
+
+PDF PAGE 100
+Model Complexity and Overfitting
+Feature Engineering and Regularization100
+Finding the “Sweet Spot”
+
+PDF PAGE 101
+Questions to Keep in Mind
+Feature Engineering and Regularization101
+1.Value of  Simple Models•Why are simple models less prone to overfitting than complex models? 2.Regularization Paradigm•How does regularization conceptually allow us to balance between two objectives: model fit and complexity? •How do we choose the optimal balance between the two (i.e., choice of  lambda)?3.Regularization in Practice•How is regularization used in practice with LASSO and Ridge penalties? 
+
+PDF PAGE 102
+What is model complexity?
+Feature Engineering and Regularization102
+•Model complexity is broadly defined as how many parameters the model controls when fitting to data.•More parameters means the model can learn more complex patterns in the data.
+
+
+PDF PAGE 103
+Linear Regression: # of  Variables
+Feature Engineering and Regularization10324 Variables
+4 Variables
+
+
+PDF PAGE 104
+CART: Number of  Splits/Leaves
+Feature Engineering and Regularization104•Which model is more accurate on the training data? test data?
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+● ●
+●
+●
+●
+●
+0
+1
+2
+3
+4
+3.25 3.50 3.75 4.00GP A
+Experience
+No interviewInterview
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+● ●
+●
+●
+●
+● ●
+●
+●
+●
+●
+0
+1
+2
+3
+4
+3.25 3.50 3.75 4.00GP A
+Experience
+No interviewNo interview
+Interview
+No interview
+No interview
+Interview
+No interview
+No interviewInterview
+No interview
+
+PDF PAGE 105
+Underfitting and Overfitting
+Feature Engineering and Regularization106
+
+
+PDF PAGE 106
+Finding the Sweet Spot
+Feature Engineering and Regularization107Model complexity 
+Unseen Data (OSR2)
+Training Data (R2)
+R2
+Underfitting: Model cannot capture the richness of  the data
+Overfitting: Model captures idiosyncrasies of  training data. “Sweet spot”
+0
+1.0
+
+PDF PAGE 107
+Balancing Two Objectives
+Feature Engineering and Regularization108
+In-Sample Error Sum of  Squared ErrorClassification Error
+Model Complexity Number of  Variables Number of  Splits/Leaves
+Model that generalizes well to unseen data
+
+
+PDF PAGE 108
+Regularization Paradigm
+Feature Engineering and Regularization109
+
+PDF PAGE 109
+Questions to Keep in Mind
+Feature Engineering and Regularization110
+1.Value of  Simple Models•Why are simple models less prone to overfitting than complex models? 2.Regularization Paradigm•How does regularization conceptually allow us to balance between model fit and complexity? •How do we choose the optimal balance between the two (i.e., choice of  lambda)?3.Regularization in Practice •How is regularization used in practice with LASSO and Ridge penalties? 
+
+PDF PAGE 110
+Multi-objective Optimization
+Feature Engineering and Regularization111
+You are a fresh graduate out of  college. You are deciding the best career for you. You want to maximize your happiness, which you know is influenced by (1) Salary, and (2) Work-life balance. You are young and  don’t know yourself  yet… What kind of  balance leads to the best happiness for me?Maximize:         Salary + 𝜆⋅ Hours of  Free TimeHere’ what you do: •Year 1: Try 𝜆 = 1 (burn yourself  out, but very lucrative)•Year 2: Try 𝜆 = 25 (decent balance) •Year 3: Try 𝜆 = 2000 (paycheck-to-paycheck, but pursue hobbies) After the 3 years, you realize that Year 2 gives you the most happiness. You choose this balance for the rest of  your career.
+
+PDF PAGE 111
+Regularization as Optimization
+Feature Engineering and Regularization112
+•Old Paradigm
+•New Paradigm (with Regularization)
+Minimizeover Model Parameters  In-Sample Error
+Minimizeover Model Parameters  In-Sample Error+ 𝜆⋅	Model ComplexityShrinkage Parameter Controls the weight (trade-off) between measure of  fit vs. measure of  complexity.
+
+PDF PAGE 112
+Vanilla Linear Regression
+Feature Engineering and Regularization113
+Predicted Actual 
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·Number of Non-Zero( b0,...,b k)
+•Find coefficients b0, b1, … bk to optimize fit and complexity. •Measure of  Fit/Error: Minimize Sum of  Squared Error (SSE), equivalent to R2. 
+Measure of  Fit/Error 
+
+PDF PAGE 113
+Linear Regression with BSS Regularization
+Feature Engineering and Regularization114
+•Find coefficients b0, b1, … bk to optimize fit and complexity. •Measure of  Fit/Error: Minimize Sum of  Squared Error (SSE), equivalent to R2•Measure of  Complexity: Number of  Non-Zero Coefficients •Best Subset Selection (BSS) refers to the measure of  complexity. 
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·Number of Non-Zero( b0,...,b k)
+Predicted Actual 
+Measure of  Fit/Error Measure of  Complexity 
+Shrinkage Parameter Controls the weight (trade-off) between measure of  fit vs. measure of  complexity.
+
+
+PDF PAGE 114
+Recall our Line Bending Example
+Feature Engineering and Regularization115
+•We had 24 variables, each of  which controlled how much our piece-wise line bended at each hour of  the day. •A variable being 0 means the line does not bend. •Without Regularization: •Choose the change in slope at 24 bends to minimize sum of  squared error (SSE). •With Regularization: •Choose the change in slopes at 24 bends to minimize SSE + Lambda * (# of  Bends You Choose). •Each Bend is equivalent to a Lambda increase in SSE. 
+
+PDF PAGE 115
+𝜆=10! leads to 2 Bends
+Feature Engineering and Regularization116
+
+
+PDF PAGE 116
+𝜆=6⋅10! leads to 3 Bends
+Feature Engineering and Regularization117
+
+
+PDF PAGE 117
+𝜆=3⋅10! leads to 4 Bends
+Feature Engineering and Regularization118
+
+
+PDF PAGE 118
+𝜆=2⋅10! leads to 5 Bends
+Feature Engineering and Regularization119
+
+
+PDF PAGE 119
+Best Subset Selection for Diabetes
+Feature Engineering and Regularization120
+Penalty “Tradeoff ” Parameter ( l )SSENumber of  Non-Zero CoefsIn-Sample R2Out-of-Sample R2
+3.27x1061.08x10600~04.42x1058.71x10510.39100.22071.63x1056.22x10520.48300.393622,0265.08x10550.53710.41612,9814.79x10590.56500.4470
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·Number of Non-Zero( b0,...,b k)
+
+
+PDF PAGE 120
+How to Pick Lambda
+Feature Engineering and Regularization121
+•What choice of  trade-off  parameter leads to the best OSR2?•There is no one-size-fits-all answer. •Depends on the dataset•Question: How can we pick lambda to perform the best on the testing set? •Answer: Cross Validation! •Intuition: Giving yourself  a “practice test” before the real test. •Note: Cross-validation can be used for any parameter selection (e.g., selecting the best ccp_alpha in CART). 
+
+PDF PAGE 121
+Connection
+Feature Engineering and Regularization124
+You are a fresh graduate out of  college. You are deciding the best career for you. You want to maximize your happiness, which you know is influenced by (1) Salary, and (2) Work-life balance. You are young and  don’t know yourself  yet… What kind of  balance leads to the best happiness for me?Maximize:         Salary + 𝜆⋅ Hours of  Free TimeHere’ what you do: •Year 1: Try 𝜆 = 1 (burn yourself  out, but very lucrative)•Year 2: Try 𝜆 = 25 (decent balance) •Year 3: Try 𝜆 = 2000 (paycheck-to-paycheck, but pursue hobbies) After the 3 years, you realize that Year 2 gives you the most happiness. You choose this balance for the rest of  your career.Cross Validation
+Salary = In-Sample Fit Free Time = Model Complexity Happiness = OSR2
+
+PDF PAGE 122
+Practical Implementation in Linear RegressionRegularization in Practice
+Feature Engineering and Regularization125
+
+PDF PAGE 123
+Best Subset Selection is Hard to Optimize
+Feature Engineering and Regularization126
+Numberof  Variables(k)Best SubsetSelectionComputation Time 10.06 second20.18 second30.28 second40.69 second52.33 second69.75 second774.14 seconds8330.21 seconds91636.40 seconds10Hours?20Years?
+•It is challenging to find an optimal solution to the Best Subset Selection problem. •There’s not much we can do besides enumerate all possible subsets of  k variables out of  say 64 (in the diabetes dataset).•In practice, we use some alternative penalties that try to mimic Best Subset Selection.
+
+PDF PAGE 124
+Alternative Measures of  Complexity
+Feature Engineering and Regularization128
+1. BSS – Best Subset Selection
+2. LASSO
+3. Ridge
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·Number of Non-Zero( b0,...,b k)
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·
+k
+∑
+j=1
+|bj|
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·
+k
+∑
+j=0
+(bj)
+2
+Measure of  Fit/Error Measure of  Complexity 
+Encourages many 𝑏! to be close to 0.
+
+
+PDF PAGE 125
+“Coefficient Profile”
+Feature Engineering and Regularization129
+l
+
+
+PDF PAGE 126
+Ridge Coefficient Profile
+Feature Engineering and Regularization130
+Coefficient values shrink as 𝜆 increases
+
+
+PDF PAGE 127
+“LASSO”
+Feature Engineering and Regularization131
+•LASSO (“Least Absolute Shrinkage and Selection Operator”) encourages coefficients close to 0 by penalizing their absolute value.
+•Properties•Computation: Much better than BSS, but still a bit challenging.•Results: As lambda increases, coefficients 𝑏0 shrink and many are equal to 0 (hence called the “selection operator”)
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi− yi)
+2
++ λ·
+k
+∑
+j=1
+|bj|
+
+PDF PAGE 128
+LASSO Coefficient Profilefor the regularized diabetes model
+Feature Engineering and Regularization132
+Coefficients also shrink as 𝜆 increases but LASSO brings them to zero
+min
+b0,b1,...,b k
+∑
+i∈Train Data
+(ˆyi−yi)2
++ λ·
+k∑
+j=1
+|bj|
+
+PDF PAGE 129
+Ridge Coefficient Profile
+Feature Engineering and Regularization133
+Coefficient values shrink as 𝜆 increases
+
+
+PDF PAGE 130
+LASSO: Higher l yields Simpler Models
+Feature Engineering and Regularization134
+
+
+PDF PAGE 131
+LASSO: Performance
+Feature Engineering and Regularization135
+•In-sample performance: smaller 𝜆 always results in a better fit to Training data•Out-of-sample performance: the best fit is typically achieved with intermediate values of  𝜆, achieving a “sweet spot” between overfitting and underfitting
+Overfitting
+UnderfittingR2
+0.00
+0.25
+0.50
+0.75
+1.00
+−5.0 −2.5 0.0 2.5 5.0log(λ)
+R2 T rainT est
+Overfitting
+
+PDF PAGE 132
+Python call l “alpha”
+Feature Engineering and Regularization136
+alpha = 1.0: 34 non-zero coefIntercept           : 153.3451age                 : 91.8553sex                 : -129.9518bmi                 : 575.6187map                 : 269.5742tc                  : -43.7085hdl                 : -213.1209ltg                 : 450.5594age^2               : 44.3134bmi^2               : 77.3966tch^2               : 190.4212glu^2               : 45.8530age:sex             : 181.6209age:bmi             : 29.1560age:ldl             : -7.1227age:hdl             : 16.2974age:ltg             : 2.7179age:glu             : 89.9253sex:bmi             : 98.7207sex:map             : 16.2283sex:hdl             : 70.8751sex:tch             : -99.1359bmi:map             : 85.5033bmi:tc              : -52.2914bmi:ldl             : -7.4845bmi:ltg             : 10.2341…
+alpha = 2.9447: 16 non-zero coefIntercept           : 152.8508age                 : 37.9020sex                 : -53.9072bmi                 : 564.6246map                 : 241.2214hdl                 : -175.2877ltg                 : 422.1609bmi^2               : 70.4747tch^2               : 9.7551glu^2               : 22.6446age:sex             : 138.2954age:map             : 0.7935age:glu             : 102.9532sex:bmi             : 35.4915sex:hdl             : 42.3630bmi:map             : 57.0496map:tc              : 51.7285alpha = 10: 4 non-zero coefIntercept           : 153.1317bmi                 : 543.3172map                 : 136.0266hdl                 : -72.0403ltg                 : 364.3673
+
+PDF PAGE 133
+Impact
+Feature Engineering and Regularization141
+•Analytics can process vast amounts of  data to help diagnose patients with critical diseases as early as possible•“Signs and symptoms of  heart failure are often documented years before a diagnosis. [This] can offer […] signals for early detection of  this deadly disease” S. Steinhubl (2013), Cardiologist MD•Design and use of  predictive algorithms requires collaborations of  analytics experts and domain experts (nurses, doctors, etc.)•Predictive diagnosis can be leveraged to implement…•early treatment•personalized treatment: specific treatments to specific patients
+
+PDF PAGE 134
+Conclusions
+Feature Engineering and Regularization142
+•Value of  Simple Models. •Complex models can fit to noise, i.e. patterns in the training data that do not generalize to the testing data.•Balancing Fit and Complexity. •Regularization is a paradigm for balancing between in-sample fit and complexity, two objectives useful in constructing a model with high OSR2.•Cross-validation is used to pick the optimal balance between the two objectives •Regularization in Practice. •For linear regression, LASSO is very popular in practice due to its computational tractability and good performance. 

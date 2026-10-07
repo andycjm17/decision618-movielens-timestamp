@@ -1,0 +1,768 @@
+PDF PAGE 1
+INTRODUCTION TO CLASSIFICATION WITH LOGISTIC REGRESSIONPredicting Customer Retention
+Decision618 Data Analytics for BusinessProf. Peng Sun
+
+
+PDF PAGE 2
+Reminder
+Decision 618--Lecture 3: Logistic Regression1
+•First homework due this coming weekend•TA session on Friday•First project deliverable this weekendhttps://fuqua.instructure.com/courses/4169/assignments/60450•Brief  description of  business problem, use case (i.e. how it would be used in practice), data source, business value, etc.•Can change in the coming weeks•Motivating your thinking and planning
+
+PDF PAGE 3
+Review from Last Class
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 4
+Train/Test Split
+Decision 618–Lecture 2: Linear Regression
+20% Testing Set (n=1,693)
+80% Training Set (n=6,768)#datetimerad_actualrad_forecasttemp…hour12021/4/2 5:000.000.009.81…522021/4/2 5:300.030.009.78…532021/4/2 6:000.120.019.75…642021/4/2 6:300.230.0310.2…652021/4/2 7:000.290.0510.6…762021/4/2 7:300.400.0810.9…772021/4/2 8:000.430.1211.2…882021/4/2 8:300.530.1611.5…892021/4/2 9:000.790.1911.9…9102021/4/2 9:300.840.4412…9112021/4/2 10:000.920.6912.2…10122021/4/2 10:300.950.7112.3…10132021/4/2 11:000.990.7412.5…11142021/4/2 11:300.990.7612.6…11152021/4/2 12:000.970.7812.8…12162021/4/2 12:300.930.7812.8…12172021/4/2 13:000.880.7912.9…13182021/4/2 13:300.800.7813.2…13192021/4/2 14:000.730.7713.4…14202021/4/2 14:300.530.7613.4…14212021/4/2 15:000.490.7513.4…15222021/4/2 15:300.420.5813.3…15232021/4/2 16:000.210.4213.2…16242021/4/2 16:300.060.3713…16252021/4/2 17:000.030.3112.8…17………………84602022/1/31 18:000.000.092.78…1884612022/1/31 18:300.000.082.54…18
+Full Dataset (n=8,461)
+datetimerad_actualrad_forecasttemp…hour2021/4/2 5:000.000.009.81…52021/4/2 5:300.030.009.78…52021/4/2 6:000.120.019.75…62021/4/2 6:300.230.0310.2…62021/4/2 7:000.290.0510.6…72021/4/2 7:300.400.0810.9…72021/4/2 8:000.430.1211.2…82021/4/2 8:300.530.1611.5…82021/4/2 9:300.840.4412…92021/4/2 10:000.920.6912.2…102021/4/2 10:300.950.7112.3…102021/4/2 11:000.990.7412.5…112021/4/2 11:300.990.7612.6…112021/4/2 12:000.970.7812.8…122021/4/2 12:300.930.7812.8…122021/4/2 13:000.880.7912.9…13……………2022/1/31 18:300.000.082.54…18
+datetimerad_actualrad_forecasttemp…hour2021/4/2 9:000.790.1911.87…92021/4/2 13:300.80.7813.15…132021/4/2 14:300.530.7613.41…142021/4/2 16:300.060.3712.99…162021/4/2 18:0000.2212.29…182021/4/3 6:300.060.0311.08…6……………2022/1/31 18:000.000.092.78…18
+
+PDF PAGE 5
+Add Month as categorical variable
+Linear Regression
+P
+Model 3 (𝑹𝟐=𝟎.𝟒𝟔𝟗)Model 1 + Month: Adds 'month' as a categorical variable 
+
+
+PDF PAGE 6
+Add Month and Hour as categorical variables
+Linear Regression
+Model 6 (𝑹𝟐=𝟎.𝟕𝟑𝟓)Model 1 + Month, Hour: Adds ‘month’ & ‘hour' as a categorical variable 
+P
+
+PDF PAGE 7
+Out-of-Sample Assessment of  all Models
+Decision 618–Lecture 2: Linear Regression
+•By and large, the OSR2 is very consistent with the in-sample R2•If  OSR2 is much smaller than the R2, overfitting!
+R2Hour Variable
+ExcludedNumeric VariableCategorical Variable
+Month Variable 
+Excluded.46.57.72Numeric Variable.46.57Categorical Variable.47.73
+OSR2Hour Variable
+ExcludedNumeric VariableCategorical Variable
+Month Variable 
+Excluded.45.56.72Numeric Variable.45.56Categorical Variable.45.73
+
+PDF PAGE 8
+Visualizing the Predictions of  the Models
+Decision 618–Lecture 2: Linear Regression
+•Scatter plots of  predicted versus actual values for different modelsModel 1Model 6FGS Forecast(Use only radiation forecast)
+Predicted Radiation by FGS Forecast (kW/m2)
+Actual Radiation (kW/m2)
+Predicted Radiation by Model 1 (kW/m2)
+Actual Radiation (kW/m2)
+Actual Radiation (kW/m2)
+Predicted Radiation by Model 6 (kW/m2)R2 = 0.44OSR2 = 0.43R2 = 0.46OSR2 = 0.45R2= 0.73OSR2 = 0.73
+
+PDF PAGE 9
+Value Impact of  the Models
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 10
+Estimating the value of  using predictions from Model 6
+Decision 618–Lecture 2: Linear Regression
+Forecasting ToolAnnual Values($1,000)Current PracticeModel 1Model 6Revenues$ 4,200$ 4,205$ 4,356Production Costs$ 2,429$ 2,429$ 2,429Penalties$ 463$ 454$ 285Profit$ 1,308$ 1,323$ 1,641
+•Assume FGS contracts for their forecast•Contract price is $.15/kWh•FGS internal variable production cost is $.08/kWh•Price for supplying more than contract demand is $.11/kWh•Under-supply penalty cost is $.05/kWh •Implement on the Test Set hours•Extrapolate to annual values •Using Model 6, profit increases 25%  (from $1,308,000 to $1,641,000)
+
+PDF PAGE 11
+Can we do even better?
+Decision 618–Lecture 2: Linear Regression
+•OSR2 = 0.73 is pretty good, but perhaps it can be further improved…•Can we improve the forecasting?•Can we improve the day-before contract decision-making?•Asymmetric cost structure of  over/under-supply penalties. •Consider solar radiation as a “newsvendor-type model”
+
+PDF PAGE 12
+Beyond Predicting the Mean
+Decision 618–Lecture 2: Linear Regression
+
+
+PDF PAGE 13
+Decision 618–Lecture 2: Linear Regression
+More advanced models you will learn
+We can run XGBoost(an ensemble model with boosting)
+•Over the next several weeks, we will see many different predication modeling tools, each with their own advantages and disadvantages
+R2OSR2
+Model 6.73.73XGBoost.86.79
+Scatterplot of  Predicated Radiation versus Actual Radiation
+Predicted Radiation by XGBoost(kW/m2)
+Actual Radiation (kW/m2)
+
+
+PDF PAGE 14
+INTRODUCTION TO CLASSIFICATION WITH LOGISTIC REGRESSIONPredicting Customer Retention
+Decision618 Data Analytics for BusinessProf. Peng Sun
+
+
+PDF PAGE 15
+Outline
+Decision 618--Lecture 3: Logistic Regression14
+1.Predicting Customer Churn•What is customer churn and how can analytics help?2.Introduction to Logistic Regression•What is the difference between classification and regression?•How is Logistic Regression similar/different from Linear Regression?3.Classification Metrics•How do we evaluate the quality of  a classification model?4.From Probabilities to Decisions•How can we go from probabilities to “optimal” interventions?
+
+PDF PAGE 16
+New Lexicon
+Decision 618--Lecture 3: Logistic Regression15
+•“Regression model” – any model that predicts numerical outcomes:•Linear regression is the canonical standard regression model•CART (Classification And Regression Tree) -- next week•others: Random Forest, neural networks, …•“Classification models” – models that predict categorical outcomes•Logistic regression is the canonical standard model•CART, and others….
+
+PDF PAGE 17
+The logistic (sigmoid) function 
+Decision 618--Lecture 3: Logistic Regression16
+
+
+PDF PAGE 18
+What is customer churn and how can analytics help?
+1. Predicting Customer Churn
+Decision 618--Lecture 3: Logistic Regression17
+
+PDF PAGE 19
+What is Churn?•Churn (attrition) refers to a customer cancelling their commercial relationship with a company to go to a competitor, or leave the industry altogether.•Critical issue in subscription-based businesses •Software as a Service (SaaS) companies (Dropbox for example)•Wireless carriers•Media companies (New York Times)•Streaming companies (Netflix)•Amazon Prime (streaming? media? everything?…)•Avoidance of  churn is referred to as “customer retention” 
+Decision 618--Lecture 3: Logistic Regression18
+
+PDF PAGE 20
+Why is Customer Churn a Big Problem?
+Decision 618--Lecture 3: Logistic Regression19
+•Fact: acquiring a new customer is almost always significantly more expensive than retaining an existing customer.
+
+
+PDF PAGE 21
+Decision 618--Lecture 3: Logistic Regression20
+Churn in Wireless Telecom
+AT&T wireless customers: postpaid churn rate 2007-2024
+Note(s):Worldwide; 2007 to 2024Further information regarding this statistic can be found on page 8.Source(s): AT&T; ID 219831
+1.27%1.18%1.13%1.09%1.18%1.09%1.06%1.04%1.09%1.22%1.25%1.19%1.17%
+1.61%1.68%1.67%
+1.07%1.07%1.12%1.18%0.98%0.94%0.97%0.98%0.92%0.92%0.85%0.9%0.95%0.79%0.76%0.81%0.81%0.76%
+200720082009201020112012201320142015201620172018201920202021202220232024
+Churn rate
+Old reporting meth odNew reporting method*Branded churnPostpaid churnPostpaid phone-only churn
+2https://www.statista.com/statistics/219831/postpaid-churn-rate-of-atandt-wireless-customers-since-2007/
+20
+
+PDF PAGE 22
+What can you do reduce churn?
+Decision 618--Lecture 3: Logistic Regression21
+•Spend more on sales •Spend more on marketing•If  the underlying problem is due to product deficiencies, fix it •If  the underlying problem is customer knowledge of  how to use/get value from the product, educate customers•SaaS companies have dedicated “Customer Success” functions for exactly this reason •proactively identify customers at risk of  switching to the competition and offer inducements to get them to stay
+Let us see how…
+
+PDF PAGE 23
+Analytics for churn prediction
+Decision 618--Lecture 3: Logistic Regression22
+Customer data/features from transactions and experiments
+Select “optimal” interventions
+Prediction Modelprobability that customer will churn
+
+
+PDF PAGE 24
+𝒌: # of independent variables (𝒌=𝟔); 𝒏: # of observations (𝒏=𝟕,𝟎𝟑𝟐)
+Decision 618--Lecture 3: Logistic Regression23
+𝒏=𝟕,𝟎𝟑𝟐
+Customer Retention Data
+
+PDF PAGE 25
+Customer Retention Data
+Decision 618--Lecture 3: Logistic Regression24
+•We have customer retention data for 7,032 customers of  a telecom company that worked with Watson Analytics; one-year data for customers at the beginning of  the year•Dependent variable: Whether the customer left within that year(1forleaving,0forstaying)•Independent variables:•Monthly charges ($)•Is the customer a senior citizen? (1 or 0)•Payment method for account (electronic check, mailed check, bank transfer, credit card)•Internet service (DSL, Fiber, or None)•Months as a customer•Contract type (month-to-month, 1-year, or 2-year)
+
+PDF PAGE 26
+MonthlyChargesv.s.Churn
+Decision 618--Lecture 3: Logistic Regression25
+•Plot300customers•Linearregressionisclearlynotagoodmodel
+
+
+PDF PAGE 27
+PaymentMethodsv.s.Churn
+•ThereisahigherchurnrateforElectroniccheckversustheotherthreepaymentmethodsDecision 618--Lecture 3: Logistic Regression26
+
+
+PDF PAGE 28
+Contractv.s.Churn
+•Thereisahigherchurnrateforshortercontracts.Decision 618--Lecture 3: Logistic Regression27
+
+
+PDF PAGE 29
+Training and Test Split•Since there is no natural temporal order to the data, we will  split the data randomly into Training and Test sets …•Usual randomization approach:  •Choose the percent splits, say 70% Training, 30% Test•For each of  the 𝑛 individuals in the total data set, randomly assign each individual to the Training or Test set using the 70/30 split
+Decision 618--Lecture 3: Logistic Regression28
+
+PDF PAGE 30
+Training and Test Sets, continued
+y      x1     0      232     1      48  3     0      174     1      425     0      196     1      30  ... ...     ... 998   0      55 999   0      301000  1      35
+HomeownerAge1     0      232     1      48  3     0      175     0      19... ...     ...998   0      55 999   0      30
+HomeownerAge4     1      426     1      30  ... ...     ... 1000  1      35
+But what if  we are unlucky?…
+How can we avoid this?
+Training Set
+Testing Set
+Decision 618--Lecture 3: Logistic Regression29
+
+
+PDF PAGE 31
+Use Stratified Sampling 
+ChurnMonths1     0      232     1      48  3     0      174     1      425     0      196     1      30  ... ...     ... 998   0      55 999   0      301000  1      35
+HomeownerAge1     0      23  3     0      175     0      19... ...     ... 998   0      55 999   0      30
+HomeownerAge2     1      48  4     1      426     1      30  ... ...     ... 1000  1      35
+HomeownerAge1     0      234     1      42  5     0      176     1      30... ...     ...998   0      55 
+HomeownerAge2     1      483     0      17  ... ...     ... 999   0      551000  1      35
+6%
+6%
+6%Decision 618--Lecture 3: Logistic Regression30
+
+
+PDF PAGE 32
+Train/Test Split
+Decision 618--Lecture 3: Logistic Regression31
+Full dataset (𝑛=7,032)Training data 70% (𝑛=4,922)
+Test data 30% (𝑛=2,110)
+…
+…
+…
+
+PDF PAGE 33
+What is the difference between classification and regression?How is logistic regression similar/different from linear regression?
+2. Intro To Logistic Regression
+Decision 618--Lecture 3: Logistic Regression32
+
+PDF PAGE 34
+Predicting categories vs. numbersClassification vs. Regression
+Decision 618--Lecture 3: Logistic Regression33
+
+PDF PAGE 35
+Regression
+(numerical)
+Model
+Dependent variable
+Y
+Independent variables
+x1x2...xk
+(numeric or categorical)
+Decision 618--Lecture 3: Logistic Regression34
+•In Regression tasks, we try to predict future values for a continuous, numeric dependent variable•Once we have our model, we simply plug in an individual’s independent variables to attain our prediction
+
+PDF PAGE 36
+Classification
+Decision 618--Lecture 3: Logistic Regression35
+Model
+Dependent variableIndependent variables
+x1x2...xk
+(categorical)(numeric or categorical)
+Category 1
+Category M...
+•In Classification tasks, we try to predict future values for a categorical dependent variable•Probability vs. Prediction. Classification models can either output a probability for each category or directly provide a prediction of  the category.
+
+PDF PAGE 37
+Classification(Probability)
+Decision 618--Lecture 3: Logistic Regression36
+Model
+Dependent variableIndependent variables
+x1x2...xk
+(numerical,between0and1)(numeric or categorical)
+Prob(Category 1)
+Prob(Category M)...
+•In Classification tasks, we try to predict future values for a categorical dependent variable•Probability vs. Prediction. Classification models can either output a probability for each category or directly provide a prediction of  the category.
+
+PDF PAGE 38
+Logistic Regression Model•The dependent variable is called a Bernoulli random variable (think success or failure): Y = 0 or 1 •Y = 1 if  “success” – customer churns•Y = 0 if  “failure” – customer does not churn•We seek to predict the probability of  a “success” outcome of  the dependent variable Y:•Predict probability that the customer churns, namely Pr( Y = 1 )•Probability of  success is a particular function of  the independent variables  x1, …, xkDecision 618--Lecture 3: Logistic Regression37
+
+PDF PAGE 39
+Customer Retention Training Set𝒌: # of independent variables (𝒌=𝟔); 𝒏: # of observations (𝒏=𝟒,𝟗𝟐𝟐)
+Decision 618--Lecture 3: Logistic Regression39
+𝒏=𝟒,𝟗𝟐𝟐
+
+
+PDF PAGE 40
+Pr𝑌=1=𝛽!+𝛽"𝑥" +	𝛽#𝑥#+⋯𝛽$𝑥$This won’t work since the right-hand side can be any value. As a first step, can we transform it to make it always non-negative?
+Decision 618--Lecture 3: Logistic Regression40
+Getting to Logistic Regression:Some intuition from linear regression
+
+
+PDF PAGE 41
+Pr𝑌=1=𝛽!+𝛽"𝑥" +	𝛽#𝑥#+⋯𝛽$𝑥$This won’t work since the right-hand side can be any value. As a first step, can we transform it to make it always non-negative?
+Pr(𝑌=1)=	𝑒%!&%"'" &	%#'#&⋯%$'$Now the right-hand side is guaranteed to be positive. How can we transform it further so that it is less than or equal to 1?
+Decision 618--Lecture 3: Logistic Regression41
+Getting to Logistic Regression:Some intuition from linear regression
+
+PDF PAGE 42
+Pr𝑌=1=𝛽!+𝛽"𝑥" +	𝛽#𝑥#+⋯𝛽$𝑥$This won’t work since the right-hand side can be any value. As a first step, can we transform it to make it always non-negative?
+Pr(𝑌=1)=	𝑒%!&%"'" &	%#'#&⋯%$'$Now the right-hand side is guaranteed to be positive. How can we transform it further so that it is less than or equal to 1?
+Pr(𝑌=1)=𝑒%!&%"'" &	%#'#&⋯%$'$1+𝑒%!&%"'" &	%#'#&⋯%$'$This is guaranteed to be between 0 and 1. But, let’s simplify it a bit.
+Decision 618--Lecture 3: Logistic Regression42
+Getting to Logistic Regression:Some intuition from linear regression
+
+PDF PAGE 43
+Pr𝑌=1=𝛽!+𝛽"𝑥" +	𝛽#𝑥#+⋯𝛽$𝑥$This won’t work since the right-hand side can be any value. As a first step, can we transform it to make it always non-negative?
+Pr(𝑌=1)=	𝑒%!&%"'" &	%#'#&⋯%$'$Now the right-hand side is guaranteed to be positive. How can we transform it further so that it is less than or equal to 1?
+Pr(𝑌=1)=𝑒%!&%"'" &	%#'#&⋯%$'$1+𝑒%!&%"'" &	%#'#&⋯%$'$This is guaranteed to be between 0 and 1. But, let’s simplify it a bit.
+Pr(𝑌=1)=11+𝑒*(%!&%"'" &	%#'#&⋯%$'$)This is called the logistic (or sigmoid) function
+Decision 618--Lecture 3: Logistic Regression43
+Getting to Logistic Regression:Some intuition from linear regression
+
+PDF PAGE 44
+The logistic (sigmoid) function 
+Decision 618--Lecture 3: Logistic Regression44
+
+
+PDF PAGE 45
+Logistic vs. Linear Regression
+Decision 618--Lecture 3: Logistic Regression45
+Linearfunctionof  independent variablesLinear Regression
+Logistic Regression
+Prediction of  y
+Predicted Probability that y = 1
+LogisticFunction
+Any Number
+Linearfunctionof  independent variables
+Any NumberBetween 0 and 1
+𝛽!+𝛽"⋅𝑥"+⋯+𝛽#⋅𝑥#
+𝛼=𝛽!+𝛽"⋅𝑥"+⋯+𝛽#⋅𝑥#
+
+PDF PAGE 46
+Probabilities from the Logistic Function
+0.00
+0.25
+0.50
+0.75
+1.00
+−10 −5 0 5 10β0+β1x1+…+βkxk
+Pr(Y=1)
+The logistic function ranges between 0 and 1, is increasing. Positive values are mapped to 0.5 or greater, while negative values are mapped to 0.5 or lower.Logistic regression predicts a higher probability that 𝑦=1 when 𝛽!+𝛽"⋅𝑥"+⋯+𝛽#⋅𝑥# is higher
+Decision 618--Lecture 3: Logistic Regression46
+Pr (y= 1) = 1
+1+ e−(b0+b1·x1+... +bk·xk)
+𝛽!+𝛽"⋅𝑥"+⋯+𝛽#⋅𝑥#
+
+PDF PAGE 47
+In 3-d: Logistic Regress finds the best one (location, direction) to fit data
+Decision 618--Lecture 3: Logistic Regression47
+
+
+PDF PAGE 48
+Let’s see what our logistic regression model looks like, then discuss how the coefficients are found.
+Customer Retention Model
+Decision 618--Lecture 3: Logistic Regression48
+
+PDF PAGE 49
+Customer Retention Training Set𝒌: # of independent variables (𝒌=𝟔); 𝒏: # of observations (𝒏=𝟒,𝟗𝟐𝟐)
+Decision 618--Lecture 3: Logistic Regression49
+𝒏=𝟒,𝟗𝟐𝟐
+
+
+PDF PAGE 50
+Logistic Regression in Python
+•As in linear regression, a single line builds the model•‘glm’ stands for ‘generalized linear model’ 
+model = smf.ols(‘Churn ~ variables’, data=churn).fit()
+model = smf.glm(‘Churn ~ variables’, data = churn, family = sm.families.Binomial()).fit()
+Linear Regression:
+Logistic Regression:
+Decision 618--Lecture 3: Logistic Regression50model.summary()Toseetheoutput:
+
+PDF PAGE 51
+Logistic Regression Output
+Decision 618--Lecture 3: Logistic Regression51
+
+PDF PAGE 52
+Applying the Model to an Individual Customer
+Decision 618--Lecture 3: Logistic Regression52
+NameCustomer ValueCoefficientIntercept -.7589      (𝛽!)Monthly Charges ($)$94.51.0045       (𝛽1)Senior Citizen1.3029       (𝛽2)Payment Method CreditCard0-.1080       (𝛽3)… ……Tenure (months)15-.0313       (𝛽8)ContractOne Year0-.7605        (𝛽9)ContractTwo Year ($1000s)1-1.5812     (𝛽10)𝛼=−.7589+.0045×94.51+.3029×1−⋯−1.58×1=−1.24Pr𝑌"=##$%$%=##$%$&.()=	0.224
+
+PDF PAGE 53
+Interpreting Positive Coefficients•Monthly Charges has a positive coefficient (𝛽1 = 0.0045)•Monthly Charges High =>Link (𝛼)High=> Churn Probability High•Monthly Charges Low =>Link (𝛼)Low=> Churn Probability Low•Consider the probability of  churn for this customer with different monthly charges (all other variables held the same)
+Decision 618--Lecture 3: Logistic Regression53
+Monthly Charges ($)Link(𝛼)Pr(Yi = 1)94.51-1.2440.224104.51-1.1990.232114.51-1.1540.240124.51-1.1090.248
+
+PDF PAGE 54
+Logistic Regression Output
+Decision 618--Lecture 3: Logistic Regression54
+The significance of  coefficients is assessed the same way as in linear regression
+
+PDF PAGE 55
+Improving the Model
+Decision 618--Lecture 3: Logistic Regression55
+Since MonthlyCharges is not significant, let us remove this variable and re-construct the model…
+
+PDF PAGE 56
+Output after removing Monthly Charges
+Decision 618--Lecture 3: Logistic Regression56
+Since no Payment Method except Electronic Check is significant, let us combine them and create a new 0-1 categorical variable:ElectronicCheck = 1 or 0
+
+PDF PAGE 57
+PaymentMethodsv.s.Churn
+•ThereisahigherchurnrateforElectroniccheckversustheotherthreepaymentmethodsDecision 618--Lecture 3: Logistic Regression57
+
+
+PDF PAGE 58
+Final “Improved model”
+Decision 618--Lecture 3: Logistic Regression58
+•Are all of  the variables significant?•Do the signs of  the coefficients make sense?
+
+PDF PAGE 59
+“Sanity check”: signs of  coefficients
+Decision 618--Lecture 3: Logistic Regression59
+Positive coefficients: Higher value of  the variable will result in a higher value of  the probability. Lower value of  the variable will result in a lower value of  the probabilityNegative coefficients: Higher value of  the variable will result in a lower value of  the probability. Lower value of  the variable will result in a higher value of  the probability
+
+PDF PAGE 60
+How does Python find these coefficients 0.3031, -0.8851…etc.Finding the Coefficients
+Decision 618--Lecture 3: Logistic Regression60
+
+PDF PAGE 61
+Finding the Coefficients
+Decision 618--Lecture 3: Logistic Regression61
+•In both linear and logistic regression, the coefficients are chosen to maximize a measure of  fit. •Linear Regression: Minimize Sum of  Squared Error •A model fits the data well predictions and actual values are not too far off. •Logistic Regression: Minimize Binary Cross Entropy•A model fits the data well if  data points with y = 1 are assigned a high probability, while data points with y = 0 are assigned a low probability.
+
+PDF PAGE 62
+Measure of  Fit
+Decision 618--Lecture 3: Logistic Regression62
+Predicted ProbabilityActual Label0.9010.9510.9810.8510.0500.1000.1200.220Excellent(Entropy0.109)
+Predicted ProbabilityActual Label0.9010.7710.6810.5910.0500.1700.2300.340Good(Entropy0.274)
+
+PDF PAGE 63
+Measure of  Fit
+Decision 618--Lecture 3: Logistic Regression63
+Predicted ProbabilityActual Label0.80010.65010.59010.35010.15000.26000.35000.6700Okay(Entropy0.529)
+Predicted ProbabilityActual Label0.50010.50010.50010.50010.50000.50000.50000.5000Bad(Entropy0.693)
+
+PDF PAGE 64
+Logistic Regression Summary•Probability Prediction for i-th data xi
+•The model produces probabilities, but can be converted to 0/1 prediction using a cutoff.•Estimate coefficients 𝛽3 ,𝛽4 …, 𝛽5 so that:•Probabilities are high for those records where yi = 1, and •Probabilities are low for records where yi = 0Decision 618--Lecture 3: Logistic Regression64
+
+
+PDF PAGE 65
+How do we evaluate the quality of  a classification model?3. Classification Metrics
+Decision 618--Lecture 3: Logistic Regression65
+
+PDF PAGE 66
+EvaluationMetrics•Two types of  metrics when evaluating a classification model.•Prediction-Based Metrics•Compares actual churn/no churn (0 or 1) to model’s predicted churn/no churn (0 or 1).•If  a model produces probabilities (like Logistic Regression), a cutoff threshold must first be applied. The resulting metrics will depend on the chosen threshold.•ConfusionMatrix,Accuracy, False Positive Rate(FPR), True Positive Rate(TPR).•Probability-Based Metrics•Compare actual churn/no churn (0 or 1) to a model’s probabilities.•ReceiverOperatingCurve(ROC) andAreaUnderCurve(AUC)Decision 618--Lecture 3: Logistic Regression66
+
+PDF PAGE 67
+Prediction-based metricsAccuracy, True Positive Rate, False Positive Rate
+Confusion Matrix
+Decision 618--Lecture 3: Logistic Regression69
+
+PDF PAGE 68
+Let’s choose a cutoff… how about 0.33?
+Decision 618--Lecture 3: Logistic Regression70
+RealityProbabilitiesPredictions
+10021250Confusion MatrixAccuracy, TPR, FPR
+p = 0.33
+
+PDF PAGE 69
+The Confusion MatrixA confusion matrix (“contingency table” or “error matrix”) compares our model’s predictions to true outcomes for all 2,110 customers in the Test set
+Decision 618--Lecture 3: Logistic Regression71
+Model
+RealityNo ChurnPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑ChurnPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏)147413We chose 0.333 as our threshold for predicting Churn/No Churn
+
+PDF PAGE 70
+True Negatives
+Decision 618--Lecture 3: Logistic Regression72
+•True negatives: Model predicts “no churn” (low churn-probability), and indeed, they did not churn in reality→Flagging these customers as low-churn risks avoids unnecessary costs to the companyModel
+RealityNo ChurnPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑ChurnPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217Churn (𝒀𝒊	=	𝟏)
+
+PDF PAGE 71
+True Positives
+Decision 618--Lecture 3: Logistic Regression73
+•True positives: Model predicts these customers will “churn,” and they did indeed churn→Flagging these customers as high-churn risks enables the company to take proactive action to reduce churn and retain customersModel
+RealityNo ChurnPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑ChurnPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217Churn (𝒀𝒊	=	𝟏) 414
+
+PDF PAGE 72
+False Positives (“Type I Errors”)
+Decision 618--Lecture 3: Logistic Regression74
+•False positives: Model predicts “churn” but these customers in reality did not churn→Flagging these customers as high-churn risks imposes unnecessary costs to the company (i.e., the costs of  the 20% price reduction here)Model
+RealityNo ChurnPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑ChurnPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏) 414
+
+PDF PAGE 73
+False Negatives (“Type II Errors”)
+Decision 618--Lecture 3: Logistic Regression75
+•False negatives: Model predicts “no churn” but these customers in reality did churn→Flagging these customers as low-churn risks results in a missed opportunity to take proactive action to retain customersModel
+RealityNo ChurnPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑ChurnPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏)147414
+
+PDF PAGE 74
+Four numbers that will drive our metrics
+Decision 618--Lecture 3: Logistic Regression76
+Model
+RealityNo ChurnPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑ChurnPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)True negativeFalse positiveChurn (𝒀𝒊	=	𝟏)False negativeTrue positive
+•Negative or Positive in the table refers to the classification that our model produces •True or false refers to whether that classification was correct in reality
+
+PDF PAGE 75
+Accuracy (and Misclassification Rate)
+Decision 618--Lecture 3: Logistic Regression77
+•Accuracy: the proportion of  customers that are correctly classified
+•Misclassification Rate (“Error Rate”): 1 – Accuracy = 0.266Model
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏)147414
+
+
+PDF PAGE 76
+True and False Positive Rates
+Decision 618--Lecture 3: Logistic Regression78
+•True Positive Rate (TPR): proportion of  churning customers (𝑌"=1) that the model correctly identifies as high-churn risk𝑇𝑃𝑅=𝑇𝑟𝑢𝑒	𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠𝑇𝑟𝑢𝑒	𝑃𝑜𝑠+𝐹𝑎𝑙𝑠𝑒	𝑁𝑒𝑔=414414+147	=0.738•False Positive Rate (FPR): proportion of  non-churning customers (𝑌"=0) that the model incorrectly identifies as high-churn risk𝐹𝑃𝑅=𝐹𝑎𝑙𝑠𝑒	𝑃𝑜𝑠𝑖𝑡𝑖𝑣𝑒𝑠𝑇𝑟𝑢𝑒	𝑁𝑒𝑔+𝐹𝑎𝑙𝑠𝑒	𝑃𝑜𝑠=332332+1217	=0.214
+Model
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏)147414
+
+PDF PAGE 77
+Classification Metrics Exercise
+Decision 618--Lecture 3: Logistic Regression79
+•Suppose my cutoff  is 33% (Higher à Churn, Lower à Not Churn). 
+0.050.100.150.200.250.300.350.400.450.50Probability of  ChurnFrom Logistic Regression
+Actual OutcomeRed = Churn, Blue = No Churn
+ModelRealityNo ChurnChurnNo ChurnChurn
+ TPR: ?? FPR: ?? 
+
+PDF PAGE 78
+Classification Metrics Exercise
+Decision 618--Lecture 3: Logistic Regression80
+•Suppose my cutoff  is 33% (Higher à Churn, Lower à Not Churn). 
+0.050.100.150.200.250.300.350.400.450.50Probability of  ChurnFrom Logistic Regression
+Actual OutcomeRed = Churn, Blue = No Churn
+ModelRealityNo ChurnChurnNo Churn51Churn13
+TPR: 3/4 FPR: 1/6 
+
+PDF PAGE 79
+Summary of  Metrics So Far
+Decision 618--Lecture 3: Logistic Regression81
+Quality MetricValueAccuracy0.734True Positive Rate (TPR)0.738False Positive Rate (FPR)0.214Any issue with using these numbers to evaluate the performance of  our logistic regression model?Answer: If  we use a different cutoff  probability instead of  p = 0.33, then our confusion matrix will change, and hence Accuracy, TPR, and FPR will change. We need a cutoff-free metric!  
+
+PDF PAGE 80
+Plotting how the TPR and FPR trade-off  as we vary the threshold 
+ROC Curve and AUC
+Decision 618--Lecture 3: Logistic Regression82
+
+PDF PAGE 81
+Probability-Based Metrics
+Decision 618--Lecture 3: Logistic Regression83
+RealityProbabilities
+Vary Cutoff
+ROC Curve AUC Score
+
+
+PDF PAGE 82
+Probability-Based Metric: ROC Curve
+Decision 618--Lecture 3: Logistic Regression84
+•The Receiver Operating Characteristic (ROC) curve plots how the TPR and FPR vary as we change the cutoff  probability for predicting “Churn”. 
+False positive rate
+True positive rate
+0.0 0.2 0.4 0.6 0.8 1.0
+0.0 0.2 0.4 0.6 0.8 1.0
+Cutoff  = 1.0Predict 0 for everyone. 
+Cutoff  = 0.0 Predict 1 for everyone. 
+Cutoff  = 0.80 Predict 0 for almost everyone. 
+ Cutoff  = 0.20 Predict 1 for almost everyone. 
+Area Under the Curve (AUC)
+
+PDF PAGE 83
+ROC Curve for Real Data
+Decision 618--Lecture 3: Logistic Regression85
+Model (cutoff  probability p = 0.333)
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏)147414
+Cutoff  probability TPRFPRp = 0.330.7380.214
+Records of  all TPR and FPR values
+p=0.33
+
+PDF PAGE 84
+ROC Curve for Real Data
+Decision 618--Lecture 3: Logistic Regression86
+Model (cutoff  probability p = 0.50)
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟓𝟎High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟓𝟎No Churn (𝒀𝒊	=	𝟎)1,396153Churn (𝒀𝒊	=	𝟏)267294Records of  all TPR and FPR valuesCutoff  probabilityTPRFPRp = 0.330.7380.214p = 0.500.5240.099
+p=0.50
+
+PDF PAGE 85
+ROC Curve for Real Data
+Decision 618--Lecture 3: Logistic Regression87
+Model (cutoff  probability p = 0.99)
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟗𝟗High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟗𝟗No Churn (𝒀𝒊	=	𝟎)1,5490Churn (𝒀𝒊	=	𝟏)5610Records of  all TPR and FPR valuesCutoff  probabilityTPRFPRp = 0.330.7380.214p = 0.500.5330.104p = 0.990.0000.000
+p=0.99
+
+PDF PAGE 86
+ROC Curve for Real Data
+Decision 618--Lecture 3: Logistic Regression88
+Model (cutoff  probability p = 0.10)
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟏𝟎High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟏𝟎No Churn (𝒀𝒊	=	𝟎)722827Churn (𝒀𝒊	=	𝟏)38523Records of  all TPR and FPR valuesCutoff  probabilityTPRFPRp = 0.330.7380.214p = 0.500.5330.104p = 0.990.0000.000p = 0.100.9320.534
+p=0.10
+
+PDF PAGE 87
+ROC Curve for Real Data
+Decision 618--Lecture 3: Logistic Regression89
+Model (cutoff  probability p = 0.001)
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟎𝟎𝟏High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟎𝟎𝟏No Churn (𝒀𝒊	=	𝟎)0 1,549Churn (𝒀𝒊	=	𝟏)0 561
+Cutoff  probabilityTPRFPRp = 0.330.7380.214p = 0.500.5330.104p = 0.990.0000.000p = 0.100.9460.557p = 0.0011.0001.000
+Records of  all TPR and FPR values
+p=0.001
+
+PDF PAGE 88
+Probability-Based Metric: ROC Curve
+Decision 618--Lecture 3: Logistic Regression90
+•The Receiver Operating Characteristic (ROC) curve plots how the TPR and FPR vary as we change the cutoff  probability for predicting “Churn”. 
+False positive rate
+True positive rate
+0.0 0.2 0.4 0.6 0.8 1.0
+0.0 0.2 0.4 0.6 0.8 1.0
+Cutoff  = 1.0Predict 0 for everyone. 
+Cutoff  = 0.0 Predict 1 for everyone. 
+Cutoff  = 0.80 Predict 0 for almost everyone. 
+ Cutoff  = 0.20 Predict 1 for almost everyone. 
+Area Under the Curve (AUC)
+
+PDF PAGE 89
+Area Under the ROC Curve (AUC)•We want ROC curves that simultaneously achieve a high TPR and low FPR•This corresponds to a high area under the ROC curve, which is called the AUC (Area Under the Curve)•Maximum AUC is 1.000•AUC of  our model: 0.841•AUC of  a “(very naïve) baseline model”: 0.500 •Similar in spirit to R2 (and OSR2), the AUC is a unit-free measure that is used to evaluate the overall quality of  a classification modelDecision 618--Lecture 3: Logistic Regression91
+
+PDF PAGE 90
+Area Under the ROC Curve (AUC)
+Decision 618--Lecture 3: Logistic Regression92
+•AUC of  perfect prediction is  1.0•AUC of  our Logistic Regression model is  0.841•AUC of  the (very) naïve baseline model that predicts randomly is  0.50•If  the AUC of  your model is not much larger than 0.50, then your model is not much better than the (very) naïve baseline model -- which itself  is “blind” to the data
+
+
+PDF PAGE 91
+Perfect ROC Curve
+Decision 618--Lecture 3: Logistic Regression93
+0.050.100.150.200.250.300.350.400.450.50
+False Positive Rate (FPR)
+True Positive Rate (TPR)
+
+
+PDF PAGE 92
+Baseline Model: AUC = 0.5
+Decision 618--Lecture 3: Logistic Regression94
+•Let us consider a naïve baseline that randomly guesses a probability between 0 and 1 for each data point.•This is a “blind” model that completely ignores the data•By design:•The blind model has a	TPR	of	𝑝, because a proportion 𝑝	of  the positive observations will be correctly classified as positive•The blind model has an	FPR	of	𝑝, because a proportion 𝑝	of  the negative observations will be incorrectly classified as positive•ROC Curve is a diagonal line, AUC = 0.5
+
+PDF PAGE 93
+ROC for the Baseline Model
+Decision 618--Lecture 3: Logistic Regression95
+𝑝TPRFPR0.800.200.20
+Records of  all TPR and FPR values
+●
+0.00
+0.25
+0.50
+0.75
+1.00
+0.000.250.500.751.00False Positive Rate
+True Positive Rate
+Blind Model (𝒑=𝟎.𝟐𝟎)RealityLow-churn riskHigh-churn riskNo Churn (𝒀𝒊	=	𝟎)1,240310Churn (𝒀𝒊	=	𝟏)448112
+
+PDF PAGE 94
+ROC for the Baseline Model
+Decision 618--Lecture 3: Logistic Regression96
+Blind Model (𝒑=𝟎.𝟓𝟎)RealityLow-churn riskHigh-churn riskNo Churn (𝒀𝒊	=	𝟎)775775Churn (𝒀𝒊	=	𝟏)280280
+𝑝TPRFPR0.800.200.200.500.500.50
+Records of  all TPR and FPR values
+●
+●
+0.00
+0.25
+0.50
+0.75
+1.00
+0.000.250.500.751.00False Positive Rate
+True Positive Rate
+
+PDF PAGE 95
+ROC for the Baseline Model
+Decision 618--Lecture 3: Logistic Regression97
+Blind Model (𝒑=𝟎.𝟖𝟎)RealityLow-churn riskHigh-churn riskNo Churn (𝒀𝒊	=	𝟎)3101,240Churn (𝒀𝒊	=	𝟏)112448
+𝑝TPRFPR0.800.200.200.500.500.500.200.800.80
+Records of  all TPR and FPR values
+●
+●
+●
+0.00
+0.25
+0.50
+0.75
+1.00
+0.000.250.500.751.00False Positive Rate
+True Positive Rate
+
+PDF PAGE 96
+Area Under the ROC Curve (AUC)
+Decision 618--Lecture 3: Logistic Regression98
+•AUC of  perfect prediction is  1.0•AUC of  our Logistic Regression model is  0.841•AUC of  the (very) naïve baseline model that predicts randomly is  0.50•If  the AUC of  your model is not much larger than 0.50, then your model is not much better than the (very) naïve baseline model -- which itself  is “blind” to the data
+
+
+PDF PAGE 97
+AUC vs. Accuracy
+Decision 618--Lecture 3: Logistic Regression99
+MethodAUC of  the ROC CurveAccuracy
+DefinitionCaptures how well a model trades off  between FPR and TPR. Proportion of  predictions that are correct. 
+AdvantagesRobust to imbalance in the dataset.Very interpretable
+DisadvantagesHard to interpret. •Sensitive to imbalance in the dataset •Implicitly assumes that false positives and false negatives are weighted equally.
+
+PDF PAGE 98
+ROC Curves and AUC are Widely Used
+Decision 618--Lecture 3: Logistic Regression100Source: https://blog.google/technology/health/improving-breast-cancer-screening/
+
+
+PDF PAGE 99
+Evaluating a Classification Model
+Decision 618--Lecture 3: Logistic Regression101
+Logistic Regression
+Probability of  Yes (Between 0 and 1)
+Prediction of  Yes / No (0 or 1)
+Choose a Specific Cutoff p
+Vary Cutoff  from 0 to 1
+ROC Curve,AUC
+Confusion Matrix
+Classification Metrics
+Accuracy, TPR, FPR
+Model OutputsModel
+
+PDF PAGE 100
+4. From Probabilities to Decisions
+Decision 618--Lecture 3: Logistic Regression102
+How can we go from probabilities to “optimal” interventions?
+
+PDF PAGE 101
+Analytics for churn prediction
+Decision 618--Lecture 3: Logistic Regression103
+Select “Optimal” Interventions
+Prediction ModelProbability that customer will churn
+Customer Churn Data
+
+PDF PAGE 102
+Analytics for churn prediction
+Decision 618--Lecture 3: Logistic Regression104
+Prediction ModelProbability that customer will churn
+Customer Churn Data
+“Optimal” Intervention:•If  p > .333 offer 20% price reduction•If  p ≤ .333 do nothing
+
+PDF PAGE 103
+Stylized Churn Decision Problem
+Decision 618--Lecture 3: Logistic Regression105
+•The Marketing division has determined that a 20% price reduction halves the risk of  churn of  a customer.  •If  the customer churns, the company makes $0 from her/him in the future •If  the customer does not churn, the company makes $1000 (without the price reduction) or $800 (with the price reduction)
+→Decision: We should offer the discount if  the customer’s churn probability exceeds  p = 0.333
+𝑝/2$0
+$800Reduce Price 20%
+Don’t Reduce Price
+ChurnNo Churn𝑝1−	𝑝$0
+$1,000ChurnNo Churn
+1−	𝑝/2 Expected profit=	800(1−𝑝/2)
+Expected profit=	1,000(1−𝑝)
+
+PDF PAGE 104
+Profit Implications
+Decision 618--Lecture 3: Logistic Regression111
+Model
+RealityLow-churn riskPr(𝒀𝒊=𝟏)<𝟎.𝟑𝟑𝟑High-churn riskPr(𝒀𝒊=𝟏)>𝟎.𝟑𝟑𝟑No Churn (𝒀𝒊	=	𝟎)1,217332Churn (𝒀𝒊	=	𝟏)147414•For the true negatives, total profit is 1,217*1000 = $1,217,000•For the false positives, total profit is 332*800 = $265,600•For the false negatives, total profit is 147*0 = $0•For the true positives, total expected profit is 414*0.5*800 = $165,600•We expect 414*0.5 = 210.5 customers to remain with us because of  the price discount•Overall expect total profit: $1,648,200
+
+PDF PAGE 105
+Profit for different cutoff  probabilities  p 
+Decision 618--Lecture 3: Logistic Regression113
+1500000
+1550000
+1600000
+1650000
+0.00 0.25 0.50 0.75 1.00
+Churn threshold
+Total profit on test−set
+Method
+Baseline
+Logistic regression
+Cutoff probability  p
+
+PDF PAGE 106
+Impact on Customer Retention
+Decision 618--Lecture 3: Logistic Regression114
+•Predictive analytics is used extensively in managing customer retention — to assess which customers are likely to churn or not•Resulting preventative action has helped reduce churn rates•Enables personalized pricing, promotions and other inducements•If  your competition is using churn models and you are not, you will be at a disadvantage
+
+PDF PAGE 107
+Regression versus Classification
+Decision 618--Lecture 3: Logistic Regression115
+RegressionClassificationType of  OutcomesNumericalCategorical (including Binary)
+Evaluation MetricsR2 and OSR2
+Accuracy and Classification Error True Positive Rate (TPR) False Positive Rate (FPR) Receiver Operating Curve (ROC) Area Under the Curve (AUC)ModelsLinear RegressionLogistic RegressionCART, LASSO, Random Forest, XGBoost, Neural Networks

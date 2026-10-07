@@ -1,0 +1,8 @@
+           mode rank lambda  rows  warm      RMSE       MAE      OSR2 seconds
+elapsed teacher    8      0 10003 10002 0.9197671 0.7105886 0.3300099   3.314
+        warnings package_version                    R_version
+elapsed                    1.4.1 R version 4.0.2 (2020-06-22)
+           mode rank lambda  rows  warm      RMSE       MAE      OSR2 seconds
+elapsed teacher    8      0 10003 10002 0.9197671 0.7105886 0.3300099   3.314
+        warnings package_version                    R_version
+elapsed                    1.4.1 R version 4.0.2 (2020-06-22)

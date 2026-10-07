@@ -1,0 +1,526 @@
+CELL 0 markdown
+# Feature Engineering/Nonlinear Regression and Regularization
+Your Name: ...
+Date: ...
+
+
+In this assignment, we will use the Ames Housing price dataset from earlier assignments. This assignment is broken into two short problems:
+
+**Problem 1: Feature Engineering.** We will perform feature engineering for this dataset to capture non-linear relationships between the various independent variables and Sales Price (the dependent variable).
+
+**Problem 2: Regularization.** We demonstrate the power of regularization by intentionally adding in noise to our dataset so that linear regression (without regularization) grossly overfits. Then, we show that LASSO regularization allows us to remove most of the noisy terms and recover a model with much better out of sample performance.
+
+CELL 1 code
+# Run this cell
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from sklearn.linear_model import Lasso, LassoCV
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.metrics import r2_score, accuracy_score, confusion_matrix, roc_auc_score, roc_curve, mean_squared_error
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+np.random.seed(25)
+
+CELL 2 code
+# Run this cell
+def significance_stars(p):
+    if p < 0.001:
+        return '***'
+    elif p < 0.01:
+        return '**'
+    elif p < 0.05:
+        return '*'
+    elif p < 0.1:
+        return '.'
+    else:
+        return ''
+
+def print_summary_with_stars(model):
+    summary = model.summary2()
+    coef_table = summary.tables[1].copy()
+
+    coef_table['Signif'] = coef_table['P>|t|'].apply(significance_stars)
+
+    numeric_columns = coef_table.select_dtypes(include=['float64', 'int64']).columns
+    coef_table[numeric_columns] = coef_table[numeric_columns].round(4)
+    coef_str = coef_table.to_string(index=True)
+
+    # Determine max width
+    other_texts = [
+        "Regression Results",
+        "Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1",
+        f"R-squared: {model.rsquared:.4f}",
+        f"Adjusted R-squared: {model.rsquared_adj:.4f}",
+        f"F-statistic: {model.fvalue:.4f}",
+        f"Prob (F-statistic): {model.f_pvalue:.4f}",
+        f"Log-Likelihood: {model.llf:.4f}",
+        f"No. Observations: {int(model.nobs)}",
+        f"Df Model: {int(model.df_model)}",
+        f"Df Residuals: {int(model.df_resid)}",
+    ]
+    max_width = max(
+        max(len(line) for line in coef_str.splitlines()),
+        *(len(t) for t in other_texts)
+    )
+
+    def line(char="="):
+        return char * max_width
+
+    # Print nicely formatted summary
+    print(line("="))
+    print("Regression Results")
+    print(line("="))
+
+    print(f"R-squared: {model.rsquared:.4f}")
+    print(f"Adjusted R-squared: {model.rsquared_adj:.4f}")
+    print(f"F-statistic: {model.fvalue:.4f}")
+    print(f"Prob (F-statistic): {model.f_pvalue:.4f}")
+    print(f"Log-Likelihood: {model.llf:.4f}")
+    print(f"No. Observations: {int(model.nobs)}")
+    print(f"Df Model: {int(model.df_model)}")
+    print(f"Df Residuals: {int(model.df_resid)}")
+
+    print(line("="))
+    print("Coefficients:")
+    print(line("-"))
+    print(coef_str)
+    print(line("="))
+    print("Significance codes: '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1")
+    print(line("="))
+
+
+CELL 3 markdown
+# Problem 1: Feature Engineering
+
+CELL 4 markdown
+Let’s load the same dataset `AmesSales_modified.csv` and
+remind ourselves what the features are. The code below prints out the 11 independent variables as well as the dependent variable `SalePrice`.
+
+CELL 5 code
+data = pd.read_csv('AmesSales_modified.csv')
+print(data.columns)
+
+CELL 6 markdown
+Let's perform a test/train split and then train a baseline linear
+regression model. The code has been filled out for you below. Note that we chose a test/train split where `test_size=0.75`, meaning only 25% of our data is going into the training set, while 75% is going to our test set. This is **unconventional** and only done for educational purposes. Recall that a smaller training set makes models more prone to overfitting, which we will correct in the regularization portion of this assignment.
+
+CELL 7 code
+train_data, test_data = train_test_split(data, test_size=0.75)
+print(train_data.shape)
+print(test_data.shape)
+
+CELL 8 code
+X = train_data.drop('SalePrice', axis=1)
+y = train_data['SalePrice']
+
+model = smf.ols(formula='SalePrice ~ TotalRooms + Bedrooms + FullBath + HalfBath + LivArea + Fireplaces + GarageArea + PoolArea + YearBuilt + YearSold + BldgType', data=train_data).fit()
+print_summary_with_stars(model)
+
+CELL 9 markdown
+Let’s try to improve the R2 by analyzing a few of the variables.
+
+CELL 10 markdown
+## (a) Year Built
+
+CELL 11 markdown
+One of the significant variables above is `YearBuilt`. Let’s use the plot function to make a scatter plot between `YearBuilt` and `SalePrice`.
+
+CELL 12 code
+plt.figure(figsize=(10, 6))
+plt.scatter(train_data['YearBuilt'], train_data['SalePrice'], edgecolors = 'black', facecolors = 'none')
+plt.xlabel('YearBuilt')
+plt.ylabel('SalePrice')
+plt.title("YearBuilt vs SalePrice")
+plt.show()
+
+CELL 13 markdown
+The relationship between `YearBuilt` and `SalePrice` looks non-linear. The data seems to have a gradual increase in the price up to 1970, after which there is a more prominent increase in price for properties built afterwards. Using this information, let’s add a feature `YearBuiltafter1970` so that our Linear Regression model can “bend” at 1970.
+
+CELL 14 markdown
+**Task.** Add to BOTH the training dataset and testing
+the feature `YearBuiltafter1970`, which should be equal to
+the number of years after 1970 (e.g., 2000 is 30 years after 1970), or 0 if the year is 1969 or earlier. You can do this using the `np.maximum` function.
+
+CELL 15 code
+# ### YOUR CODE HERE ###
+
+
+
+# Code for showing the top 10 rows of the columns YearBuilt and YearBuiltafter1970
+display(train_data[['YearBuilt','YearBuiltafter1970']].head(10).sort_index())
+display(test_data[['YearBuilt','YearBuiltafter1970']].head(10).sort_index())
+
+CELL 16 markdown
+Confirm from the code output above that your `YearBuiltafter1970` is correct.
+
+CELL 17 markdown
+Let’s create a new model `model2` using `train_data`, which now contains this extra variable.
+
+CELL 18 code
+model2 = smf.ols(formula='SalePrice ~ TotalRooms + Bedrooms + FullBath + HalfBath + LivArea + Fireplaces + GarageArea + PoolArea + YearBuilt + YearBuiltafter1970 + YearSold + BldgType', data=train_data).fit()
+print_summary_with_stars(model2)
+
+CELL 19 markdown
+**Question 1:** The in-sample R2 increased from `model` to `model2`. Is this expected or surprising? Justify your answer.
+
+CELL 20 markdown
+***Answer 1:*** *Your Answer Here*
+
+CELL 21 markdown
+**Question 2:** Interpret the coefficients of `YearBuilt` and `YearBuiltAfter1970`. Can you provide a real-world explanation for why there is a difference before/after 1970?
+
+CELL 22 markdown
+***Answer 2:*** *Your Answer Here*
+
+CELL 23 markdown
+## (b) Living Area
+
+CELL 24 markdown
+We hypothesize that there may be non-linear relationship between `LivArea` and `SalePrice`. Let's visualize the data by breaking `LivArea` into 5 buckets based on quantiles, that is: the bottom 20% of properties by living area, 20%-40%, 40%-60%, 60%-80% and 80%-100%.  
+
+The code is provided for you below. `break_points` defines the 0, 20, 40, 60, 80 and 100th quantiles, while the function `pd.cut` divides the `LivArea` variable into buckets based on `break_points`.
+
+CELL 25 code
+train_data_dummy = train_data.copy()
+break_points = train_data_dummy['LivArea'].quantile([0, 0.2, 0.4, 0.6, 0.8, 1])
+
+# Create bins using pd.cut
+train_data_dummy['LivArea_Bins'] = pd.cut(
+    train_data_dummy['LivArea'],
+    bins=break_points,
+    labels=['0-20', '20-40', '40-60', '60-80', '80-100'],
+    include_lowest=True
+)
+
+# Create boxplot
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=train_data_dummy, x='LivArea_Bins', y='SalePrice',
+            color='grey',
+            medianprops=dict(color='black', linewidth=2))
+plt.title("SalePrice by LivArea Bins")
+plt.suptitle('')  # Remove the automatic title from pandas
+plt.xlabel("Quantile", fontsize = 12)
+plt.ylabel("Sale Price", fontsize = 12)
+plt.xticks(rotation=45, fontsize=10)
+plt.tight_layout()
+plt.show()
+
+CELL 26 markdown
+The thick black line in each box represents the median sale price of
+properties in that bucket. We notice a trend in the median of each bucket, where there seems to be 2 “bends”, one between 0-20 and 20-40 and another between 60-80 and 80-100. We choose to augment `LivArea` with higher order polynomial features of degree 2 and 3.
+
+CELL 27 markdown
+**Task.** Create the features `LivArea2` and `LivArea3` to both `train_data` as well as `test_data`. `LivArea2` should be `LivArea` raised to the 2nd power, while `LivArea3` is `LivArea` raised to the 3rd power.
+
+CELL 28 code
+### YOUR CODE HERE ###
+
+
+
+
+### Code below is provided for displaying the additional columns added
+display(train_data[['LivArea', 'LivArea2', 'LivArea3']].head(5).sort_index())
+display(test_data[['LivArea', 'LivArea2', 'LivArea3']].head(5).sort_index())
+
+CELL 29 markdown
+Let's train a model `model3` and calculate its R2.
+
+CELL 30 code
+model3 = smf.ols(formula='SalePrice ~ TotalRooms + Bedrooms + FullBath + HalfBath + LivArea + LivArea2 + LivArea3 + Fireplaces + GarageArea + PoolArea + YearBuilt + YearBuiltafter1970 + YearSold + BldgType', data=train_data).fit()
+print_summary_with_stars(model3)
+
+CELL 31 markdown
+**Question 3:** How does this R2 compare to that of `model2`? Would you say `LivArea2` and `LivArea3` are useful variables to add?
+
+CELL 32 markdown
+***Answer 3:*** *Your Answer Here*
+
+CELL 33 markdown
+## (c) Hypothetical Feature Engineering
+
+CELL 34 markdown
+In each of the following questions, we will pose a hypothetical scenario and ask you a question related to feature engineering. Note that the observations are made up and do not necessarily hold in the real dataset.
+
+CELL 35 markdown
+**Question 4:** You examine how `SalePrice` changes with
+the number of `Fireplaces`, a very significant variable in the regression model. You notice that homes with 0 fireplace, 1 fireplace, 2 fireplaces and 3 fireplaces have an average `SalePrice` given in the table below. The relationship between fireplace and sale price is clearly non-linear.
+
+CELL 36 code
+fireplace_table = train_data.groupby('Fireplaces')['SalePrice'].mean().reset_index()
+fireplace_table['SalePrice'] = fireplace_table['SalePrice'].round(2)
+fireplace_table.columns = ['Number of Fireplaces', 'SalePrice']
+display(fireplace_table.style.hide(axis='index').format({'SalePrice': '${:,.2f}'}))
+
+CELL 37 markdown
+**Using this information, propose two ways that you could help Linear Regression capture this non-linearity. (Hint: one of the ways is from Lecture 2).**
+
+CELL 38 markdown
+***Answer 4:*** *Your Answer Here*
+
+CELL 39 markdown
+**Question 5:** Your real-estate friend tells you a secret from the trade: there is a strong connection between `Bedroom`, `LivArea` and `SalePrice`. For properties with a small number of bedrooms, each additional square foot of living area has a large impact on the sale price of the unit. On the other hand, for properties with a larger number of bedrooms, the impact of each additional square foot of living area is much smaller.
+
+CELL 40 markdown
+**Using this information, propose a new feature to add to the dataset.**
+
+CELL 41 markdown
+***Answer 5:*** *Your Answer Here*
+
+CELL 42 markdown
+**Question 6:** While the dataset contains the variables for the number of full and half bathrooms, it is customary to simply include the total number of bathrooms as Full Bath + 0.5 * Half Bath. (e.g., a property with 2 full baths and 1 half bath is typically said to have 2.5 total bath). Your friend says you should add the feature `TotalBaths` to your dataset, equal to `FullBath` plus 0.5 times `HalfBath`. Your friend says that doing so will increase the in-sample R2. Do you agree or disagree with your friend? Why?
+
+
+CELL 43 markdown
+***Answer 6:*** *Your Answer Here*
+
+CELL 44 markdown
+## (d) Calculating OSR<sup>2</sup>
+
+CELL 45 markdown
+Let’s test the out-of-sample performance of all 3 models
+
+CELL 46 code
+def calculate_r2(predictions):
+  sse = np.sum((train_data['SalePrice'] - predictions) **2)
+  sst = np.sum((train_data['SalePrice'] - np.mean(train_data['SalePrice'])) ** 2)
+  return 1 - (sse/sst)
+def calculate_osr2(predictions):
+  sse = np.sum((test_data['SalePrice'] - predictions)**2)
+  sst = np.sum((test_data['SalePrice'] - np.mean(train_data['SalePrice'])) ** 2)
+  return 1 - (sse/sst)
+
+pd.DataFrame({
+    'name': ['model', 'model2', 'model3'],
+    'r2': [calculate_r2(model.predict(train_data)),
+           calculate_r2(model2.predict(train_data)),
+           calculate_r2(model3.predict(train_data))],
+    'osr2': [calculate_osr2(model.predict(test_data)),
+             calculate_osr2(model2.predict(test_data)),
+             calculate_osr2(model3.predict(test_data))]
+})
+
+
+CELL 47 markdown
+**Question 7:** Comment on the R2 and OSR2 performance above. Would you say our feature engineering was successful?
+
+CELL 48 markdown
+***Answer 7:*** *Your Answer Here*
+
+CELL 49 markdown
+# Problem 2: Regularization
+
+CELL 50 markdown
+We demonstrate the power of regularization by intentionally adding in noise to our dataset so that linear regression (without regularization) grossly overfits. Then, we show that LASSO regularization allows us to remove most of the noisy terms and recover a model with much better out of sample performance.
+
+In particular, we will first inject an extra 100 (!!) columns into `train_data` and `test_data`, each of which will be a uniform random number between 0 and 1.Clearly, these variables have nothing to do with `SalePrice` and are purely noise added for the sake of instruction. We will see how LASSO is able to remove this noise and recover the strong OSR2 we saw in Assignment 2.
+
+CELL 51 markdown
+## (a) Adding the Noise
+
+CELL 52 markdown
+We add in 100 noisy features, called `noise_1`, `noise_2`, …, `noise_100` to our dataset. Our training dataset now has 115 features, the 1 dependent variable + 11 original variables + 3 variables we feature engineered + 100 features that are pure noise.
+
+CELL 53 code
+n_noise = 100
+for i in range(1, n_noise+1):
+  train_data[f"noise_{i}"] = np.random.uniform(size=len(train_data))
+  test_data[f"noise_{i}"] = np.random.uniform(size=len(test_data))
+
+print(train_data.shape)
+
+CELL 54 markdown
+Let's take a peek at a few columns of our dataset. We see that `noise_1`, `noise_2` and `noise_100` are just pure nonsense.
+
+CELL 55 code
+display(train_data[['SalePrice', 'LivArea', 'Bedrooms', 'noise_1', 'noise_2', 'noise_100']].head(6).sort_index())
+
+CELL 56 markdown
+Let’s see how the in-sample performance of a linear regression model
+changes.
+
+CELL 57 code
+features = [col for col in train_data.columns if col != 'SalePrice']
+formula = 'SalePrice ~ ' + ' + '.join(features)
+model_with_noise = smf.ols(formula = formula, data=train_data).fit()
+print_summary_with_stars(model_with_noise)
+
+CELL 58 markdown
+Wow, the in-sample R2 is pretty good! But what about the OSR2?
+
+CELL 59 code
+print(calculate_osr2(model_with_noise.predict(test_data)).round(4))
+
+CELL 60 markdown
+**Question 8:** Explain in your own words what overfitting means. Why does adding these 100 noise features lead to significant overfitting? What would you expect would happen if you added 1000 noise features instead?
+
+CELL 61 markdown
+***Answer 8:*** *Your Answer Here*
+
+CELL 62 markdown
+## (b) Regularization with Particular $\lambda$ Values
+
+CELL 63 markdown
+We now use Linear Regression with LASSO regularization to build linear regression models that select a subset of these 115 variables. First, we process our data so that `X_train` and `X_test` only have the independent variables and `y_train` and `y_test` contain the dependent variable.
+
+CELL 64 code
+X_train = pd.get_dummies(train_data.drop('SalePrice', axis=1), drop_first = True)
+y_train = train_data['SalePrice']
+
+X_test = pd.get_dummies(test_data.drop('SalePrice', axis=1), drop_first = True)
+y_test = test_data['SalePrice']
+
+CELL 65 markdown
+**Task.** Build 3 LASSO models with $\lambda$ = 100, $\lambda$ = 3000 and $\lambda$ = 10,000 respectively. For each choice of $\lambda$, build a linear regression model with LASSO regularization. Name them `lasso_model_100`, `lasso_model_3000`, and `lasso_model_10000`.
+
+CELL 66 code
+### YOUR CODE HERE ###
+
+
+
+
+
+
+CELL 67 markdown
+We report the following metrics.
+*   In-Sample R2
+*   Out-of-Sample R2
+*   Number of non-zero coefficients (out of 115)  
+
+We also compare with `model_with_noise`, which is linear regression without regularization. This is equivalent to choosing $\lambda$ = 0 in LASSO.
+
+
+
+
+
+
+CELL 68 code
+def calculate_r2(y_true, y_pred):
+    sse = np.sum((y_true - y_pred) ** 2)
+    sst = np.sum((y_true - np.mean(y_true)) ** 2)
+    return 1 - (sse / sst)
+
+def calculate_osr2(y_train_true, y_test_true, y_test_pred):
+    sse = np.sum((y_test_true - y_test_pred) ** 2)
+    sst = np.sum((y_test_true - np.mean(y_train_true)) ** 2)
+    return 1 - (sse / sst)
+
+results = pd.DataFrame({
+    'model_name': ['No Regularization (Lambda: 0)', 'Lambda: 100', 'Lambda: 3000', 'Lambda: 10000'],
+    'r2': [
+        calculate_r2(y_train, model_with_noise.predict(train_data)),
+        calculate_r2(y_train, lasso_model_100.predict(X_train)),
+        calculate_r2(y_train, lasso_model_3000.predict(X_train)),
+        calculate_r2(y_train, lasso_model_10000.predict(X_train)),
+    ],
+    'osr2': [
+        calculate_osr2(y_train, y_test, model_with_noise.predict(test_data)),
+        calculate_osr2(y_train, y_test, lasso_model_100.predict(X_test)),
+        calculate_osr2(y_train, y_test, lasso_model_3000.predict(X_test)),
+        calculate_osr2(y_train, y_test, lasso_model_10000.predict(X_test)),
+    ],
+    'non_zero_coefficients': [
+        X_train.shape[1],
+        np.sum(lasso_model_100.coef_   != 0),
+        np.sum(lasso_model_3000.coef_  != 0),
+        np.sum(lasso_model_10000.coef_ != 0),
+    ]
+})
+
+display(results.style.hide(axis='index'))
+
+CELL 69 markdown
+**Question 9:** In your own words, explain why a larger choice of $\lambda$ leads to a Linear Regression model with fewer non-zero coefficients (i.e., fewer variables selected)
+
+CELL 70 markdown
+***Answer 9:*** *Your Answer Here*
+
+CELL 71 markdown
+## (c) Cross Validation to Find the Optimal $\lambda$
+
+CELL 72 markdown
+Use cross-validation `LassoCV` to choose the optimal value of $\lambda$. Here, use 5-fold cross validation on values of $\lambda$ from 1000 to 10000 in increments of 200 (i.e., `np.arange(1000, 10000, 200)`). Print out the best value of $\lambda$ using `lasso_cv.alpha_`.
+
+CELL 73 code
+# use this warnings.filterwarnings to make the run silent
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+### YOUR CODE HERE (print lasso_cv.alpha_)###
+
+
+
+
+
+
+CELL 74 markdown
+Construct a model called `lasso_model_optimal` using the optimal value of $\lambda$ you got above.
+
+CELL 75 code
+### YOUR CODE HERE ###
+
+
+
+
+### The code below generates metrics for lasso_model_optimal ###
+
+results = pd.DataFrame({
+    'model_name': ['No Regularization (Lambda: 0)', 'Lambda: 100', 'Lambda: 3000', 'Lambda: 10000', 'Lambda Optimal'],
+    'r2': [
+        calculate_r2(y_train, model_with_noise.predict(train_data)),
+        calculate_r2(y_train, lasso_model_100.predict(X_train)),
+        calculate_r2(y_train, lasso_model_3000.predict(X_train)),
+        calculate_r2(y_train, lasso_model_10000.predict(X_train)),
+        calculate_r2(y_train, lasso_model_optimal.predict(X_train)),
+    ],
+    'osr2': [
+        calculate_osr2(y_train, y_test, model_with_noise.predict(test_data)),
+        calculate_osr2(y_train, y_test, lasso_model_100.predict(X_test)),
+        calculate_osr2(y_train, y_test, lasso_model_3000.predict(X_test)),
+        calculate_osr2(y_train, y_test, lasso_model_10000.predict(X_test)),
+        calculate_osr2(y_train, y_test, lasso_model_optimal.predict(X_test)),
+    ],
+    'non_zero_coefficients': [
+        X_train.shape[1],
+        np.sum(lasso_model_100.coef_   != 0),
+        np.sum(lasso_model_3000.coef_  != 0),
+        np.sum(lasso_model_10000.coef_ != 0),
+        np.sum(lasso_model_optimal.coef_ != 0),
+    ]
+})
+
+display(results.style.hide(axis='index'))
+
+
+CELL 76 markdown
+**Question 10:** Comment on the performance of `lasso_model_optimal` shown in the “Lambda Optimal” row above.
+
+CELL 77 markdown
+***Answer 10:*** *Your Answer Here*
+
+CELL 78 markdown
+Examine the coefficients of the optimal model by running the code
+below.
+
+CELL 79 code
+pd.set_option("display.max_rows", None)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", None)
+
+coef_table = pd.DataFrame({
+    "feature": X_train.columns,
+    "coefficient": lasso_model_optimal.coef_
+})
+
+coef_table
+
+CELL 80 markdown
+**Question 11:** Out of the 100 pure noise variables that we added, how many does this optimal LASSO model assign a non-zero coefficient to? Comment on how this highlights the ability for LASSO to remove non-informative variables.
+
+CELL 81 markdown
+***Answer 11:*** *Your Answer Here*

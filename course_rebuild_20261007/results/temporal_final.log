@@ -1,0 +1,8 @@
+                  mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_final    4      0 100021 95723 1.224647 0.9294948 -0.263955
+        seconds warnings package_version                    R_version
+elapsed   2.052                    1.4.1 R version 4.0.2 (2020-06-22)
+                  mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_final    4      0 100021 95723 1.224647 0.9294948 -0.263955
+        seconds warnings package_version                    R_version
+elapsed   2.052                    1.4.1 R version 4.0.2 (2020-06-22)

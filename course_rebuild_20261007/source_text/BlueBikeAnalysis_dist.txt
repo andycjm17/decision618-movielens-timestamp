@@ -1,0 +1,167 @@
+CELL 0 code
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import statsmodels.formula.api as smf
+
+# Load the DataFrame, assuming 'combined_rentals_weather_wind_2024.csv' is available
+df = pd.read_csv('combined_rentals_weather_wind_2024.csv')
+
+columns_to_correlate = ['rental',	'temp',	'rel_humidity',	'wb_temp', 'precip_in', 'wind_speed']
+correlation_matrix = df[columns_to_correlate].corr()
+display(correlation_matrix)
+
+with open('cor_matrix.tex', 'w') as f:
+    f.write(correlation_matrix.to_latex(float_format="{:.4f}".format))
+
+CELL 1 code
+plt.figure(figsize=(5, 4))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+plt.title('Correlation Matrix Heatmap')
+plt.tight_layout()
+plt.savefig('correlation_matrix_heatmap.eps') # Save the plot
+plt.show()
+
+CELL 2 code
+ybar = df['rental'].mean()
+print(f"Average number of rentals per hour: {ybar:.2f}")
+residuals = df['rental'] - ybar
+SST = (residuals ** 2).sum()
+print(f"Total sum of squares (SST): {SST:.2f}")
+
+CELL 3 code
+covariance = df['rental'].cov(df['temp'])
+print(f"Covariance between rentals and temp: {covariance:.2f}")
+
+CELL 4 code
+correlation = df['rental'].corr(df['temp'])
+print(f"Correlation between rentals and temp: {correlation:.4f}")
+
+CELL 5 markdown
+# Simple Linear Regression: Rentals vs. Temperature
+
+CELL 6 code
+# Perform linear regression using statsmodels OLS
+model = smf.ols('rental ~ temp', data=df).fit()
+
+print(model.summary())
+
+# Extract coefficients
+slope = model.params['temp']
+intercept = model.params['Intercept']
+r_value_squared = model.rsquared
+p_value = model.pvalues['temp']
+std_err = model.bse['temp'] # Standard error of the slope
+ssr = model.ssr
+
+print(f"\nSlope: {slope:.2f}")
+print(f"Intercept: {intercept:.2f}")
+print(f"R-squared: {r_value_squared:.2f}")
+print(f"P-value: {p_value:.3f}")
+print(f"Standard Error (Slope): {std_err:.2f}")
+print(f"Sum of Squares of Residuals (SSR): {ssr:.2f}")
+
+# Create the regression line values
+df['regression_line'] = slope * df['temp'] + intercept
+
+# Plotting
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='temp', y='rental', data=df, alpha=0.5, s=10) # Reduced marker size to 20
+plt.plot(df['temp'], df['regression_line'], color='red', linestyle='-', label=f'Regression Line (y = {slope:.2f}x + {intercept:.2f})')
+
+plt.xlim(5,100)
+#plt.ylim(-150,1350)
+# Add label for intercept b0
+plt.text(plt.gca().get_xlim()[0], intercept, f'$b_0 = {intercept:.2f}$',
+         verticalalignment='center', horizontalalignment='right', color='white', fontsize=12)
+# Add label for slope b1
+plt.text(plt.gca().get_xlim()[1] * 0.95, plt.gca().get_ylim()[1] * 0.4,
+         f'slope $b_1 = {slope:.2f}$', verticalalignment='top', horizontalalignment='right', color='white', fontsize=14)
+
+plt.title('Simple Linear Regression: Rentals vs. Temperature')
+plt.xlabel('Temperature (F$^°$)')
+plt.ylabel('Number of Rentals')
+plt.grid(False)
+plt.axvline(0, color='gray', linestyle='--', linewidth=0.8)
+plt.axhline(0, color='gray', linestyle='--', linewidth=0.8)
+# plt.legend()
+plt.tight_layout()
+plt.savefig('rentals_vs_temp_linear_regression_statsmodels.eps') # Save the plot
+plt.show()
+
+CELL 7 code
+predicted_rental = model.predict(pd.DataFrame({'temp': [75]}))
+print(f"Predicted rentals at {75}°F: {predicted_rental.iloc[0]:.2f}")
+
+CELL 8 code
+print(f"SSR for model: {model.ssr:.2f}")
+
+CELL 9 code
+model1 = smf.ols('rental ~ temp + rel_humidity', data=df).fit()
+print(model1.summary())
+
+model2 = smf.ols('rental ~ temp + rel_humidity + precip_in + wind_speed', data=df).fit()
+print(model2.summary())
+
+CELL 10 code
+model2 = smf.ols('rental ~ temp + wb_temp + rel_humidity', data=df).fit()
+print(model2.summary())
+
+CELL 11 code
+model3 = smf.ols('rental ~ temp + rel_humidity + hour', data=df).fit()
+print(model3.summary())
+
+CELL 12 code
+model4 = smf.ols('rental ~ temp + rel_humidity + C(hour)', data=df).fit()
+print(model4.summary())
+
+CELL 13 code
+import numpy as np
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import math
+from scipy import stats
+
+def significance_stars(p):
+    if p < 0.001:
+        return '***'
+    elif p < 0.01:
+        return '**'
+    elif p < 0.05:
+        return '*'
+    elif p < 0.1:
+        return '.'
+    else:
+        return ''
+
+def print_summary_with_stars(model):
+    summary_table = model.summary2().tables[1]
+    summary_table['Signif'] = summary_table['P>|t|'].apply(significance_stars)
+
+    # Round all numeric columns to 4 decimal places
+    rounded_table = summary_table.round(4)
+
+    # Get the string representation of the table with header
+    table_string = rounded_table.to_string(header=True)
+
+    # Split the string into lines
+    lines = table_string.split('\n')
+
+    # Print the header line
+    print("=" * len(lines[0]))
+    print(lines[0])
+    # Print the separator line
+    print("-" * len(lines[0]))
+    # Print the rest of the table data
+    print('\n'.join(lines[1:]))
+    print("=" * len(lines[0]))
+    print(f"R-squared: {model.rsquared:.4f}  ***:p<0.001  **:p<0.01  *:p<0.05  .:p<0.1")
+
+CELL 14 code
+modelstar = smf.ols('rental ~ temp + rel_humidity + precip_in + wind_speed', data=df).fit()
+print_summary_with_stars(modelstar)

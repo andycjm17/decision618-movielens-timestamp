@@ -1,0 +1,19 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.venv-*/
+.ipynb_checkpoints/
+.env
+.env.*
+
+# These exact files are available as private Release assets.
+course_rebuild_20261007/sources/cv_all_1m.pkl
+course_rebuild_20261007/data/fresh_cv_predictions.rds
+archives/Decision618_Course_Rebuild_20261007.zip
+
+# Local caches and kernel connection files; preserve the recorded R library.
+course_rebuild_20261007/runtime/font-cache/
+course_rebuild_20261007/runtime/mpl-cache/
+course_rebuild_20261007/runtime/jupyter/
+course_rebuild_20261007/runtime/kernel-*/

@@ -1,0 +1,24 @@
+                 mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_grid    4      0 100024 23844 1.036534 0.8155635 0.1420857
+        seconds warnings package_version                    R_version
+elapsed   1.814                    1.4.1 R version 4.0.2 (2020-06-22)
+                 mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_grid    4     20 100024 23844 1.042754 0.8217683 0.1317593
+        seconds warnings package_version                    R_version
+elapsed   1.774                    1.4.1 R version 4.0.2 (2020-06-22)
+                 mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_grid    8      0 100024 23844 1.055798 0.8283589 0.1099003
+        seconds warnings package_version                    R_version
+elapsed   1.914                    1.4.1 R version 4.0.2 (2020-06-22)
+                 mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_grid    8     20 100024 23844 1.043363 0.8225233 0.1307433
+        seconds warnings package_version                    R_version
+elapsed   2.504                    1.4.1 R version 4.0.2 (2020-06-22)
+                 mode rank lambda   rows  warm     RMSE       MAE       OSR2
+elapsed temporal_grid   12      0 100024 23844 1.066946 0.8363772 0.09100404
+        seconds warnings package_version                    R_version
+elapsed   2.568                    1.4.1 R version 4.0.2 (2020-06-22)
+                 mode rank lambda   rows  warm     RMSE       MAE      OSR2
+elapsed temporal_grid   12     20 100024 23844 1.043124 0.8226652 0.1311424
+        seconds warnings package_version                    R_version
+elapsed   3.517                    1.4.1 R version 4.0.2 (2020-06-22)

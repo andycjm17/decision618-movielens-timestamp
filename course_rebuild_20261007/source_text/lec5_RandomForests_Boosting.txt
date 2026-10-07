@@ -1,0 +1,2629 @@
+PDF PAGE 1
+TREE-BASED ENSEMBLE LEARNING
+Predicting Click-Through Rates of  Ad Impressions 
+Decision618 – Data Analytics for BusinessProf Peng Sun
+
+
+PDF PAGE 2
+Review: What is a CART Model?
+Data Analytics for Business — CART 1
+• CART is a “tree”-based model used to make predictions.
+• Given the observed values of  the independent variables, just “follow the splits” 
+to the final node
+• At the split, go left if  “yes” and go right if “no”
+• Follow the splits to the end/bottom of  the tree and read off  the value.  That’s it!
+Splits
+Leaves (Buckets)
+
+
+PDF PAGE 3
+(Hyper)-Parameters
+Data Analytics for Business — CART 2
+• When we build a CART model, we can specify some parameters which 
+control the complexity of the resulting tree.
+Parameter Name in 
+Python
+English 
+Name Description Default 
+Value
+Higher = 
+Simpler Model?
+min_samples_split Minimum 
+Split Size
+CART will only consider splitting a 
+node at all if  its size is at least 
+min_samples_split.
+2 Yes
+min_samples_leaf Minimum 
+Bucket Size
+CART only considers splits if  each leaf  
+has min_samples_leaf data 
+points at least.
+1 Yes
+max_depth Maximum 
+Depth
+CART will build a tree no deeper than 
+max_depth. None No
+ccp_alpha Complexity 
+Parameter
+CART removes a branch if  it reduces 
+impurity (MSE or SSE) by less than 
+ccp_alpha × (# leaves – 1). 
+0.0 Yes
+
+PDF PAGE 4
+Impact of ccp_alpha value on the tree size
+Data Analytics for Business — CART 3
+ccp=0.001
+ccp=0.002 ccp=0.005
+15 leaves
+11 leaves 7 leaves
+
+PDF PAGE 5
+5-Fold Cross-Validation
+Data Analytics for Business — CART 4
+• Repeat procedure for each value of  the 
+(hyper-)parameter (ccp_alpha).
+• Choose the hyper-parameter value that 
+maximizes the average R2
+Fold 1 Fold 2 Fold 3 Fold 5
+Fold 1 Fold 2 Fold 4 Fold 5
+Fold 1 Fold 3 Fold 4 Fold 5
+Fold 2 Fold 3 Fold 4 Fold 5
+Fold 1 Fold 2 Fold 3 Fold 4 Fold 5
+Fold 4
+Fold 3
+Fold 2
+Fold 1
+R2Prediction
+Prediction
+Prediction
+Prediction
+Prediction
+R2
+R2
+R2
+R2
+compute 
+average R2
+
+PDF PAGE 6
+No interview
+No 
+interview
+Interview
+CART for Regression vs. Classification
+Regression: Salary ($/hour) Classification: Interview or not
+Data Analytics for Business — CART 5
+Salary: 59
+Salary: 31Salary: 6
+
+PDF PAGE 7
+Toy Example: Job Interviews
+Data Analytics for Business — CART 6
+𝒌: # of independent variables (𝒌 = 𝟐); 𝒏: # of observations (𝒏 = 𝟐𝟗)
+𝒏 = 𝟐𝟗
+
+
+PDF PAGE 8
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 7
+
+
+PDF PAGE 9
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 8
+No interview Interview
+
+PDF PAGE 10
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 9
+No interview
+No 
+interview
+Interview
+
+
+PDF PAGE 11
+Who Will Receive a Job Interview?
+Data Analytics for Business — CART 10
+No interview No 
+interview
+Interview
+No 
+interview
+
+
+PDF PAGE 12
+How to predict: Total Loss (Cost)
+Data Analytics for Business — CART 11
+• In CART for Classification, we measure the quality of  the model using:
+Prediction/Decision
+Reality
+No Violation
+(Grant Parole)
+Violation
+(Deny Parole)
+No Violation 0 𝐿𝐹𝑃
+Violation 𝐿𝐹𝑁 0
+Cost of  a single false negative (FN) Cost of  a single false positive (FP)
+dTotal Loss = 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐹𝑁 ∗ 𝐿𝐹𝑁 + 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐹𝑃 ∗ 𝐿𝐹𝑃
+Average Loss = Total Loss
+Number of Data Points
+
+PDF PAGE 13
+Prediction at a Leaf
+Data Analytics for Business — CART 12
+• For each leaf bucket, CART selects the class that has the lowest Total 
+Loss across all the training observations in that leaf  bucket. 
+• From the training set observations, suppose the bucket has: 
+• 6 parole violators
+• 23 non-violators
+• 𝐿𝐹𝑁 = 20 and 𝐿𝐹𝑃 = 1
+• If  predict this leaf as “Violator” Total Loss is
+23 * 1 = 23
+• Total Loss from predicting “Non-violator” for this leaf
+6 * 20 = 120
+• “Violator” has the lower loss
+
+PDF PAGE 14
+Gini index: leaf  gini
+Data Analytics for Business — CART 13
+• Assume a CART tree has 𝐿 leaves numbered from 1 to 𝐿.
+• For each 𝑙 ∈  {1, … , 𝐿}, let 𝑝𝑙 and 𝑞𝑙 respectively denote the 
+proportions of  loss-weighted samples sizes of  violators and 
+non-violators at leaf  𝑙. Note that 𝑝𝑙 + 𝑞𝑙 = 1.
+• E.g. Leaf 𝑙 has 6 violators and 23 non-violators. Then:
+𝑝𝑙 = 20 ×  6
+20 ×  6 + 1 ×  23 = 0.84 , 𝑞𝑙 = 1 ×  23
+20 ×  6 + 1 ×  23 = 0.16. 
+• The expression of  the Gini index of  leaf  𝑙 is:
+𝐺𝑖𝑛𝑖 𝐿𝑒𝑎𝑓 𝑙 = 1 − 𝑝𝑙
+2  − 𝑞𝑙
+2.
+• It quantifies how uncertain the leaf  is of  its decision.
+
+PDF PAGE 15
+Gini index: Leaf  Gini
+Data Analytics for Business — CART 14
+• The expression of  the Gini index of  leaf  𝑙 is:
+𝐺𝑖𝑛𝑖 𝑝𝑙, 𝑞𝑙 = 1 − 𝑝𝑙
+2  − 𝑞𝑙
+2.
+• It quantifies how uncertain the leaf  is of its label.
+𝑝𝑙
+𝐺𝑖𝑛𝑖 𝑝𝑙, 1 − 𝑝𝑙
+𝒑𝒍 very high, 𝒒𝒍 very low
+→ certain of  “Violator”  
+𝒑𝒍 very low, 𝒒𝒍 very high
+→ certain of  “Non-Violator”  
+𝒑𝒍 and 𝒒𝒍 are close
+→ leaf  is uncertain  
+
+
+PDF PAGE 16
+Split criterion: Gini reduction
+Data Analytics for Business — CART 15
+• CART decides which split to make by computing the Gini 
+reduction of  each potential split:
+• Iteratively, CART chooses the split with the highest Gini 
+Reduction.
+Gini reduction
+=
+weighted sum of Ginis of leaves −  Gini of original leaf
+𝑶𝒍𝒅 𝒍𝒆𝒂𝒇 𝑵𝒆𝒘 𝒍𝒆𝒂𝒗𝒆𝒔
+𝑺𝒑𝒍𝒊𝒕 𝒖𝒏𝒅𝒆𝒓
+𝒄𝒐𝒏𝒔𝒊𝒅𝒆𝒓𝒂𝒕𝒊𝒐𝒏
+
+PDF PAGE 17
+CART Model for Parole Data
+• Here is the CART model 
+we built for this 
+classification problem
+• 𝐿𝐹𝑃 = 1 and 𝐿𝐹𝑁 = 20 
+• min_samples_leaf = 25
+• ccp_alpha =  0.01
+Data Analytics for Business — CART 16
+
+PDF PAGE 18
+Two different CART models
+Data Analytics for Business — CART 17
+• Which model is more accurate on the training data? 
+• Which model will be more accurate on the test data?
+No interview
+No 
+interview
+Interview
+Interview
+Interview
+No interview
+No interview
+No 
+interview
+No 
+interview
+
+PDF PAGE 19
+CART that perfectly fits the Training data
+Data Analytics for Business — CART 18
+TimeServ < 1.94
+Age >= 24.2
+Age < 58.5
+TimeServ < 1.87
+TimeServ < 1.19
+TimeServ >= 1.26
+Age >= 38.5
+Age < 38.4
+TimeServ < 1.25
+Age < 32.5
+Age >= 33
+TimeServ >= 1.88
+Multiple = 0
+Age >= 58.8
+Class = C,E
+TimeServ < 1.03
+TimeServ < 1.5
+Age < 22.5
+Age >= 22.9
+Class = B,C,E
+TimeServ >= 1.26
+TimeServ < 0.85
+Male = 0
+InCity = 1
+Age < 22.8
+TimeServ >= 0.89
+TimeServ >= 1.59
+Class = B,D
+InCity = 1
+Age < 24.1
+Age >= 22.9
+Class = A
+TimeServ >= 16
+TimeServ < 33.8
+InCity = 1
+TimeServ >= 22.5
+TimeServ < 22.5
+TimeServ >= 33.9
+TimeServ < 8.78
+Age >= 45.4
+TimeServ >= 12.5
+TimeServ < 15.9
+InCity = 1
+Age >= 28.4
+TimeServ < 9.47
+TimeServ < 2.78
+Class = C,D
+Age >= 24.4
+TimeServ >= 1.99
+Age >= 28.8
+Age < 28.6
+Age < 49
+InCity = 0
+Age < 23.1
+Multiple = 1
+Age >= 45.4
+Multiple = 1
+Age >= 39
+Age < 37.6
+TimeServ < 2.7
+Age >= 27.8
+Age >= 28.8
+Age < 32
+InCity = 1
+TimeServ >= 2.73
+Class = E
+Age < 44
+TimeServ < 2.24
+Age >= 41.1
+Age >= 32.5
+TimeServ >= 2.26
+Class = B
+TimeServ < 1.96
+Age < 19.9
+TimeServ < 2.2
+Age >= 25.1
+InCity = 1
+Age >= 26.4
+Age < 27.2
+Age >= 44.8
+TimeServ < 17.1
+TimeServ >= 13.3
+InCity = 1
+Age >= 48.4
+Age < 47.7
+Male = 1
+Class = C
+TimeServ < 12.3
+Class = B,D
+TimeServ < 3.22
+TimeServ >= 3.28
+TimeServ < 4.08
+TimeServ >= 4.22
+TimeServ < 6
+TimeServ < 13.2
+TimeServ >= 11.4
+TimeServ < 11.2
+Age >= 57.8
+TimeServ >= 10.8
+Age < 47.1
+TimeServ >= 6.26
+Multiple = 0
+TimeServ < 9.8
+Age >= 47.4
+Age < 52.1
+Age >= 51.5
+Age < 49.5
+Age < 49
+Multiple = 1
+TimeServ >= 4
+InCity = 1
+TimeServ < 5.97
+Age >= 53.6
+TimeServ < 3.07
+Age < 56.2
+TimeServ < 3.86
+TimeServ < 3.78
+Age < 47.3
+Age >= 60.5
+TimeServ >= 4.83
+TimeServ < 8.1
+Age >= 60.8
+Multiple = 1
+Age < 65.6
+Multiple = 1
+TimeServ < 24.9
+TimeServ >= 20.7
+InCity = 1
+TimeServ < 20.6
+Age >= 50.3
+Age < 46.4
+TimeServ >= 25.2
+Age < 51.3
+TimeServ < 26.6
+Age >= 54.2
+TimeServ >= 27.3
+TimeServ >= 33.5
+TimeServ >= 25.9
+InCity = 1
+Class = C
+Age < 48.7
+Class = D
+Age < 53.7
+Age >= 55.4
+TimeServ < 20.4
+TimeServ >= 18.2
+Age < 51
+Age >= 49.1
+Age >= 51.7
+Age < 54
+Class = B
+TimeServ >= 20.6
+Age >= 50.7
+Age < 55.1
+InCity = 1
+TimeServ < 3.12
+TimeServ < 7.29
+Multiple = 1
+Age >= 25.1
+Class = B
+TimeServ >= 6.83
+TimeServ < 4.76
+TimeServ >= 4.16
+TimeServ >= 3.36
+TimeServ < 4.12
+Age >= 43.5
+Age >= 31
+Age < 41.9
+Age < 35.2
+TimeServ >= 22.3
+TimeServ >= 9.95
+Class = D
+TimeServ < 12.7
+Multiple = 1
+TimeServ >= 19.9
+TimeServ >= 13.7
+TimeServ < 16.9
+Age < 37.9
+TimeServ < 19.2
+TimeServ >= 17
+Age < 34.3
+Age >= 44.3
+TimeServ < 17.9
+TimeServ >= 16.7
+Age >= 43.1
+TimeServ < 15.4
+Age >= 38.6
+TimeServ >= 15.2
+Age >= 42.9
+Class = E
+Age < 28.5
+Age >= 35.6
+Age < 38.4
+TimeServ < 5.78
+Class = B,C
+Age >= 27.2
+TimeServ >= 2.89
+Age < 25.3
+Age >= 43.8
+Multiple = 1
+TimeServ >= 4.9
+Age >= 40.5
+TimeServ < 2.99
+Age < 22.1
+TimeServ < 3.42
+Age >= 27.7
+Age < 24.8
+Age >= 25.7
+Age < 26.6
+Age >= 33.9
+Age < 39
+TimeServ >= 4.43
+TimeServ < 4.68
+Age < 27.3
+Age >= 24
+Class = D
+Age < 20.4
+TimeServ < 3.05
+TimeServ >= 2.94
+Age >= 37.8
+Age >= 30.6
+Age < 35.1
+TimeServ >= 3.08
+TimeServ < 3.47
+Age >= 34.3
+Male = 0
+TimeServ >= 3.42
+Age < 27.1
+Age >= 21.9
+TimeServ >= 3.14
+TimeServ >= 3.22
+TimeServ < 3.24
+Age >= 27.6
+Age < 28.2
+Age >= 25.3
+Age < 26.4
+TimeServ >= 4.08
+TimeServ < 4.34
+Age >= 36.8
+Age < 41.8
+Age >= 31.3
+Age < 37.1
+Age >= 41.7
+TimeServ >= 5.66
+TimeServ < 3.19
+TimeServ >= 3.13
+TimeServ < 16.4
+Age >= 44.1
+TimeServ >= 16.1
+TimeServ >= 14.4
+TimeServ < 15.9
+Class = B,D
+Age >= 31
+TimeServ < 5.94
+Age < 31.8
+Age < 41.4
+TimeServ >= 13.6
+Age >= 41.2
+Male = 0
+TimeServ >= 11
+TimeServ < 13.1
+Age >= 40.7
+TimeServ < 7.95
+TimeServ >= 6.37
+Multiple = 1
+Age >= 33.5
+Age < 35
+Class = B
+TimeServ < 10.8
+Multiple = 1
+Age < 26.6
+Age >= 24.1
+TimeServ < 6.4
+Age >= 39.7
+Age >= 37.1
+Age < 37.9
+Class = D
+TimeServ >= 20
+Age < 43.7
+0
+0
+0
+0
+0
+0
+1
+1
+0
+0
+1
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+1
+0
+1
+0
+0
+0
+1
+0
+1
+0
+1
+0
+0
+1
+0
+0
+1
+0
+0
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+0
+0
+1
+1
+1
+1
+0
+0
+0
+0
+0
+1
+0
+1
+1
+0
+0
+0
+1
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+0
+1
+0
+0
+1
+1
+1
+0
+0
+1
+1
+0
+0
+0
+1
+0
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+1
+0
+0
+1
+0
+0
+1
+0
+0
+0
+1
+0
+1
+1
+0
+0
+0
+0
+0
+1
+0
+1
+0
+1
+0
+1
+1
+0
+0
+0
+1
+1
+0
+0
+1
+0
+0
+0
+0
+1
+0
+0
+1
+1
+0
+1
+0
+0
+0
+0
+0
+0
+0
+1
+1
+1
+0
+0
+0
+0
+0
+0
+1
+1
+1
+0
+0
+0
+0
+1
+1
+0
+1
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+1
+1
+0
+1
+0
+1
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+0
+1
+0
+0
+1
+1
+1
+0
+0
+0
+1
+1
+0
+1
+1
+1
+1
+0
+0
+0
+1
+1
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+1
+0
+0
+0
+1
+0
+1
+1
+0
+1
+1
+0
+1
+1
+1
+0
+1
+0
+1
+1
+0
+0
+1
+1
+yes no
+How do you think this model 
+will perform on unseen data?
+
+PDF PAGE 20
+How do we find the best ccp_alpha?
+Data Analytics for Business — CART 19
+underfitting 
+the training 
+data?
+overfitting 
+the training 
+data?
+sweet spot?
+ccp_alpha = 0.005 ccp_alpha = 0.01 ccp_alpha = 0.1ccp_alpha = 0
+
+
+PDF PAGE 21
+How to predict: Total Loss (Cost)
+Data Analytics for Business — CART 20
+• In CART for Classification, we measure the quality of  the model using:
+Prediction/Decision
+Reality
+No Violation
+(Grant Parole)
+Violation
+(Deny Parole)
+No Violation 0 𝐿𝐹𝑃
+Violation 𝐿𝐹𝑁 0
+Cost of  a single false negative (FN) Cost of  a single false positive (FP)
+dTotal Loss = 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐹𝑁 ∗ 𝐿𝐹𝑁 + 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐹𝑃 ∗ 𝐿𝐹𝑃
+Average Loss = Total Loss
+Number of Data Points
+
+PDF PAGE 22
+5-Fold Cross-Validation
+Data Analytics for Business — CART 21
+• Repeat procedure for each value of  (ccp_alpha)
+• Select the value of  ccp_alpha that maximizes the 
+average loss
+Fold 1 Fold 2 Fold 3 Fold 5
+Fold 1 Fold 2 Fold 4 Fold 5
+Fold 1 Fold 3 Fold 4 Fold 5
+Fold 2 Fold 3 Fold 4 Fold 5
+Fold 1 Fold 2 Fold 3 Fold 4 Fold 5
+Fold 4
+Fold 3
+Fold 2
+Fold 1
+Losses on 
+Fold 5Prediction
+Prediction
+Prediction
+Prediction
+Prediction
+Losses on 
+Fold 4
+Losses on 
+Fold 3
+Losses on 
+Fold 2
+Losses on 
+Fold 1
+Average 
+Losses
+
+PDF PAGE 23
+Cross-Validation to choose ccp_alpha
+Data Analytics for Business — CART 22
+• It is common to perform 5-fold or 10-fold cross-validation
+(we will perform 10-fold cross-validation here)
+• One parameter is varied (ccp_alpha). min_samples_leaf is 
+fixed throughout.
+• We use our losses of  𝐿𝐹𝑁 = 20  and  𝐿𝐹𝑃 = 1  
+• For ccp_alpha = 0, 0.01, 0.02, 0.03, …, 1 :
+• We will do cross-validation with the value of ccp_alpha.
+• We will record the average loss value over all folds.  Call it AvgLoss.
+• Finally, we will choose that value of  ccp_alpha that achieves the 
+lowest value of  AvgLoss.
+• Then fit a (final) tree on the full training data with this value of  
+ccp_alpha.
+
+PDF PAGE 24
+Cross-Validation to select the best choice of  ccp_alpha
+Data Analytics for Business — CART 23
+Overfitting
+(model is overly complex)
+Underfitting
+(model is overly simple)
+“Optimal” model complexity, “sweet spot”
+
+PDF PAGE 25
+Cross-Validation Results from R
+Data Analytics for Business — CART 24
+Tested values Average performance
+Select the best value
+
+
+PDF PAGE 26
+Python Code for Cross Validation
+Data Analytics for Business — CART 25
+cv.trees = GridSearchCV(
+  dt_cv,
+  param_grid = {'ccp_alpha': np.linspace(0, 1, 101)},
+  cv=StratifiedKFold(10),
+  scoring=loss_scorer,
+  n_jobs=-1
+      )
+3. Do cross validation on ccp_alpha:
+loss_scorer = make_scorer(lambda y_true, y_pred: avg_loss(y_true, 
+ y_pred, L), greater_is_better=False)
+2. Define the scoring function:
+dt_cv = DecisionTreeClassifier(
+  min_samples_leaf=5,
+  class_weight={0: 1, 1: L}
+   )
+1. Define the estimator with the loss matrix:
+
+PDF PAGE 27
+PART I: RANDOM FORESTS
+Predicting Click-Through Rates of  Ad Impressions 
+
+
+PDF PAGE 28
+Lecture Outline
+Random Forest and Boosting 27
+1. Predicting Click-Through Rate in Online Advertisements 
+• Why would an advertisement platform like Google want to predict the click-
+through rates of its ads?
+2. Intro to Ensemble Learning and Random Forest 
+• 2.1 Building a Random Forest
+• How does a random forest model use randomness in its construction?
+• 2.2 Results on Real Data with Parameter Selection
+• What parameters of a random forest model can we control?
+• 2.3 Trade-offs for Performance: Computation and Interpretability
+• Why are random forest models computationally intensive to train? What 
+are some ways to remedy this?
+• What information on feature importance does random forest provide?
+
+PDF PAGE 29
+1. Online Advertisements
+Random Forest and Boosting 28
+
+PDF PAGE 30
+Sponsored Search Advertising 
+Random Forest and Boosting 29
+
+
+PDF PAGE 31
+Sponsored Search Overview
+Random Forest and Boosting 30
+• Advertisers create ads and submit to Google bids ($), typically for a particular 
+keyword search (e.g., “flowers”).
+• Google determines which ads to show and in what order based on the bid 
+and a quality score. 
+• Crucially, advertisers only pay if  their ad is clicked.
+Ad Shown 
+to User
+Bid + 
+Quality 
+Score
+Google
+Bid ($)
+Bid ($)
+Venus et 
+Fleur
+1800flowers.
+com
+Advertisers
+User searches 
+“flowers”
+
+
+PDF PAGE 32
+Deciding which Ad to Show
+Random Forest and Boosting 31
+• Influenced by bid ($) and quality score.
+• The bid is how much an advertiser is willing to pay for a click.
+• The quality score is dominated by the click-through rate (CTR) of  the 
+ad, an estimate of how likely the user will click this ad.
+• Other factors: advertiser targeting (e.g., user demographic, geography). 
+• Final Decision: Google shows the ad with the highest expected revenue 
+(bid * CTR). 
+User searches 
+“flowers”
+Venus et 
+Fleur
+1800flowers.
+com
+Advertisers
+
+
+PDF PAGE 33
+Example
+Random Forest and Boosting 32
+Advertiser Name Bid CTR 
+Estimate
+Expected 
+Revenue
+Loreto’s business 
+“Petals” $0.10 0.10 $0.0100
+Clyde’s business 
+“Peonies” $0.11 0.08 $0.0088
+*In practice, there are multiple ads shown, so the position of  the ad will also be factored in. Loreto 
+may win position 1, and Clyde wins position 2. Google may find this more optimal than Loreto in 
+position 2 and Clyde in position 1. We’ll have a lecture on this!
+Question: What are some negative consequences for Google if CTR’s 
+are not estimated correctly?
+
+PDF PAGE 34
+Google Advertising Revenue
+Random Forest and Boosting 33
+• Google launched its advertisement platform 
+(AdWords) in 2000.
+• ~75% of Google’s revenue
+33
+
+PDF PAGE 35
+Click-Through Rate Dataset
+Random Forest and Boosting 34
+
+PDF PAGE 36
+Click-Through Rate Dataset
+Random Forest and Boosting 35
+• 6,057 new advertisements shown to specific groups of  users in a 
+specified position on the (former) Tencent search engine soso.com
+• Dependent Variable: Click-through rate (CTR)
+• Independent Variables
+• Number of  words in the title and text of the advertisement
+• Depth (i.e., number of  ads on the page) and the position of  this ad
+• Average CTR of  this advertiser’s ads and of  this query—both across all 
+ads and across all ads in this position (4 metrics)
+• Gender and age of  the users viewing the advertisement
+
+PDF PAGE 37
+Click-Through Rate (CTR) Data
+Random Forest and Boosting 36
+𝒌: # of independent variables (𝒌 = 𝟏𝟎); 𝒏: # of observations (𝒏 = 𝟔, 𝟓𝟎𝟕)
+
+
+PDF PAGE 38
+Example Query with Ads
+Random Forest and Boosting 37
+Position 1
+Position 2 Position 3
+Query 
+Depth = 3
+
+PDF PAGE 39
+Training/Testing data split
+Random Forest and Boosting 38
+Full Dataset (𝒏 = 𝟔, 𝟎𝟓𝟕) 70% Training Set (𝒏 = 𝟒, 𝟐𝟑𝟗)
+30% Testing Set (𝒏 = 𝟏, 𝟖𝟏𝟖)
+
+PDF PAGE 40
+Linear Regression and CART models
+Random Forest and Boosting 39
+Variable Linear 
+regression
+titleWords -0.00039
+adWords 0.000195
+depth 0.000572
+position -0. 001295
+advCTR 0.272312
+advCTRInPos 0.702157
+queryCTR -0.072609
+queryCTRInPos 0.565682
+gendermale -0.008656
+genderunknown -0.048420
+age13-18 -0.006917
+age19-24 -0.006791
+age25-30 -0.006079
+age31-40 -0.007717
+age41+ 0.005114
+ageunknown 0.027482
+CART (for regression))
+• Somewhat interpretable
+• But do you thinkGoogle would prioritize  interpretability of  their model 
+here?
+• Or do they simply care about maximizing predictive ability?
+
+
+PDF PAGE 41
+Linear Regression and CART models, cont.
+Random Forest and Boosting 40
+Metric Linear 
+Regression CART
+OSR2 0.3961 0.3377
+MAE 0.0331 0.0340
+RMSE 0.0551 0.0577
+Mean Absolute Error (MAE):
+Root Mean Square Error (RMSE):
+
+
+PDF PAGE 42
+Combining multiple models 
+2. Ensemble Learning and RF
+Random Forest and Boosting 41
+
+PDF PAGE 43
+Wisdom of  Crowds
+Random Forest and Boosting 42
+• 1907: F . Galton examined 787 predictions of 
+the weight of  an ox
+• Mean prediction: 1,197 pounds
+• Median prediction: 1,207 pounds
+• Actual weight: 1,198 pounds
+• Who Wants to be a Millionaire
+• The friend (“expert”) is correct 65% of  the time
+• The audience (“crowd”) is correct 91% of the time
+• Wisdom of  crowds: aggregate predictions of  a 
+group often outperform individual predictions
+
+
+PDF PAGE 44
+Wisdom of  the Crowd Activity
+Random Forest and Boosting 43
+• How many pieces of  candy are in this jar? 
+
+
+PDF PAGE 45
+Wisdom of  the Crowd Activity
+Random Forest and Boosting 44
+• How many pieces of  candy are in this jar? 
+
+PDF PAGE 46
+Wisdom of  the Crowd Activity
+Random Forest and Boosting 45
+• 49 responses
+• Average: 138.75
+• True: 204
+• 30 responses 
+“worse” than average
+• Winners:
+• Arohi Singh
+• Rajitha Penaka
+• Jake Readinger
+• Shakthi Velan Mariappan Veerashanmughamoni
+• Nicolas Aldunate
+• Fernando Bonilla
+0
+100
+200
+300
+400
+500
+600
+1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47 49
+
+PDF PAGE 47
+Ensemble Learning Principles
+Random Forest and Boosting 46
+• Ensemble learning: build multiple prediction models and 
+combine their predictions (for example by averaging)
+• Different strengths and weaknesses . Models 
+complement each other and work together to make a 
+prediction.
+• Reduces overfitting: a single model may overfit in one 
+way, but not all models will overfit in the same way. 
+• Advantages and Disadvantages
+• Pros: Strong performance. Routinely used by winners of  machine-
+learning competitions (e.g., Kaggle)
+• Cons: Interpretability and Computation. Even though each model 
+may be interpretable, the ensemble typically is not. 
+
+PDF PAGE 48
+Ensemble Learning Paradigms
+Random Forest and Boosting 47
+• Models in Parallel: Build models independently, then 
+make predictions by taking an average or majority vote. 
+• Models in Series: Build models adaptively, where each 
+model is trained to fix the mistakes of  the previous 
+models. 
+180
+ 100
+200
+ 120
+In Parallel and Independent
+e.g., Random Forest
+100
+ +20
++40
+ -10
+In Series and Adaptive
+e.g., Boosted Trees
+Number of candies?
+
+PDF PAGE 49
+Warning! Science vs. Practice
+Random Forest and Boosting 48
+• As we search for better and better models, we sometimes 
+discover a model type which works amazingly in practice, 
+but whose scientific basis is not well-understood. 
+• Why does this modification work so well? 
+• Why don’t we do this another way? Try it!
+• Have we really found an excellent new type of  model, or are 
+we just (consistently) lucky?
+• After finding a model type that consistently works well, we 
+start to “believe” it is inherently a great new discovery.
+
+PDF PAGE 50
+A collection of  independent CART models.
+2. Intro to Random Forest
+Random Forest and Boosting 49
+
+PDF PAGE 51
+Random Forest Overview
+Random Forest and Boosting 50
+• Random Forest is a collection of  CART trees (hence called a forest).
+• Predictions are made by taking the average (regression) or majority vote 
+(classification) of each tree’s prediction.
+• The forest of trees is built using some randomization, which ensures 
+trees are diverse. 
+1. Random Training Data (Bootstrapping) – Creating different 
+training datasets for each tree by sampling.
+2. Random Splits – Restricting each split to a subset of  the 
+independent variables. 
+
+
+PDF PAGE 52
+Making Predictions (Regression)
+Random Forest and Boosting 51
+Data 
+Point
+Tree 1
+Tree 2
+Tree B
+ 0.18
+0.08
+0.04
+0.10
+Random Forest Model Predictions of  
+Each Tree
+Input
+. . .
+. . .
+. . .
+Final Prediction 
+(Average)
+
+PDF PAGE 53
+Making Predictions (Classification)
+Random Forest and Boosting 52
+Data 
+Point
+Tree 1
+Tree 2
+Tree B
+ No
+No
+Yes
+No
+Random Forest Model Predictions of  
+Each Tree
+Input Final Prediction 
+(Majority Vote)
+. . .
+. . .
+. . .
+
+PDF PAGE 54
+What’s so “random” about random forest?
+2.1 Building a Forest with Randomness
+Random Forest and Boosting 53
+
+PDF PAGE 55
+Building the Forest with Randomness
+Random Forest and Boosting 54
+Create Random “New” 
+Datasets (Boostrapping) 
+Random Forest 
+Model
+Training 
+Dataset
+Tree 1
+Tree B  
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+0.03 1 14
+0.03 1 14
+… … …
+0.51 1 54
+0.03 1 14
+0.51 1 54
+… … …
+0.51 1 54
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+Tree 2         
+. . .
+. . .
+Dataset 1
+Dataset 2
+Dataset B
+. . .
+Build CART with 
+Randomized Splits
+
+PDF PAGE 56
+Each CART Model is Very Complex
+Random Forest and Boosting 55
+• Unlike CART, there is no pruning of  trees based on a complexity 
+parameter ccp_alpha
+→ As a result, each fitted tree is usually very large and very complicated
+→ We will see how randomization reduces the risk of overfitting
+
+
+PDF PAGE 57
+Bootstrapping and Bagging
+Randomizing the Training Datasets
+Random Forest and Boosting 56
+
+PDF PAGE 58
+Bootstrap: Sample with replacement from the training set, 
+selecting the same number of observations as in the training set
+As a result, some rows may appear more than once, and other rows 
+may not appear at all
+Random Forest and Boosting 57
+1. Bootstrapping
+
+
+PDF PAGE 59
+Bootstrap aggregation, or Bagging, is a general ensemble learning 
+principle for creating diverse predictors
+• Generate B different bootstrapped training sets (think B = 100)
+• Train your favorite predictive analytics (i.e., machinelearning)
+method on each of the B bootstrapped training sets
+• Aggregate the results by taking the average (regression) or majority 
+vote (classification) of  the B predicted values. 
+Random Forest and 
+Boosting
+Bagging = Bootstrap aggregation
+15.071 Spring 2020—Predicting Click-Thru Rates of Ads 58
+
+PDF PAGE 60
+Demonstration of  Bagging 
+Random Forest and Boosting 60
+
+
+PDF PAGE 61
+Demonstration of  Bagging 
+Random Forest and Boosting 61
+• 2 Variables: x (independent variable) and y (dependent 
+variable). 
+• Vary the number of  trees from 1 to 100. 
+• Each tree is fit on a bootstrapped sample of  the training data. 
+• The fit is generally good, but is quite “jagged” because of  
+overfitting. 
+• As the number of  trees increases, the curve smooths out 
+significantly. 
+
+PDF PAGE 62
+Demonstration
+Random Forest and Boosting 62
+
+
+PDF PAGE 63
+Random Forest: Individual Trees
+Random Forest and Boosting 63
+
+
+PDF PAGE 64
+Random Forest: Tree 1 Only
+Random Forest and Boosting 64
+
+
+PDF PAGE 65
+Random Forest: 2 Trees
+Random Forest and Boosting 65
+
+
+PDF PAGE 66
+Random Forest: 3 Trees
+Random Forest and Boosting 66
+
+
+PDF PAGE 67
+Random Forest: 5 Trees
+Random Forest and Boosting 67
+
+
+PDF PAGE 68
+Random Forest: 10 Trees
+Random Forest and Boosting 68
+
+
+PDF PAGE 69
+Random Forest: 100 Trees
+Random Forest and Boosting 69
+
+
+PDF PAGE 70
+Building the Forest
+Random Forest and Boosting 70
+Bootstrapping 
+(Randomized)
+Random Forest 
+Model
+Training 
+Dataset
+Tree 1
+Tree B
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+0.03 1 14
+0.03 1 14
+… … …
+0.51 1 54
+0.03 1 14
+0.51 1 54
+… … …
+0.51 1 54
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+Tree 2
+. . .
+. . .
+Dataset 1
+Dataset 2
+Dataset B
+. . .
+Build CART with 
+Randomized Splits
+
+PDF PAGE 71
+Choosing different splits among trees
+Randomizing Splits
+Random Forest and Boosting 71
+
+PDF PAGE 72
+2. Randomizing Splits
+Random Forest and Boosting 72
+• For each split in the CART tree, 
+random forests only consider a 
+small random subset of  𝑚 variables 
+(here 𝑚 = 3)
+• Random forests add the best 
+available split to the tree (among 
+just those variables)
+• The set of  candidate variables to 
+consider is different for each split
+advCTR < 0.030
+Yes No
+position < 1.5 
+Yes No
+advCTRInPos < 0.056
+Yes No
+age = 0-12 or 41+
+Yes No
+titleWords adWords depth position advCTR advCTRInPos queryCTR queryCTRInPos gender age
+
+PDF PAGE 73
+Why Does This Promote Diversity?
+Random Forest and Boosting 73
+• Recall that CART typically chooses the split that reduces impurity (SSE 
+or Total Loss) the most. 
+• Randomly selecting the candidate predictors at each split results in 
+more diverse trees with lower correlation.
+• Consider an extreme example where there is one strong feature variable (say 
+GPA) and other very weak variables (say citizenship)
+• In this case, CART would almost always pick the strong variable for its first 
+split. As a result, all trees will be quite similar, and the trees’ predictions will 
+be highly correlated (hence less diverse)
+• Trade-Off. However, sampling too few predictors at each split might 
+result in poorly optimized splits and might worsen predictive ability.
+
+PDF PAGE 74
+Building the Forest Summary
+Random Forest and Boosting 74
+Random Forest 
+Model
+Training 
+Dataset
+Tree 1
+Tree B
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+0.03 1 14
+0.03 1 14
+… … …
+0.51 1 54
+0.03 1 14
+0.51 1 54
+… … …
+0.51 1 54
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+Tree 2
+. . .
+. . .
+Dataset 1
+Dataset 2
+Dataset B
+. . .
+Bootstrapping 
+(Randomized)
+Build CART with 
+Randomized Splits
+
+PDF PAGE 75
+How do we select the best parameters? 
+How well does Random Forest perform?
+2.2. Parameter Selection and Results
+Random Forest and Boosting 75
+
+PDF PAGE 76
+Model Parameters: n_estimators, max_features, 
+min_samples_leaf, min_samples_split
+Random Forest and Boosting 76
+1. n_estimators: number of  CART trees in the forest (B) 
+(typical value = 100).
+2. max_features: number of  variables randomly examined 
+at each split of  the trees (m) (typical value = 1-10).
+3. min_samples_leaf: minimum number of  observations in 
+each terminal node of  the trees (same as in CART).
+Default values (where k = number of  independent variables) 
+• Regression: n_estimators = 100, max_features ~ 𝑘, 
+min_samples_leaf  = 1.
+• Classification: n_estimators = 100, max_features ~ 𝑘 , 
+min_samples_leaf  = 1.
+
+PDF PAGE 77
+Selecting Parameters
+Random Forest and Boosting 77
+• n_estimators: higher is always better, but there are 
+diminishing returns (e.g., 50 → 500 vs. 500 → 5000 trees) 
+• min_samples_leaf: typical values (1-10).
+• max_features: Cross validation is needed to choose the best 
+value. 
+• Small max_features: Trees have too much diversity, individually 
+garbage (splits are not optimized at all)
+• Large max_features: Trees are too similar, don’t get benefits of  
+“wisdom of  the crowds”. 
+
+PDF PAGE 78
+In-sample Performance
+Random Forest and Boosting 78
+• In-sample performance improves with model complexity
+• High in-sample performance due to high number of  trees
+impact of  n_estimators impact of  max_features impact of  n_samples_leaf
+
+PDF PAGE 79
+max_features and out-of-sample performance 
+Random Forest and Boosting 79
+• Predictive (out-of-sample) performance is usually quite sensitive 
+to max_features
+impact of  max_features
+Hmm, it would be 
+nice to find the best value 
+of max_features …
+
+PDF PAGE 80
+Cross-Validation on max_features
+Random Forest and Boosting 80
+• Use default hyper-parameter values for: n_estimators = 100, min_samples_leaf  = 1.
+• For max_features = 1, 2 …, 16:
+• Do cross-validation with the current value of  max_features
+• Record the average “out-of-sample” R2 over the cross-validated folds (Average R2 )
+• Choose the value of  max_features that yields the highest value of Average R2 
+Tested values Average 
+performance
+Selected
+value
+
+PDF PAGE 81
+Cross-Validation Results
+Random Forest and Boosting 81
+• Cross-validation yields out-of-sample estimates within the overall training data
+• Can you see any downside of  using cross-validation to set the value of  max_features?
+Good balance between 
+optimized splits and diverse 
+trees
+Well-optimized splits, but trees 
+are not so diverse
+Very diverse trees, but splits are 
+poorly optimized
+
+PDF PAGE 82
+Random Forest and Boosting 82
+• The predictive performance of  the random forest model is significantly 
+better than that of  the other two models
+• But the choice of  the “right” model balances different objectives:
+• Predictive performance
+• Interpretability
+• Computational efficiency
+• Let’s talk about the computational efficiency and interpretability of  
+Random Forest.  
+Linear Regression CART Model Random Forest
+OSR2 0.3961 0.3377 0.4940
+Out-of-Sample MAE 0.0331 0.0340 0.0304
+Out-of-Sample RMSE 0.0551 0.0577 0.0504
+Results
+
+PDF PAGE 83
+What are the downsides of  Random Forest?
+2.3 Computation Time and Interpretability
+Random Forest and Boosting 83
+
+PDF PAGE 84
+Computation Time
+Random Forest and Boosting 84
+• Random forests can be computationally intensive to build
+• Model runtimes increase significantly with model complexity
+impact of  n_estimators impact of  max_features impact of  min_samples_leaf
+
+
+PDF PAGE 85
+Computation Time
+Random Forest and Boosting 85
+• Random forests can be computationally intensive to build
+• Model runtimes increase significantly with model complexity 
+(e.g., number of trees, depth of  each tree)
+• However, they have one very important advantage: they can 
+easily be computed using parallel architecture
+• Each tree in the forest can be built in parallel
+• If  you need to build 500 trees, spin up 500 servers in the cloud and 
+build one tree on each server, or 2 trees on 250 servers, or …
+• The time it takes to build a random forest using parallel architectures 
+is proportional to the time it takes to build a single CART tree
+  
+
+PDF PAGE 86
+Computational Effort
+Random Forest and Boosting 86
+• We performed 10-fold cross validation on 10 values of max_features (1, 2, 
+…, 10). Each random forest model was trained with n_estimators = 100.
+• Questions:
+• How many CART models did we build in total? 
+• Answer: Consider max_features = 1, and a particular fold (let’s say fold 1, 
+which uses the last 10% of  the data as testing). We must produce 100 
+bootstrapped datasets, and each one generates a CART model. 100 CART 
+models and 100 bootstrapped samples just for 1 max_features and 1 fold, so 
+100 * 10 * 10 = 10,000 trees and bootstrapped datasets in total. 
+
+PDF PAGE 87
+Computational Effort of  
+Cross-Validation on Random Forests
+Random Forest and Boosting 87
+• The computational effort can be very significant because:
+• K-Fold cross-validation replicates the fitting/testing procedure many times 
+• Trees in random forests are more complex than CART (no ccp_alpha)
+CART
+(10-Fold
+Cross-Validation)
+Random Forest
+(10-Fold
+Cross-Validation)
+Time to fit a CART tree (mseconds) ~ 10.0 ~ 10.0
+CART trees per model fit 1 500
+Model fits per parameter tested 10 10
+Parameter values tested 10 10
+Computation time 1 second 8 minutes
+
+PDF PAGE 88
+Interpreting Random Forest Models
+Random Forest and Boosting 88
+
+PDF PAGE 89
+Variable Importance/Influence
+Random Forest and Boosting 89
+• CART trees are very interpretable
+• In contrast, by combining many trees (each of which is quite 
+large), random forests are typically not interpretable at all
+• Random forest can sort-of  be interpreted using variable 
+importance metrics
+• For regression, we look at the improvement in the sum of  squared 
+errors from splitting with the variable, averaged across all trees
+• For classification, we look at the improvement in the weighted loss, 
+averaged across all trees
+→ This provides an ordering of variables by importance
+(although the actual values cannot be readily interpreted)
+
+PDF PAGE 90
+Variable Importance in CTR Model
+Random Forest and Boosting 90
+• The most important variables identify the main drivers of  CTR
+• The main drivers appear to be historical click-thru rates of  the advertiser’s ad 
+impressions and of  the query (both in general and in the position)
+
+
+PDF PAGE 91
+Comparison of  
+CTR Prediction Models
+Random Forest and Boosting 91
+
+PDF PAGE 92
+Let us Compare all Models Discussed So Far 
+Random Forest and Boosting 92
+Linear
+Regression
+Logistic 
+Regression CART Random 
+Forest
+Can be used to predict 
+numerical outcomes ✓ 
+Can be used for 
+classification problems  ✓
+Captures nonlinear 
+relationships in the data ~ ~
+Simple and interpretable ~ ~
+Yields best out-of-sample 
+prediction quality ~ ~
+Computational 
+Efficiency ✓ ✓
+
+PDF PAGE 93
+Let us Compare all Models Discussed So Far 
+Random Forest and Boosting 93
+Linear
+Regression
+Logistic 
+Regression CART Random 
+Forest
+Can be used to predict 
+numerical outcomes ✓  ✓ ✓
+Can be used for 
+classification problems  ✓ ✓ ✓
+Captures nonlinear 
+relationships in the data ~ ~ ✓ ✓
+Simple and interpretable ~ ~ ✓ 
+Yields best out-of-sample 
+prediction quality ~ ~ ~ ✓
+Computational 
+Efficiency ✓ ✓ ✓ ~
+
+PDF PAGE 94
+Random Forest Summary
+Random Forest and Boosting 95
+• Builds a collection of CART models in a way that promotes 
+diversity among the trees. 
+• Bagging for diversity in the training datasets 
+• max_features for diversity in the splits chosen 
+• Cross-validation is used to select optimal parameters 
+(max_features, n_estimators, min_samples_leaf).
+• Random Forest models work very well in practice, but are 
+computationally intensive to train (can be parallelized) especially 
+when cross validation is performed too. 
+• Random Forest models are difficult to interpret. Some notion of 
+feature importance can be obtained, but it is not clear how 
+changing the feature impacts the prediction of the model.
+
+PDF PAGE 95
+An alternative to K-Fold Cross Validation specifically for Random 
+Forest
+Advanced Materials:
+Reducing Computation Time using
+“Out-of-bag” Predictions 
+Random Forest and Boosting 97
+
+PDF PAGE 96
+Out-of-bag Predictions: Introduction
+Random Forest and Boosting 98
+• Random forests are built by sampling data from the training set
+• In each sample, some rows appear multiple times, while others do not appear 
+at all
+• Using the training data, how might we estimate how well the tree fitted with this 
+dataset generalizes — without using cross-validation?
+
+
+PDF PAGE 97
+Out-of-bag Predictions: Principles
+Random Forest and Boosting 99
+• Each training set observation (row) appears in roughly 63% of  the 
+bootstrap (bag) samples*
+• Out-of-bag prediction: for each row , we use all the trees that did 
+not use that row in the fitting process ( ~37% of  the trees)
+• Regression: predict the average over all of  these trees
+• Classification: predict the most common class among all of these trees
+→ Estimates the out-of-sample performance (R 2, RMSE, MAE, etc.) 
+using only the training data
+→ An efficient way to estimate how well random forests generalize to 
+“new” data, without having to do k-fold cross-validation
+
+PDF PAGE 98
+Out-of-bag Predictions
+Illustration for ntree = 500
+Random Forest and Boosting 100
+• Average prediction for row 𝑖: (Pred. 2 + Pred. 4 + … )/(number of samples 
+where row i  is NOT included)
+• Repeat for all parameter values and compute the performance metrics, and then 
+choose the value that optimizes the performance metric
+Sample 1
+Sample 2
+Sample 3
+Sample 4
+Sample 500 
+YES
+NO
+YES
+NO
+YES
+Model 1
+Model 2
+Model 3
+Model 4
+Model 500
+—
+Prediction 2
+—
+Prediction 4
+—
+Bootstrap Sample Row 𝑖 included? Model Prediction for row 𝑖
+…
+…
+…
+…
+
+PDF PAGE 99
+Out-of-bag Predictions: Results
+Random Forest and Boosting 101
+These results are quite similar to what we obtained using cross-validation
+
+PDF PAGE 100
+Cross-Validation and Out-of-bag 
+Prediction yield similar results
+Random Forest and Boosting 102
+
+PDF PAGE 101
+Computational Burden
+Random Forest and Boosting 103
+• In summary, out-of-bag predictions:
+• avoids repeating the fitting/testing procedure multiple times, and is thus more 
+computationally efficient than cross-validation
+• is oftentimes quite accurate, leading to similar parameter value choices (e.g. 
+max_features)
+CART
+(10-Fold CV)
+Random Forest
+(10-Fold CV)
+Random Forest
+(out-of-bag)
+Time to fit a CART tree (milliseconds) ~ 10.0 ~ 10.0 ~ 10.0
+CART trees per model fit 1 500 500
+Model fits per parameter tested 10 10 1
+Parameter values tested 10 10 10
+Computational time 1 second 8 minutes 1 minute
+
+PDF PAGE 102
+PART II: BOOSTING
+Predicting Click-Through Rates of  Ad Impressions 
+
+
+PDF PAGE 103
+Ensemble Learning Paradigms
+Random Forest and Boosting 105
+• Models in Parallel: Build models independently, then 
+make predictions by taking an average or majority vote. 
+• Models in Series: Build models adaptively, where each 
+model is trained to fix the mistakes of  the previous 
+models. 
+180
+ 100
+200
+ 120
+In Parallel and Independent
+e.g., Random Forest
+100
+ +20
++40
+ -10
+In Series and Adaptive
+e.g., Boosted Trees
+Number of candies?
+
+PDF PAGE 104
+Boosted Trees
+(also known as “Gradient Boosted Trees”, “Gradient Boosting
+Machine”)
+Random Forest and Boosting 106
+Sequential predictions 
+
+PDF PAGE 105
+Aside: trying to minimize a function  f(x) 
+• Suppose we want to find  x  
+that minimizes  f(x)
+• Suppose we can’t “see” the 
+function, but we can 
+compute f ’(x)  for any 
+given value of   x  
+• “Gradient Descent”
+Random Forest and Boosting 107
+
+PDF PAGE 106
+Gradient Descent Algorithm
+Random Forest and Boosting 108
+• Algorithm:
+1. Current point is  x  
+2. Compute f’(x) 
+3. Next point is   x  ← x ⎯  f’(x)
+•  is called the “step-size” among mathematicians, but in Machine 
+Learning it is called the “learning rate” or the “shrinkage 
+parameter”
+• A larger learning rate allows us to make initial progress fast, at the 
+expense of  less accuracy as we get nearer to the actual solution
+• A smaller learning rate will take us longer to get near to the 
+solution, but is likely to result in a higher accuracy solution
+
+PDF PAGE 107
+Step-size/learning rate
+Random Forest and Boosting 109
+
+
+PDF PAGE 108
+Boosted Trees Overview
+Random Forest and Boosting 110
+• (Gradient) Boosted trees is an ensemble learning model consisting of  a 
+sequence of  trees. 
+• Making Predictions. Start with the predictions of  the first tree, then having 
+each subsequent tree adjust that prediction slightly. 
+• Building the Trees. The trees are built sequentially: each tree is built to 
+correct the “mistakes” of  the previous trees. 
+
+
+PDF PAGE 109
+Making Predictions
+Random Forest and Boosting 111
+
+PDF PAGE 110
+Making Predictions
+Random Forest and Boosting 112
++7.30
+-5.50
++0.45
+0.630
+Predictions 
+of  Each Tree
+Final 
+Prediction 
+Data 
+Point
+Input
+. . .
+Tree 1
+Tree 2
+Tree B
+Boosted 
+Trees Model
+. . .
+. . .
+0.630
+-0.10
+0.45
+Cumulative 
+Predictions with 
+Learning Rate (𝜼)
+𝜂 = 0.10
+𝜂 = 0.10
+
+PDF PAGE 111
+Notation
+• Function notation for trees: we can think of  a given tree, say 
+tree number 7 in our ensemble,  as a function  𝑓7 𝑥1, … , 𝑥𝑘  that 
+takes values of  our  k  independent variables 𝑥1, … , 𝑥𝑘 , and 
+assigns a value to the dependent variable 𝑦 , namely the 
+prediction  𝑦 = 𝑓7 𝑥1, … , 𝑥𝑘
+Random Forest and Boosting 113
+For this tree we have: 
+𝑓7 𝑥1, … , 𝑥𝑘 = 𝑓7 (advCTRIn, advCTR, …, 
+queryCTR) 
+𝑓7(0.1, 0.2, …, 0.05) = 0.18
+
+
+PDF PAGE 112
+Additively Combining trees
+Random Forest and Boosting 114
+Using this notation, we can define additive combinations of  trees:
+y = Tree1 +  0.10 × Tree2  + 0.10 × Tree3
+This is also: 
+𝑦 = 𝑓1 𝑥1, … , 𝑥𝑘 + 0.10 𝑓2 𝑥1, … , 𝑥𝑘 + 0.10 𝑓3 𝑥1, … , 𝑥𝑘
+Tree1
+ Tree2
+ Tree3
+
+PDF PAGE 113
+Additively Combining trees, cont.
+Random Forest and Boosting 115
+𝑦 = 𝑓1 𝑥1, … , 𝑥𝑘 +  .10 𝑓2 𝑥1, … , 𝑥𝑘 +  .10 𝑓3 𝑥1, … , 𝑥𝑘
+Suppose (advCTRIn, advCTR, queryCTR) = (0.1, 0.2, 0.05)
+Then  y = 0.17 + .10 * 0.24  + .10 * 0.16 = 0.21   
+Tree1
+ Tree2
+ Tree3
+
+
+PDF PAGE 114
+Making Predictions
+Random Forest and Boosting 116
+• Let 𝑓1, 𝑓2, … , 𝑓𝐵be the function notation for each of  the B trees. 
+• For a regression problem, the final prediction is made by: 
+𝑓1 𝑥 + 𝜂 ⋅ 𝑓2 𝑥 + 𝜂 ⋅ 𝑓3 𝑥 + ⋯ + 𝜂 ⋅ 𝑓𝐵(𝑥)
+Here, I’m using 𝑥 to represent a vector of  features 𝑥 = 𝑥1, 𝑥2, … , 𝑥𝑘
+• For a classification problem using logistic regression, the 
+predicted probability is given by:
+1
+1 + 𝑒−[𝑓1 𝑥 +𝜂⋅𝑓2 𝑥 +𝜂⋅𝑓3 𝑥 +⋯+𝜂⋅𝑓𝐵 𝑥  ]
+
+PDF PAGE 115
+Making Predictions
+Random Forest and Boosting 117
+Data 
+Point
+Tree 1
+Tree 2
+Tree B
+Boosted 
+Trees Model
+Predictions 
+of  Each Tree
+Input Final 
+Prediction 
+. . .
+. . .
+. . .
+Cumulative 
+Predictions with 
+Learning Rate (𝜼)
+𝜂
+𝜂
+𝑓1 𝑥
+𝑓2 𝑥
+𝑓𝐵 𝑥
+𝑥
+𝑓1 𝑥
+𝑓1 + 𝜂 ⋅ 𝑓2 𝑥 𝑓1 𝑥 + 𝜂 ⋅ 𝑓2 𝑥
++ ⋯ + 𝜂 ⋅ 𝑓𝐵(𝑥)
+𝑔1 𝑥
+𝑔2 𝑥 𝑔𝐵 𝑥
+
+PDF PAGE 116
+Adaptively building trees based on residuals.
+Building the Trees
+Random Forest and Boosting 118
+
+PDF PAGE 117
+A (very) Simplified Boosting Example
+Random Forest and Boosting 119
+Suppose we have the following very simple dataset:
+Data
+CTR titleWords age
+0.0000 10 41+
+0.0761 13 13-18
+0.0068 11 19-24
+0.0383 10 13-18
+0.0125 11 13-18
+0.0128 9 31-40
+0.0000 9 25-30
+
+PDF PAGE 118
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 120
+We fit an initial simple tree model to the data.  Cthis model  g1 :
+Data
+Initial 
+model
+CTR titleWords age g1
+0.0000 10 41+ 0.0049
+0.0761 13 13-18 0.0761
+0.0068 11 19-24 0.0049
+0.0383 10 13-18 0.0254
+0.0125 11 13-18 0.0254
+0.0128 9 31-40 0.0049
+0.0000 9 25-30 0.0049
+
+PDF PAGE 119
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 121
+Let us compute the residuals (errors) of the model g2 :
+Data
+Initial 
+model Residuals
+CTR titleWords age g1 r1
+0.0000 10 41+ 0.0049 -0.0049
+0.0761 13 13-18 0.0761 0.0000
+0.0068 11 19-24 0.0049 0.0019
+0.0383 10 13-18 0.0254 0.0129
+0.0125 11 13-18 0.0254 -0.0129
+0.0128 9 31-40 0.0049 0.0079
+0.0000 9 25-30 0.0049 -0.0049
+
+PDF PAGE 120
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 122
+We now try to fit the residuals using a second simple tree model:
+                                                                                    f2 :
+Data Model 1 Residuals
+Tree to fit 
+residuals
+CTR titleWords age g1 r1 f2
+0.0000 10 41+ 0.0049 -0.0049 -0.0049
+0.0761 13 13-18 0.0761 0.0000 0.0005
+0.0068 11 19-24 0.0049 0.0019 0.0005
+0.0383 10 13-18 0.0254 0.0129 0.0005
+0.0125 11 13-18 0.0254 -0.0129 0.0005
+0.0128 9 31-40 0.0049 0.0079 0.0079
+0.0000 9 25-30 0.0049 -0.0049 -0.0049
+
+PDF PAGE 121
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 123
+We now try to fit the residuals using a second simple tree model:
+                                                                                    f2 :
+Data Model 1 Residuals
+Tree to fit 
+residuals
+CTR titleWords age g1 r1 f2
+0.0000 10 41+ 0.0049 -0.0049 -0.0049
+0.0761 13 13-18 0.0761 0.0000 0.0005
+0.0068 11 19-24 0.0049 0.0019 0.0005
+0.0383 10 13-18 0.0254 0.0129 0.0005
+0.0125 11 13-18 0.0254 -0.0129 0.0005
+0.0128 9 31-40 0.0049 0.0079 0.0079
+0.0000 9 25-30 0.0049 -0.0049 -0.0049
+
+PDF PAGE 122
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 124
+We will now “boost” the initial model a little with the tree that fit the residuals:
+       New model
+                                                                                            g2 = g1 + 0.10 f2
+Data Model 1 Residuals
+Tree to fit 
+residuals Model 2
+CTR titleWords age g1 r1 f2 g2
+0.0000 10 41+ 0.0049 -0.0049 -0.0049 0.0044
+0.0761 13 13-18 0.0761 0.0000 0.0005 0.0761
+0.0068 11 19-24 0.0049 0.0019 0.0005 0.0049
+0.0383 10 13-18 0.0254 0.0129 0.0005 0.0254
+0.0125 11 13-18 0.0254 -0.0129 0.0005 0.0254
+0.0128 9 31-40 0.0049 0.0079 0.0079 0.0057
+0.0000 9 25-30 0.0049 -0.0049 -0.0049 0.0044
+
+PDF PAGE 123
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 125
+Then we repeat the process, and repeat again, …, etc.
+Data Model 1 Residuals
+Tree to fit 
+residuals Model 2 Residuals
+CTR titleWords age g1 r1 f2 g2 r2
+0.0000 10 41+ 0.0049 -0.0049 -0.0049 0.0044 -0.0044
+0.0761 13 13-18 0.0761 0.0000 0.0005 0.0761 0.0000
+0.0068 11 19-24 0.0049 0.0019 0.0005 0.0049 0.0019
+0.0383 10 13-18 0.0254 0.0129 0.0005 0.0254 0.0129
+0.0125 11 13-18 0.0254 -0.0129 0.0005 0.0254 -0.0129
+0.0128 9 31-40 0.0049 0.0079 0.0079 0.0057 0.0071
+0.0000 9 25-30 0.0049 -0.0049 -0.0049 0.0044 -0.0044
+
+PDF PAGE 124
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 126
+Then we repeat the process, and repeat again, …, etc.
+Data Model 1 Residuals
+Tree to fit 
+residuals Model 2 Residuals
+Tree to fit 
+residuals
+CTR titleWords age g1 r1 f2 g2 r2 f3
+0.0000 10 41+ 0.0049 -0.0049 -0.0049 0.0044 -0.0044 -0.0044
+0.0761 13 13-18 0.0761 0.0000 0.0005 0.0761 0.0000 -0.0065
+0.0068 11 19-24 0.0049 0.0019 0.0005 0.0049 0.0019 0.0019
+0.0383 10 13-18 0.0254 0.0129 0.0005 0.0254 0.0129 0.0100
+0.0125 11 13-18 0.0254 -0.0129 0.0005 0.0254 -0.0129 -0.0065
+0.0128 9 31-40 0.0049 0.0079 0.0079 0.0057 0.0071 0.0100
+0.0000 9 25-30 0.0049 -0.0049 -0.0049 0.0044 -0.0044 -0.0044
+
+PDF PAGE 125
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 127
+Then we repeat the process, and repeat again, …, etc.
+Data Model 1 Residuals
+Tree to fit 
+residuals Model 2 Residuals
+Tree to fit 
+residuals Model 3
+CTR titleWords age g1 r1 f2 g2 r2 f3 g3
+0.0000 10 41+ 0.0049 -0.0049 -0.0049 0.0044 -0.0044 -0.0044 0.0040
+0.0761 13 13-18 0.0761 0.0000 0.0005 0.0761 0.0000 -0.0065 0.0755
+0.0068 11 19-24 0.0049 0.0019 0.0005 0.0049 0.0019 0.0019 0.0051
+0.0383 10 13-18 0.0254 0.0129 0.0005 0.0254 0.0129 0.0100 0.0264
+0.0125 11 13-18 0.0254 -0.0129 0.0005 0.0254 -0.0129 -0.0065 0.0248
+0.0128 9 31-40 0.0049 0.0079 0.0079 0.0057 0.0071 0.0100 0.0067
+0.0000 9 25-30 0.0049 -0.0049 -0.0049 0.0044 -0.0044 -0.0044 0.0040
+g3 = g2 + 0.10 f3 (= g1 + 0.10 f2 + 0.10 f3)
+
+PDF PAGE 126
+A (very) Simplified Boosting Example, cont.
+Random Forest and Boosting 128
+Here is tree  f3 :
+
+
+PDF PAGE 127
+Residual 1𝑟1 
+Building the Boosted Trees
+Random Forest and Boosting 129
+Boosted Trees 
+Model
+Training 
+Dataset
+Tree 1
+Tree B
+0.03 1 14
+0.92 3 13
+… … …
+0.51 1 54
+Tree 2
+. . .
+Residual B-1
+. . .
+Residuals 
+(Actual – Predicted)
+Learning 
+Rate
+Residual 2
+ Tree 3
+𝑓1 
+𝑓2 
+𝑓3 
+𝑓𝐵 
+𝑟2 
+𝑟𝐵−1 
+𝑔1 𝑔2 𝑔3 
+
+PDF PAGE 128
+Building Boosted Trees
+Random Forest and Boosting 130
+• Start with an initial tree 𝑔1 and calculate its residual 𝑟1. 
+• For each iteration 𝑖 = 2, 3, … , 𝐵
+• Fit a CART model 𝑓𝑖 to the residuals 𝑟𝑖−1
+• Calculate 𝑔𝑖 = 𝑔𝑖−1 + 𝜂 ⋅ 𝑓𝑖−1 
+• Calculate new residuals 𝑟𝑖 as 𝑦 − 𝑔𝑖
+• 𝑔𝑖 is the prediction using the CART models 1, 2, … , 𝑖 out of  B.
+• The residuals 𝑟𝑖 are the “errors” between the actual value (y) and the 
+prediction 𝑔𝑖. Each CART model 𝑓𝑖 tries adjust the prediction 𝑔𝑖−1based on 
+the residuals 𝑟𝑖−1.
+• We often set 𝑔1 (the initial model) to be a tree with 1 leaf that predicts 
+classical baseline model  ത𝑦𝑡𝑟𝑎𝑖𝑛 (the average of  the observations in the 
+training set). But this is not required.
+
+PDF PAGE 129
+Building Boosted Trees
+• Each trees 𝑓1, 𝑓2, … , 𝑓𝐵 are intentionally limited to be shallow/weak 
+trees (very few splits, not very deep trees). 
+• These types of  trees are sometimes called “tree stumps” or just 
+“stumps”
+• Each tree is limited in its ability to fix residuals, but each tree 
+certainly does not overfit.
+• 𝜂 is the learning rate, also sometimes called the shrinkage parameter.
+• The learning rate 𝜂 is usually set to be a very small number ( 𝜂 =
+0.01 is fairly common)
+• Many small changes lead to more stable models than a lot of big 
+changes. 
+Random Forest and Boosting 131
+
+PDF PAGE 130
+Tuning Parameters for Boosting
+The class GradientBoostingRegressor  in sklearn implements boosting for 
+trees, and has four main hyper-parameters:
+• n_estimators: Total number of  boosting iterations B.
+• max_depth: total number of  splits performed in each tree
+•  Setting to 1 allows only for a single predictor variable; setting to 2 allows for  
+pairwise interactions
+• Such small trees are sometimes called “tree stumps” or just “stumps”
+• learning_rate: ( 𝜂 ) controls the extent to which each new tree contributes to 
+the additive model:
+ 𝑔𝑗+1 𝑥1, … , 𝑥𝑘  = 𝑔𝑗 𝑥1, … , 𝑥𝑘  + 𝜂 𝑓𝑗+1 𝑥1, … , 𝑥𝑘  
+• min_samples_leaf: minimum number of  samples in a leaf  (same as in 
+CART).
+Random Forest and 
+Boosting
+15.071 Spring 2022—Boosted Trees 132
+
+PDF PAGE 131
+Boosting Parameter Insights from Practice
+The class GradientBoostingRegressor implements boosted trees, and GridSearchCV(...) 
+implements cross-validation of the hyper-parameters.
+• Boosting works best with slow learning , namely the learning_rate 𝜼  is small
+• The slower the learning rate, the more trees(n_estimators)will be needed to 
+optimize performance...
+• But setting  n_estimators too large can result in overfitting (this does not happen with 
+Random Forests)
+• The best value of max_depth is often between 4 and 8, but can be problem dependent
+• min_samples_leaf  should be kept at a reasonable value, but is less important in 
+practice  (the default value in Python is min_samples_leaf  = 1 )
+• But wait, there is even more…
+Random Forest and 
+Boosting
+15.071 Spring 2020—Boosted Trees 133
+
+PDF PAGE 132
+Stochasticversion of Boosting
+• In Random Forests, we have seen the power of  introducing randomness into our 
+fitting algorithm through the use of  bootstrapped samples (bagging)
+• For Boosting, a slight variant of  Boosted Trees which induces randomness also 
+provides improvements in performance
+• In each iteration, instead of  using the entire training set to fit the next tree, we 
+choose a random subset of  the training set, where each observation is chosen to be 
+in the random subset with probability  p.
+• The rest of  the Boosting method is exactly as described earlier
+• It is typical to use  p = 0.5.  This is controlled by the subsample parameter in 
+GradientBoostingRegressor , and the default is  p = 1.0.  It is sometimes set 
+smaller when n is very large.
+Random Forest and Boosting 134
+
+PDF PAGE 133
+Random Forest vs. Boosted Trees
+Random Forest and Boosting 135
+
+PDF PAGE 134
+Comparing Boosting and Random Forests
+In Random Forests:
+• Deep trees are trained independently in 
+different bootstrap samples and 
+combined by average/majority vote.
+• Each tree is designed to be diverse using 
+randomness.
+In Boosted Trees:
+• Shallow trees are trained adaptively and 
+combined sequentially.
+• Each new tree is designed to tackle the 
+residuals (errors) from the previous 
+additive tree model
+Random Forest and Boosting 136
+
+
+PDF PAGE 135
+Demonstration
+Random Forest and Boosting 137
+
+
+PDF PAGE 136
+Random Forest: Individual Trees
+Random Forest and Boosting 138
+
+
+PDF PAGE 137
+Random Forest: Tree 1 Only
+Random Forest and Boosting 139
+
+
+PDF PAGE 138
+Random Forest: 2 Trees
+Random Forest and Boosting 140
+
+
+PDF PAGE 139
+Random Forest: 3 Trees
+Random Forest and Boosting 141
+
+
+PDF PAGE 140
+Random Forest: 5 Trees
+Random Forest and Boosting 142
+
+
+PDF PAGE 141
+Random Forest: 10 Trees
+Random Forest and Boosting 143
+
+
+PDF PAGE 142
+Random Forest: 100 Trees
+Random Forest and Boosting 144
+
+
+PDF PAGE 143
+Boosted Trees: 1 Tree
+Random Forest and Boosting 145
+
+
+PDF PAGE 144
+Boosted Trees: 2 Trees
+Random Forest and Boosting 146
+
+
+PDF PAGE 145
+Boosted Trees: 3 Trees
+Random Forest and Boosting 147
+
+
+PDF PAGE 146
+Boosted Trees: 5 Trees
+Random Forest and Boosting 148
+
+
+PDF PAGE 147
+Boosted Trees: 10 Trees
+Random Forest and Boosting 149
+
+
+PDF PAGE 148
+Boosted Trees: 25 Trees
+Random Forest and Boosting 150
+
+
+PDF PAGE 149
+Boosted Trees: 50 Trees
+Random Forest and Boosting 151
+
+
+PDF PAGE 150
+Boosted Trees: 100 Trees
+Random Forest and Boosting 152
+
+
+PDF PAGE 151
+The Punchline
+Random Forest and Boosting 153
+• Random Forest 
+• Each tree has great in-sample fit, but overfits significantly. 
+• Solution: Averaging many trees keeps the in-sample performance, but 
+reduces the overfitting. 
+• Boosted Trees 
+• Each tree is simple (little overfitting) but cannot fit the in-sample data 
+well.
+• Solution: Creating trees sequentially keeps the low overfitting tendency, 
+but gradually improves the in-sample fit.
+Out-of-Sample Error = In-Sample Error + Tendency to Overfit
+For those interested, look up the bias-variance tradeoff  in statistics.
+
+PDF PAGE 152
+Results on CTR Dataset
+Random Forest and Boosting 154
+
+PDF PAGE 153
+Click-Through Rate (CTR) Data
+Random Forest and Boosting 155
+𝒌: # of independent variables (𝒌 = 𝟏𝟎); 𝒏: # of observations (𝒏 = 𝟔, 𝟎𝟓𝟕)
+
+
+PDF PAGE 154
+We use Cross-Validation to set parameter values
+We fix learning_rate = 0.001 and min_samples_leaf  = 10
+We perform a grid search over max_depth and n_estimators
+For max_depth = 4, 6, 8, 10
+For n_estimators = 100, 1000, 5000, 10000, 15000, 20000, 25000, 30000
+• Do cross-validation with the current values of  (max_depth, n_estimators)
+• Record the averaged cross-validated R2 (over the 2 folds) using the current 
+(max_depth, n_estimators) values
+• Then set the (max_depth, n_estimators) values to be those values that 
+achieved the highest average R2 value
+• This yielded max_depth = 6; n_estimators = 5000
+Random Forest and Boosting 156
+
+PDF PAGE 155
+Selecting n_estimators and max_depth 
+hyper-parameters using cross-validation (CV)
+Random Forest and Boosting
+Not enough trees – 
+underfitting
+Too many trees – 
+starting to overfit
+Sweet spot
+157
+Cross-
+Validation R2
+
+PDF PAGE 156
+Random Forest and Boosting
+• For this example, Boosting and Random Forests have comparable performance.
+• Parameter tuning took about 16 minutes. (Unfortunately, there is no analogue of  “out-of-
+bag tuning” for Boosting)
+• If you are only going to train an algorithm once, having to wait a few hours is not too bad
+• If you need to frequently update predictions as new data arrives, computation time is a 
+huge consideration
+• Unlike Random Forests, Boosting is not easily amenable to parallel computation
+Linear 
+Regression CART Model Random 
+Forest Boosting
+OSR2 0.3961 0.3377 0.4940 0.4718
+Out-of-Sample MAE 0.0331 0.0340 0.0304 0.0307
+Out-of-Sample RMSE 0.0551 0.0577 0.0504 0.0515
+Model Comparison
+158
+
+PDF PAGE 157
+Boosting versus Random Forests
+• Both models are very powerful
+• Conventional wisdom is that Boosting typically outperforms 
+Random Forests
+• However, many times this difference is very small, and sometimes 
+Random Forests is better
+• But in some contexts (think Google or Meta) miniscule improvements in 
+predictive performance can equate to many millions of  dollars of 
+additional revenue
+• Random Forests is easier to tune, which is a major advantage
+• Fewer tuning parameters for Random Forests than for Boosting
+• Random Forests is generally more robust (less sensitive) with respect to 
+parameter choices (but some care should still be taken)
+Random Forest and Boosting 159
+
+PDF PAGE 158
+Model Comparison Exercise
+Random Forest and Boosting
+Linear
+Regression
+Logistic 
+Regression CART Random 
+Forest Boosting
+Can be used to predict 
+numerical outcomes
+Can be used for 
+classification problems
+Captures non-linear 
+structures in the data
+Are Simple and 
+interpretable
+Yield best out-of-
+sample prediction 
+quality
+Is computationally 
+efficient
+160
+
+PDF PAGE 159
+Model Comparison Exercise
+Random Forest and Boosting
+Linear
+Regression
+Logistic 
+Regression CART Random 
+Forest Boosting
+Can be used to predict 
+numerical outcomes     
+Can be used for 
+classification problems     
+Captures non-linear 
+structures in the data     
+Are Simple and 
+interpretable ~ ~   
+Yield best out-of-
+sample prediction 
+quality
+~ ~ ~  
+Is computationally 
+efficient    ~ 
+161
+
+PDF PAGE 160
+Optional: XGBoost
+Random Forest and Boosting 162
+
+PDF PAGE 161
+XGBoost: background
+Random Forest and Boosting
+• For a while, Boosting and Random Forests were 
+essentially tied for first place in a host of  Machine 
+Learning competitions
+• Tianqi Chen developed XGBoost while he was a 
+PhD student at the University of  Washington. (He 
+finished his Ph.D. in 2019 and is now Associate 
+Professor at Carnegie Mellon University and 
+Distinguished Engineer at NVIDIA.)
+• XGBoost has been a dominant prediction method 
+ever since
+• XGBoost stands for Extreme Gradient Boosting
+https://tqchen.com/
+163
+
+PDF PAGE 162
+Random Forest and Boosting
+• Based upon CV , we set shrinkage = 0.001; n.minobsinnode =
+• XGBoost yields a (slight? is it real?) improvement in our out-of-sample metrics over 
+Boosting without regularization
+• Computationally very expensive to train --  we only explored a few hyperparameter 
+settings through cross-validation
+• Indeed, some better hyperparameter combinations may have been left unexplored
+Linear 
+Regression
+CART 
+Model
+Random 
+Forest Boosting XGBoost
+OSR2 0.3961 0.3377 0.4940 0.4718 0.4930
+Out-of-Sample 
+MAE
+0.0331 0.0340 0.0304 0.0307 0.0304
+Out-of-Sample 
+RMSE
+0.0551 0.0577 0.0504 0.0515 0.0505
+Comparison of  XGBoost and other models 
+to predict Click-Through Rates (CTRs) 
+164
+
+PDF PAGE 163
+“No free lunch”, but…
+Random Forest and Boosting
+• If  you have a prediction problem with structured data where 
+predictive performance is much more important than 
+interpretability, try XGBoost
+• There is not a single machine learning algorithm that will perform 
+best in all settings, but XGBoost rarely performs poorly, and is 
+often at or near the top
+• Of  course, if  the underlying “true model” is a linear model, 
+nothing can beat linear regression
+• A key idea behind XGBoost is “regularization,” a topic that we 
+cover next week.
+165
+
+PDF PAGE 164
+Other Applications of  Ensemble Learning
+Random Forest and Boosting
+• Other variants of  Boosting: 
+LightGBM and CatBoost are 
+similar and may be worth 
+trying too
+• Better still, ensemble the 
+algorithms themselves 
+together. (Ensemble the 
+ensemble learners…)
+166

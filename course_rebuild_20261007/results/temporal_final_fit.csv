@@ -1,0 +1,2 @@
+"mode","rank","lambda","rows","warm","RMSE","MAE","OSR2","seconds","warnings","package_version","R_version"
+"temporal_final",4,0,100021,95723,1.22464681205933,0.929494763075788,-0.263955000614063,2.052,"","1.4.1","R version 4.0.2 (2020-06-22)"

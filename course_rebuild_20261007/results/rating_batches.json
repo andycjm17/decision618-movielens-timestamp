@@ -1,0 +1,7 @@
+{
+  "gap_threshold_seconds": 1800,
+  "batches": 25163,
+  "median_ratings": 6.0,
+  "p90_ratings": 115.0,
+  "definition": "Descriptive rating-entry batches; no claim about viewing sessions"
+}

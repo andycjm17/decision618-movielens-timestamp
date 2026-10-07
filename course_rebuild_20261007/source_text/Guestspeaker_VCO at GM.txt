@@ -1,0 +1,408 @@
+PDF PAGE 1
+Vehicle Content Optimization (VCO) at 
+General Motors
+Peiling Wu-Smith, Ph.D., Research Manager and Technical Fellow, Advanced Analytics Center of Expertise
+Phil Keenan, Ph.D., Principal T echnical Fellow, Advanced Analytics Center of Expertise
+Jon Owen, Ph.D., Director of Advanced Analytics Center of Expertise, Chief Scientist for AI/ML and Operations Research
+Andy Norton, Executive Director of Global Market Research  
+Kelly Kamm, Director of Global Vehicle and T echnology Planning 
+Kathryn Schumacher, Ph.D., Staff Researcher, Advanced Analytics Center of Expertise
+Peter Fenyes, Ph.D., Staff Researcher (retired), Advanced Analytics Center of Expertise
+Don Kiggins, Features & Technology Content Optimization Manager, Global Market Research  
+Phi Konkel, Data Science Fellow, Advanced Analytics Center of Expertise 
+Bill Rosen, Technical Director (retired), Global Marketing Research 
+Kurt Schmitter, Staff Researcher, Advanced Analytics Center of Expertise
+Sharon Sheremet, Director of Global Product Research & Insights, Global Market Research  
+Laura Yochim, Content Optimization Analyst, Global Market Research
+Submission for the IISE Outstanding Innovation in Service Systems Engineering Award 
+
+PDF PAGE 2
+GM Vehicles Have Hundreds of Features…
+Wheel Size
+Rear Cross 
+Traffic Alert
+Adaptive Cruise 
+Control
+Heated SeatsHeated Steering Wheel
+Head-Up Display
+Engine
+Panoramic Sunroof
+LED Headlights
+Rain-Sense Wipers
+Transmission Four-Wheel Drive
+Front Pedestrian 
+Braking
+Forward Collision Alert
+Rear Seat 
+Entertainment
+Split-Folding 
+Third Row
+HD Rear 
+Camera
+Multi-Zone 
+Climate Control
+Veh icle Content
+2
+
+PDF PAGE 3
+Vehicle Order Guides Define Contenting Decisions 
+(what Features are offered as standard or optional content)
+Low Trim Mid Trim High Trim
+Rear Vision Camera S S S
+Rear Park Assist A A
+Perforated Leather-Appointed Heated Seats S
+8-Way Power-Adjustable Driver’s Seat A S
+LTZ Exterior Appearance S
+Convenience Package A
+Outside Heated Power -Adjustable Mirrors
+Automatic Climate Control A S
+Power Sunroof A S
+Fog Lamps, Front Halogen A
+Driver Confidence Package A A
+Universal Home Remote A A
+S: Standard content
+A: Available as an upgrade for an additional charge
+Blank: Not available in this trim
+
+
+PDF PAGE 4
+•
+ The product life
+-
+cycle in automotive is much longer than in most industries. 
+•
+ Billions of dollars spent each year in designing new vehicles and bringing them to market. 
+•
+ The vehicle development process is long and complex 
+•
+ Contenting decisions are made 2
+-
+4 years in advance and locked down
+•
+ Drive downstream decisions on engineering development, tooling investment, material sourcing, 
+and manufacturing planning
+•
+ Decisions made years in advance can swing profitability by hundreds of millions of dollars and 
+significantly impact our customers’ experiences.
+Importance of Developing Optimized Order Guides
+4
+
+PDF PAGE 5
+Traditional Approach
+“Rearview”
+ “Sideview”
+Looked back at historical sales to 
+see how well similar vehicles sold 
+in the past
+Benchmarked against competitor 
+offerings and imitated what 
+competitors do
+
+PDF PAGE 6
+•
+ “Rearview”: past success or failure does not tell you about changing consumer preferences, untapped 
+opportunities, or interest in new technologies. 
+•
+ “Sideview”: mirroring competitive offerings at best allows GM to be a “fast follower”. 
+•
+ A “windshield view” helps us better understand the diversity of what consumers really want. 
+A Forward
+-
+Looking “Windshield” View 
+66
+Opportunity… 
+What do consumers want?
+Windshield View
+…Our Approach
+✓ Forward-looking, customer-centric
+✓ Comprehends complex dynamics & tradeoffs
+✓ Optimizes vehicle contenting plan for win-
+win
+✓ Better satisfy customers
+✓ Improve profitability
+
+PDF PAGE 7
+Key to VCO: Modeling Dynamics of Consumer Choice and 
+Comprehending Complex Dynamics and Tradeoffs
+Lost
+Demand
+Captured
+Demand
+Product / 
+Content
+Net Price
+Material
+Cost
+Revenue
+PROFIT
+Purchasing
+Cost
+Volume
+Customer
+Choice
+
+PDF PAGE 8
+Overview of the VCO Technical Framework
+Consumer Demand
+Market Research:
+What Do Consumers Want?
+Consumer Choice Model
+50,000 Simulated Consumers
+Portfolio of Vehicles Offered
+from Both GM and the Competitors
+Who Buys What?
+Plot Profit and Volume
+Competitor Response
+SME Assessment
+-20
+0
+20
+40
+60
+80
+-20 0 20 40 60 80
+Incremental Volume
+Incremental Profit
+GM Strategy
+Momentum or Change Order 
+Guide? 
+
+PDF PAGE 9
+Surveying Customers About 100+ Vehicle Features is a Big 
+Challenge 
+One innovation: 
+•
+ We combine conjoint with 
+other types of market 
+research tasks, each 
+providing a different lens.
+
+PDF PAGE 10
+VCO Technical Framework
+Consumer Demand
+Market Research:
+What Do Consumers Want?
+Consumer Choice Model
+50,000 Simulated Consumers
+
+
+PDF PAGE 11
+VCO Technical Framework
+Consumer Demand
+Market Research:
+What Do Consumers Want?
+Consumer Choice Model
+50,000 Simulated Consumers
+Portfolio of Vehicles Offered
+from Both GM and the Competitors
+Who Buys What?
+Plot Profit and Volume
+Competitor Response
+SME Assessment
+GM Strategy
+Momentum or Change Order 
+Guide? 
+
+PDF PAGE 12
+We Invented Several Enhancements to a Traditional Mixed Logit Model 
+to Address Practical VCO Issues
+•
+ Independence of Irrelevant Alternatives 
+(red bus / blue bus)
+•
+ Selling vehicles from dealer inventory
+•
+ Consumer budget constraints
+•
+ Non
+-
+compensatory choice behavior
+•
+ Estimating competitor response
+•
+ Calibrating to historical sales, time on lot and 
+price elasticity data
+DEALER 
+DECISIONS
+MANUFACTURER 
+DECISIONS
+http://www.patrickcars.com/UploadData/DSC01105cm.jpg
+CUSTOMER 
+DECISIONS
+
+
+PDF PAGE 13
+VCO Technical Framework
+VCO Technical Framework
+Consumer Demand
+Market Research:
+What Do Consumers Want?
+Consumer Choice Model
+50,000 Simulated Consumers
+Portfolio of Vehicles Offered
+from Both GM and the Competitors
+Who Buys What?
+Plot Profit and Volume
+Competitor Response
+SME Assessment
+-20
+0
+20
+40
+60
+80
+-20 0 20 40 60 80
+Incremental Volume
+Incremental Profit
+GM Strategy
+Momentum or Change Order 
+Guide? 
+
+PDF PAGE 14
+Objective Function is Non
+-
+linear and Multi
+-
+modal
+•
+ Driven by individual
+-
+level choice model enhanced 
+from mixed logit 
+•
+ What is optimal for one customer may be very 
+different than what is optimal for another: creates 
+multi
+-
+modal surface
+max ∑𝑣 𝛽, 𝑝 𝑟(𝑝)
+Volume: non-linear function 
+of individual customer 
+preferences, product 
+attributes
+Variable profit: 
+function of prices, 
+variable costs
+
+
+PDF PAGE 15
+Feasible Solutions Must Satisfy Business Constraints
+•
+ Trim ladder: “higher” trims have more and 
+better content than lower ones
+•
+ Engineering restrictions:
+―
+A vehicle with feature X must also have feature Y , and 
+cannot have Z
+•
+ Price constraints:
+―
+The “all standard” in the Low trim must be cheaper 
+than the “all standard” in the Mid trim
+•
+ And many more…
+Base 
+Trim
+Price
+Mid Trim Premium 
+Trim
+All standard
+All options All standard
+All options
+All standard
+All options
+
+PDF PAGE 16
+Optimization
+We use a 
+hybrid algorithm
+, 
+leveraging multiple methods
+and 
+custom heuristics 
+to generate 
+an efficient frontier
+16
+
+
+PDF PAGE 17
+Analysts Iterate with Vehicle Program Team to Refine the Constraints on 
+the Desired Order Guide
+•
+ Generate thousands of Order Guides scored 
+on Profit & Market Share
+•
+ Organize the emergent recommendations 
+for SME discussion
+•
+ Iterate with the program team to impose 
+appropriate business constraints
+Profit
+Market Share
+ACM Focused
+Balanced
+Share Focused
+CONSTRAINED ORDER GUIDES
+Efficient 
+Frontier
+Adding 
+Constraints 
+Shifts Frontier 
+Inward
+Profit Focused
+
+PDF PAGE 18
+Program
+Management
+Product
+Planning
+Product
+Marketing
+Product
+Finance
+Advanced 
+Analytics 
+COE
+Market 
+Research
+Pricing Program 
+Engineering
+IT Systems
+Vehicle Content 
+Optimization 
+(
+VCO
+)
+It Takes a Village
+
+
+PDF PAGE 19
+Our Journey
+GEN 1:
+2008 
+–
+ 2010
+GEN 2:
+2011 
+–
+ 2016
+GEN 3:
+2017 
+–
+ Present
+Proof of Concept:
+Limited Business Support
+Guided Analytics:
+Gaining Traction
+Order Guide Optimization:
+Full Business Integration
+
+PDF PAGE 20
+85
+$4.4 Billion
+Vehicle Content Optimization (VCO)
+Has been used on over 
+vehicle programs globally 
+Has enabled
+of lifecycle profit, as verified by GM Finance

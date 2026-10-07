@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "checks": {
+    "random_disjoint_exhaustive": true,
+    "temporal_disjoint_exhaustive": true,
+    "temporal_strict_boundaries": true,
+    "exact_legacy_random_rows": true,
+    "all_20_instructor_cache_scores_match": true,
+    "random_99_1_features_ignore_query_labels": true,
+    "random_False_portable_prediction": true,
+    "random_True_portable_prediction": true,
+    "global_time_80_10_10_features_ignore_query_labels": true,
+    "temporal_False_portable_prediction": true,
+    "temporal_True_portable_prediction": true,
+    "independent_metrics_all_24_rows": true,
+    "same_second_events_excluded": true,
+    "matrix_factor_predictions_independently_verified": true,
+    "forward_fold50_rows_in_meta_training_window": true,
+    "forward_fold50_no_future_test_rows": true,
+    "forward_fold65_rows_in_meta_training_window": true,
+    "forward_fold65_no_future_test_rows": true,
+    "fresh_400_unique_fits_complete": true,
+    "fresh_fits_no_recorded_warnings": true,
+    "fresh_cv_20_finite_scores": true
+  },
+  "max_independent_metric_error": 2.220446049250313e-16,
+  "prediction_labels_checked": "All model predictions aligned with raw row IDs and original labels",
+  "causal_claim": false,
+  "history_scope": "Frozen fit-period history only; no within-holdout online updates"
+}

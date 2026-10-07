@@ -1,0 +1,1766 @@
+PDF PAGE 1
+COLLABORATIVE FILTERING
+CLUSTERING
+Recommendation Engines
+Customer Segmentation
+Decision618: Data Analytics for BusinessProfessor Peng Sun
+
+
+PDF PAGE 2
+Reminder
+Collaborative Filtering and Clustering 1
+• Fuqua CheckIn
+• Deliverable 2 on the final project: this weekend
+• Do not try to increase – data set size; OSR2
+• Elevator pitch in Class 10 (Monday Oct 5):
+• What problem are you studying?
+• Why you study this problem (why this problem matters to you)?
+• One thing you learned so far (you did not expect this before 
+working on the project)
+• No need to tell “the whole story” – that’s for the last class
+• No slides, just a speech of  up to 2 minutes from each team
+
+PDF PAGE 3
+Recap of  where we are
+Collaborative Filtering and Clustering 2
+• Descriptive analytics about networkClass 1: Network analytics
+• Linear and logistic regression for predictive analyticsClasses 2-3: Regression
+• CART for regression and classification, random forest and 
+ensemble methodsClasses 4-5: Tree-based methods 
+• What features to include in the predictive analytics model?Class 6: Model selection
+• Beyond tabular data with one column of  dependent variableClass 7 (today)
+• Neural networks
+• OptimizationLooking forward
+
+PDF PAGE 4
+RECOMMENDER SYSTEMS AND 
+COLLABORATIVE FILTERING
+Personalized Predictions from Collective Behavior
+
+
+PDF PAGE 5
+Agenda
+Collaborative Filtering and Clustering 4
+• Motivating recommender systems
+• Concrete example based on the Netflix Prize
+• Traditional approach: content-based features 
+• Collaborative Filtering 
+• Neighborhood-based Approach
+• Model-based approach using user archetypes
+• Ensemble Learning
+• Combine collaborative filtering + content features
+
+PDF PAGE 6
+The Netflix Prize
+Recommender Systems
+Collaborative Filtering and Clustering 5
+
+PDF PAGE 7
+What is a recommender system?
+Collaborative Filtering and Clustering
+• A recommender system is an algorithm that predicts what a user 
+might like based on their past preferences and interactions. 
+• Entertainment. Movie (Netflix), Video (YouTube, TikTok), Music 
+(Spotify)
+• Ecommerce. Amazon, eBay and others
+• Social Media. Facebook news feed, friend suggestions
+• Online Dating. Dating apps like eHarmony 
+• Main Challenge: Predict how much a user will like an item
+• Recommend items the user is most likely to engage with.
+6
+
+PDF PAGE 8
+Netflix Recommendations
+Collaborative Filtering and Clustering
+ 7
+
+PDF PAGE 9
+Amazon Recommendations
+Collaborative Filtering and Clustering
+ 8
+
+PDF PAGE 10
+eHarmony Recommendations
+Collaborative Filtering and Clustering 9
+
+PDF PAGE 11
+The Netflix Prize
+Collaborative Filtering and Clustering
+• In October 2006, Netflix ran a contest inviting anyone to 
+develop a recommendation method that could beat Netflix’s 
+own algorithm called Cinematch 
+• This competition took three years
+• The winning team won Cinematch by over 10%
+• Cinematch predicts user ratings of  unseen movies (rating 1-5).
+• $1,000,000 prize to the team that could best beat Cinematch.
+• Catalyzed research innovation in recommender systems
+• Fostered collaboration between academic researchers and industry 
+practitioners
+• Crowdsourcing innovation with over 44,000 submissions in 180 
+countries 
+10
+
+PDF PAGE 12
+Netflix Prize Dataset
+Collaborative Filtering and Clustering 11
+• The Netflix dataset from 2006:
+• 480,189 users
+• 17,700 movies
+→ 8,499,345,300 overall user-movie pairings possible
+• Netflix dataset is very “sparse”:
+• On average, each user rated 209 of  the 17,700 movies
+• Only 100,480,507 user ratings of  movies (1.2%)
+→ Need to estimate the remaining 8,398,864,793 user-movie ratings (98.8%)
+• Netflix can also utilize some “metadata”:
+• movie metadata: actors, director, genre, year released, etc., and 
+• user metadata: age, gender, income, etc.
+
+PDF PAGE 13
+MovieLens Dataset
+Collaborative Filtering and Clustering
+• Netflix dataset is no longer available—due to a privacy-based 
+lawsuit from users
+• We will work instead with the MovieLens dataset
+• 6,040 users
+• 3,900 movies
+• 1,000,209 ratings of  movies
+• On average, each user rated 166 of  the 3,900 movies (4.2%)
+→ The goal is to predict ratings of  the other 95.8% user-movie 
+pairings, about 22,555,791 “missing” user ratings
+12
+
+PDF PAGE 14
+MovieLens Data
+Collaborative Filtering and Clustering
+𝒏: # of observations (𝒏 = 𝟏, 𝟎𝟎𝟎, 𝟐𝟎𝟗)
+User 
+ID
+Movie ID
+1 2 3 … 3900
+1 5 4
+2 3 1
+3 1 2
+…
+6040 3 5
+Tabular Form
+Matrix Form
+Our goal is to fill in the blanks
+13
+
+
+PDF PAGE 15
+Traditional Approach: Content-Based 
+Recommenders
+Collaborative Filtering and Clustering
+• Gather features of  users and characteristics movies.
+• Learn what types of  users like what types of  movies?
+User Features
+Age Gender
+Movie Features
+Genre Length Year 
+Released
+15
+
+
+PDF PAGE 16
+Limitations 
+Collaborative Filtering and Clustering
+• Rely heavily on manually curated user features and movie 
+characteristics. 
+• Users have varied preferences that cannot be “written down”. 
+• Movies have features that also are not easily characterized. 
+• Missing Piece: Leveraging similar users (collaboration)
+• Users who have similar rating history are likely to be similar in 
+preferences. 
+• Our algorithm should learn from similar users, without explicitly 
+knowing “why” users are similar. 
+• Let’s develop some intuition for this collaborative part. 
+16
+
+PDF PAGE 17
+Some Intuition
+Collaborative Filtering and Clustering
+• What might we guess for the entries with “?”
+User
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+John 5 3 1 2 4 …
+Isabel 5 3 1 2 ? …
+Charles 2 1 2 1 1 …
+Paul 3 3 2 3 ? …
+Rahul 4 5 2 5 3 …
+Jose 1 5 2 2 4 …
+Caroline 5 1 4 4 ? …
+… …………………………………………………………………… …
+To avoid confusion between user ID’s 
+and movie ID’s, I’ll use names for the 
+users and letters (A-Z) for the movies. 
+17
+
+PDF PAGE 18
+Some Intuition, continued
+Collaborative Filtering and Clustering
+• What might we guess for the entries with “?”
+User
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+John 1 5 …
+Isabel 4 2 …
+Charles 2 2 1 5 …
+Paul 3 3 3 ? …
+Rahul 4 ? 5 1 …
+Jose 1 1 2 4 …
+Caroline 5 5 …
+… …………………………………………………………………… …
+18
+
+PDF PAGE 19
+Where’s the structure?
+Collaborative Filtering and Clustering
+User
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+John 5 1 3 4 …
+Isabel 4 4 1 2 …
+Charles 3 2 2 5 …
+Paul 1 1 4 5 …
+Rahul 2 4 …
+Jose 5 3 2 2 1 …
+Caroline 4 1 4 …
+Stephanie 3 2 2 2 3 5 …
+… … … … … … … … … … … … … … … … … … … … … … … … … … … …
+The previous slides were artificial of  course: there were visibly obvious ways 
+to impute the missing ratings using easily identifiable users or movies.  
+How do we find such structure more generally? 
+19
+
+PDF PAGE 20
+Collaborative Filtering
+Collaborative Filtering and Clustering 20
+- Neighborhood-Based Approach 
+- Model-Based Approach (focus)
+
+PDF PAGE 21
+Collaborative Filtering
+Collaborative Filtering and Clustering
+• Collaborative filtering approaches leverage only the set of  
+user-movie ratings to make predictions for missing entries. 
+• No content features are used, so no domain knowledge is needed.
+• Content features can be added to augment collaborative filtering 
+(more on this later)
+21
+User Movie
+A B C D …
+Alex 5 4 …
+Barb 3 1 …
+Cassie 1 2 …
+Dana 3 5 …
+… … … … … …
+User Movie
+A B C D …
+Alex 5 4.2 2.5 4 …
+Barb 1.4 3 1 1.9 …
+Cassie 1 3.5 2.2 2 …
+Dana 4.4 2.4 3 5 …
+… … … … … …
+
+
+PDF PAGE 22
+Collaborative Filtering Approaches
+Collaborative Filtering and Clustering 22
+• Core Principle: Similar users should like similar movies.
+• Leverages collective behavior of  the entire community of  users.
+• Approach 1: Neighborhood-Based 
+• Use past ratings to define “similar” users. Predict a weighted average 
+based on these similar users.  
+• Approach 2: Model-Based 
+• Define user archetypes to capture “types” of  (similar) users.
+• Model each user’ as a weighted combination of  user archetypes 
+• This lecture will focus on the model-based approach, which is 
+more widely used in practice. But let’s see how the 
+neighborhood-based approach works. It is quite simple.
+
+PDF PAGE 23
+Neighborhood-Based Approach
+Collaborative Filtering and Clustering 23
+• Suppose we are trying to predict Alex’s rating for movie B.
+• Using the observed ratings, calculate the correlation between 
+Alex’s ratings and each of  the other users. 
+• Corr(Alex, Barb) = 1
+• Corr(Alex, Cassie) = 0.72
+• Corr(Alex, Dana) = 0
+• Predict a weighted average.
+• (1 * 2 + 0.72 * 4+0 * 3) / 1.72 = 2.83
+User Movie
+A B C D E
+Alex 5 1 3 5
+Barb 5 2 1
+Cassie 4 2 1 5
+Dana 3 3 3
+Relying on a lot of users with overlapping movie reviews
+
+PDF PAGE 24
+Archetypes and user compositions 
+Model-Based Collaborative Filtering
+Collaborative Filtering and Clustering 24
+
+PDF PAGE 25
+Core Concept: Archetype
+Collaborative Filtering and Clustering 25
+• Concept: Archetype, a typical profile or behavior pattern.
+• Archetype 1: enjoys action, adventure, physical drama
+• Archetype 2: enjoys exploration of  relationships, interpersonal drama
+• Archetype 3: emotional drama – suspense, fear, mystery, intrigue
+• …
+• Archetype 9: enjoys chronicles of  facts, events, presentation
+• Assumption: Each person’s movie taste is some weighted 
+combination of  the preferences of  the archetypal user.
+• Archetypes are like “clusters”, except that each user is a 
+mixture of  many archetypes instead of  being assigned to one 
+archetype.
+
+PDF PAGE 26
+Toy Example
+Collaborative Filtering and Clustering
+ 26
+Alex
+Barb
+Cassie
+Dana
+4 4 5
+5 2 4
+3 55 1
+52 4
+1
+
+PDF PAGE 27
+Archetypes and Compositions
+Collaborative Filtering and Clustering 27
+4 4 5
+5 2 4
+3 55 1
+52 4
+Alex
+Barb
+Cassie
+Dana
+3 5 5 11Archetype 1
+“Child at Heart” 
+Archetype 2
+“Artist” 1 5 1 51
+-0.5 -1
++0.5 +1
++1 0
+-1 +1
+1
+Archetype 
+Ratings
+User Composition
+
+PDF PAGE 28
+Toy Example Explanation 
+Collaborative Filtering and Clustering 28
+• 4 users and 5 movies, with 14 observed ratings and 6 missing ratings. 
+• Two archetypes: Child at Heart and Artist. 
+• The kid at heart user likes movies that are animated or feature children
+• The artist user likes movies which are artsy and less mainstream (not Hollywood 
+blockbusters)
+• Each user is a composition of  these two archetypes. 
+• +1 = fits this archetype 
+• - 1 = fits the opposite of  this archetype 
+• Predictions can be made for the missing entries based on the user 
+compositions and archetype ratings. (Details to come…)
+• The archetype ratings and user composition are both discovered through the 
+model training process. (Details to come…)
+
+PDF PAGE 29
+Modeling Approach
+Collaborative Filtering and Clustering 29
+1. Parameter. Choose a number k representing the number of  
+archetypes.
+2. Training. Using the observed user-movie ratings in the 
+matrix, solve an optimization problem to discover 
+archetypes’ ratings and user compositions. 
+3. Predicting. Compute the missing entries of  the user-movie 
+ratings matrix using sum-products.
+
+PDF PAGE 30
+Training and Predicting
+Collaborative Filtering and Clustering 30
+Archetype 
+Ratings
+Observed 
+Ratings
+User 
+Compositions Observed and 
+Predicted Ratings
+Training
+(Optimization)
+Predicting
+(Sum Product)
+
+
+PDF PAGE 31
+Sum-Product of  archetype ratings and user 
+compositions.
+Predicting Ratings
+Collaborative Filtering and Clustering 31
+
+PDF PAGE 32
+Archetype Users and Their Ratings
+Collaborative Filtering and Clustering
+• Index archetypes by a = 1, … , 9 and movies by 𝑚 = 1, … , 3900
+• 𝑆𝑎,𝑚: supposed rating of  movie 𝑚 by archetype 𝑎
+• For example, in the above table:  𝑆2,𝑁𝑎𝑟𝑐𝑜𝑠 = 2 and  𝑆9,𝑁𝑎𝑟𝑐𝑜𝑠 = 5
+• The blue numbers in the table are obtained through the model training 
+process (details later)
+Archetype A. Hillbilly Elegy
+B. The Dig
+C. Lost Girls
+D. Narcos
+E. The Midnight Sky
+F. I Care a Lot
+G. Rebecca
+H. Moxie
+I. The King
+…
+1 3 5 2 5 5 3 3 4 1 …
+2 5 4 5 2 3 1 5 4 5 …
+… … … … … … … … … … …
+… … … … … … … … … … …
+9 2 5 3 5 4 5 1 4 3 …
+3 5 2 5 5 3 3 4 1 …
+5 4 5 2 3 1 5 4 5 …
+… … … … … … … … … …
+… … … … … … … … … …
+2 5 3 5 4 5 1 4 3 …
+32
+Each archetype 
+has a rating for 
+every movie.
+
+PDF PAGE 33
+User as a Composition of  Archetypes
+Collaborative Filtering and Clustering
+User
+Archetype
+1 2 3 4 5 6 7 8 9
+John 0.7 0.1 … … … … … … 0.2
+Isabel 0.8 1.6 … … … … … … -0.3
+Charles 0.2 -0.6 … … … … … … 1.1
+Paul … … … … … … … … …
+Rahul … … … … … … … … …
+Jose 0.2 0.3 0.1 0.9 -0.3 -0.4 0.8 -0.8 0.7
+… … … … … … … … … …
+Each user is characterized by 9 weights across archetypes
+33
+𝑊𝑢,𝑎: the weight of user 𝑢 for archetype 𝑎
+For example, in the above table:  𝑊𝐽𝑜𝑠𝑒,2 = 0.3 and  𝑊𝐽𝑜𝑠𝑒,9 = 0.7
+
+PDF PAGE 34
+Jose’s predicted rating of  movie Q
+Collaborative Filtering and Clustering 34
+Archetype
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+1 … 3 … …
+2 … 2 … …
+3 … 4 … …
+4 … 5 … …
+5 … 3 … …
+6 … 2 … …
+7 … 1 … …
+8 … 4 … …
+9 … … … … … … … … … … … … … … … … 3 … … … … … … … … … …
+User
+Archetype
+1 2 3 4 5 6 7 8 9
+John … … … … … … … … …
+Isabel
+Charles
+Paul
+Rahul … … … … … … … … …
+Jose .2 .3 .1 .9 -.3 -.4 .8 -.8 .7
+Caroline … … … … … … … … …
+Stephanie
+… … … … … … … … … …
+
+
+PDF PAGE 35
+Archetype Ratings of  Movies
+Collaborative Filtering and Clustering
+Let us also suppose the archetype ratings of  movies are to be solved by the model:
+Archetype
+Movie
+A B C D E F G H I J K L M N O P Q R …
+1 𝑺𝟏𝑨 … … 𝑺𝟏,𝑫 … … … … 𝑺𝟏,𝑰 … … … … … … … 𝑺𝟏,𝑸 … …
+2 𝑺𝟐,𝑨 … … 𝑺𝟐,𝑫 … … … … 𝑺𝟐,𝑰 … … … … … … … 𝑺𝟐,𝑸 … …
+3 𝑺𝟑,𝑨 … … 𝑺𝟑,𝑫 … … … … 𝑺𝟑,𝑰 … … … … … … … 𝑺𝟑,𝑸 … …
+4 𝑺𝟒,𝑨 … … 𝑺𝟒,𝑫 … … … … 𝑺𝟒,𝑰 … … … … … … … 𝑺𝟒,𝑸 … …
+5 𝑺𝟓,𝑨 … … 𝑺𝟓,𝑫 … … … … 𝑺𝟓,𝑰 … … … … … … … 𝑺𝟓,𝑸 … …
+6 𝑺𝟔,𝑨 … … 𝑺𝟔,𝑫 … … … … 𝑺𝟔,𝑰 … … … … … … … 𝑺𝟔,𝑸 … …
+7 𝑺𝟕,𝑨 … … 𝑺𝟕,𝑫 … … … … 𝑺𝟕,𝑰 … … … … … … … 𝑺𝟕,𝑸 … …
+8 𝑺𝟖,𝑨 … … 𝑺𝟖,𝑫 … … … … 𝑺𝟖,𝑰 … … … … … … … 𝑺𝟖,𝑸 … …
+9 𝑺𝟗𝑨 … … 𝑺𝟗,𝑫 … … … … 𝑺𝟗,𝑰 … … … … … … … 𝑺𝟗,𝑸 … …
+35
+
+
+PDF PAGE 36
+User Composition Weights
+Collaborative Filtering and Clustering
+User
+Archetype
+1 2 3 4 5 6 7 8 9
+John 𝒘𝑱𝒐𝒉𝒏,𝟏 𝒘𝑱𝒐𝒉𝒏,,𝟐 𝒘𝑱𝒐𝒉𝒏,,𝟑 𝒘𝑱𝒐𝒉𝒏,,𝟒 𝒘𝑱𝒐𝒉𝒏,𝟓 𝒘𝑱𝒐𝒉𝒏,,𝟔 𝒘𝑱𝒐𝒉𝒏,,𝟕 𝒘𝑱𝒐𝒉𝒏,,𝟖 𝒘𝑱𝒐𝒉𝒏,,𝟗
+Isabel … … … … … … … … …
+Charles … … … … … … … … …
+Paul 𝒘𝑷𝒂𝒖𝒍,𝟏 𝒘𝑷𝒂𝒖𝒍,,𝟐 𝒘𝑷𝒂𝒖𝒍,,𝟑 𝒘𝑷𝒂𝒖𝒍,,𝟒 𝒘𝑷𝒂𝒖𝒍,𝟓 𝒘𝑷𝒂𝒖𝒍,,𝟔 𝒘𝑷𝒂𝒖𝒍,,𝟕 𝒘𝑷𝒂𝒖𝒍,,𝟖 𝒘𝑷𝒂𝒖𝒍,,𝟗
+Rahul … … … … … … … … …
+Jose 𝒘𝑱𝒐𝒔𝒆,𝟏 𝒘𝑱𝒐𝒔𝒆,𝟐 𝒘𝑱𝒐𝒔𝒆,𝟑 𝒘𝑱𝒐𝒔𝒆,𝟒 𝒘𝑱𝒐𝒔𝒆,𝟓 𝒘𝑱𝒐𝒔𝒆,𝟔 𝒘𝑱𝒐𝒔𝒆,𝟕 𝒘𝑱𝒐𝒔𝒆,𝟖 𝒘𝑱𝒐𝒔𝒆,𝟗
+Caroline … … … … … … … … …
+Stephanie
+… … … … … … … … … …
+36
+
+
+PDF PAGE 37
+Rating as a Sum-Product
+Collaborative Filtering and Clustering
+ 37
+For those more 
+mathematically inclined: 
+R is the matrix product 
+of  w and S.
+
+
+PDF PAGE 38
+Determining the archetype ratings and user 
+compositions.
+Training the Model
+Collaborative Filtering and Clustering 38
+
+PDF PAGE 39
+Training and Predicting
+Collaborative Filtering and Clustering 39
+Archetype 
+Ratings
+Observed 
+Ratings
+User 
+Compositions Observed and 
+Predicted Ratings
+Training
+(Optimization)
+Predicting
+(Sum Product)
+
+
+PDF PAGE 40
+Notation
+Collaborative Filtering and Clustering
+• Index users by 𝑢 = 1, … , 6040 and movies by 𝑚 = 1, … , 3900
+• 𝑂𝐵𝑆𝑃𝑎𝑖𝑟𝑠: collection of  the observed user-movie pairs (𝑢, 𝑚)
+• ( John , D ) , ( John , I ) ,  ( John , M )  , ( John , P ) ,  ( Isabel , N ) , …
+• 𝑂𝐵𝑆𝑅𝑢,𝑚: observed rating of  the user-movie pair (𝑢, 𝑚)
+• For example 𝑂𝐵𝑆𝑅𝐽𝑜ℎ𝑛,𝐷 = 5
+User
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+John 5 1 3 4 …
+Isabel 4 4 1 2 …
+Charles 3 2 2 5 …
+… … … … … … … … … … … … … … … … … … … … … … … … … … … …
+40
+
+PDF PAGE 41
+Least Squares Fitting
+Collaborative Filtering and Clustering
+• Question: Which objects do we need to determine?
+• 𝑺𝒂,𝒎: rating of  movie 𝑚 by archetype 𝑎
+• 𝑤𝑢,𝑎: weight of  archetype 𝑎 in the composition of  user 𝑢
+• Let us compute these values to minimize the sum of  squared residuals, 
+namely the difference between observed and predicted user-movie 
+ratings for all user-movie pairs in the observed ratings
+41
+𝑂𝐵𝑆𝑃𝑎𝑖𝑟𝑠
+𝑤𝑢,𝑎, 𝑆𝑎,𝑚
+
+PDF PAGE 42
+We sum over all observed movie ratings by users
+Collaborative Filtering and Clustering
+Residual for model’s predicted value for Jose of  movie Q is:
+User
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+John 5 1 3 4 …
+Isabel 4 4 1 2 …
+Charles 3 2 2 5 …
+Paul 1 1 4 5 …
+Rahul 2 4 …
+Jose 5 3 2 2 1 …
+Caroline 4 1 4 …
+Stephanie 3 2 2 2 3 5 …
+… … … … … … … … … … … … … … … … … … … … … … … … … … … …
+42
+
+
+PDF PAGE 43
+Fitting Procedure, continued
+Collaborative Filtering and Clustering
+• Question: Which objects do we need to compute from the data?
+• 𝑺𝒂,𝒎: supposed rating of  movie 𝑚 by archetype 𝑎
+• 𝑤𝑢,𝑎: weight of  archetype 𝑎 in the linear combination of  user 𝑢
+• This is a least-square problem—akin to linear regression—but:
+1. The scale is very large, with 9*6,040 + 9*3,900 = 89,460 variables
+2. The model is no longer linear in the variables (it is “bilinear”)
+3. This is computationally challenging, but we do it anyway…
+43
+
+PDF PAGE 44
+Model Overview
+Collaborative Filtering and Clustering 44
+Archetype 
+Movie Ratings
+Observed 
+Ratings
+User 
+Compositions Observed and 
+Predicted Ratings
+Training Predicting
+
+
+PDF PAGE 45
+Model-Based Collaborative Filtering 
+Collaborative Filtering and Clustering 45
+• The model we just described is an example of  “model-based collaborative 
+filtering”, also referred to as matrix factorization.
+• Model user preferences as a linear combination of  archetype preferences. 
+• Calculate the “best” archetypes and weights to explain the observed data.
+• This approach shares similarities with clustering in the sense that it produces 
+archetypes that we hope to be able to “interpret” intuitively.
+• Very active area of  model research and development—and good R packages
+• softImpute, from Prof. Rahul Mazumder (MIT Sloan) and Prof. Trevor 
+Hastie (Stanford Stats)
+• R package much better than Python package…
+
+PDF PAGE 46
+Performance for MovieLens
+Collaborative Filtering and Clustering 46
+
+PDF PAGE 47
+Training/Testing Set Split (99/1 Random Split)
+Collaborative Filtering and Clustering
+Full Dataset (𝒏 = 𝟏, 𝟎𝟎𝟎, 𝟐𝟎𝟗) 99% Training Set (𝒏 = 𝟗𝟗𝟎, 𝟐𝟎𝟔)
+1% Testing Set (𝒏 = 𝟏𝟎, 𝟎𝟎𝟑)
+47
+
+
+PDF PAGE 48
+User
+Movie
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z …
+John 5 1 3 4 …
+Isabel 4 4 1 2 …
+Charles 3 2 2 5 …
+Paul 1 1 4 5 …
+Rahul 2 4 …
+Jose 5 3 2 2 1 …
+Caroline 4 1 4 …
+Stephanie 3 2 2 2 3 5 …
+… … … … … … … … … … … … … … … … … … … … … … … … … … … …
+Training/Testing Split
+Collaborative Filtering and Clustering 48
+Testing Set. Hide from the model to 
+evaluate out-of-sample performance. 
+
+PDF PAGE 49
+Model Quality on the Test Set 
+Collaborative Filtering and Clustering 49
+We use the observed user-movie ratings to assess model 
+performance—leveraging the usual metrics of  fit
+1. R2: how well the model fits the observed user-movie ratings
+• Defined just as in linear regression
+2. MAE: Mean Absolute Error
+3. RMSE: Root-Mean-Square Error 
+
+
+PDF PAGE 50
+Results: MovieLens Ratings Prediction
+Collaborative Filtering and Clustering
+• Results of  our collaborative filtering model on the test set:
+• Fit of  33.5% measured by the OSR2
+• Average error of  0.71 – 0.92 (on a ratings scale of  1 to 5), as 
+measured by MAE and RMSE
+• As a point of  reference, Netflix’s Cinematch algorithm RMSE 
+was  0.952
+• If  we were competing for the Netflix prize, these results would 
+have achieved a 3.78% improvement in RMSE over Netflix’s own 
+method!
+Model OSR2 MAE RMSE
+Collaborative Filtering Model 0.333 0.708 0.916
+50
+
+PDF PAGE 51
+• For interpretability, we show 10 standard genres and here report the 
+average rating per archetype-genre pair
+• Interpretation:
+• Archetype 2 seems to prefer documentaries and dramas 
+• Romance films are preferred by archetype 4 audience and disliked by 
+archetype 1 audience  
+• Etc.
+Results by movie genre
+Collaborative Filtering and Clustering 51
+
+
+PDF PAGE 52
+The Number of  Archetypal Users
+Collaborative Filtering and Clustering
+• How many “archetypal users” should we use in the collaborative 
+filtering model?
+• If  we have too few archetypal users, the predictions will be too 
+rough—we will not capture important patterns in the data
+• If  we have too many archetypal users, the model will overfit to the 
+training set—resulting in poor out-of-sample performance
+→ We will use cross-validation to select the value of  𝑘 that yields 
+the best prediction on unseen data
+• For each value of  𝑘, perform 20-fold cross-validation*
+• Record the average R2 using the current value of  𝑘.  Call it AvgR2
+• Choose the value of  𝑘 that yields the highest value of  AvgR2
+*Please don’t confuse the k from k-fold cross-validation with the number of  archetypes k
+52
+
+PDF PAGE 53
+Cross-Validation Results
+Collaborative Filtering and Clustering
+Best number of  
+archetypes for out-of-
+sample prediction
+Too many archetypes, 
+leading to overfitting
+Too few archetypes—cannot capture 
+the richness of  movie preferences
+53
+
+PDF PAGE 54
+Adding Content Features
+Collaborative Filtering and Clustering 57
+
+PDF PAGE 55
+Additional Data
+Collaborative Filtering and Clustering
+• Our Collaborative Filtering model has leveraged data on user-
+movie ratings to “reconstruct” missing data
+• But we have access to additional metadata on the movies
+• Genre (out of  18 genres): Action, Adventure, …, Western
+• And we also have access to additional data on the users
+• Gender
+• Age
+• Occupation (out of  21 categories): Administrator, Artist, …, Writer
+• Zip code — hence estimates of  income, rural/urban living, etc.
+• Last, we also know the date and time of  each movie rating
+58
+
+PDF PAGE 56
+Ensemble Model
+Collaborative Filtering and Clustering
+• Combine the collaborative filtering (CF) model into another 
+method (linear regression, CART, random forests, etc.)
+• Use the CF output as an additional  variable!
+• For instance, let 𝐶𝐹𝑢,𝑚 be the predicted rating of  user-movie pair (u,m) 
+using our CF model. Then consider the following regression model:
+• This ensemble model combines different predictive methods
+59
+
+PDF PAGE 57
+Extended Training Data
+Collaborative Filtering and Clustering
+𝒌: # of independent variables (𝒌 = 𝟓𝟏); 𝒏: # of observations (𝒏 = 𝟗𝟗𝟎, 𝟐𝟎𝟔)
+Dependent 
+variable
+Date/time 
+data User data Movie data CF prediction
+60
+
+PDF PAGE 58
+Linear Regression: Results
+Collaborative Filtering and Clustering
+• We knew we would 
+do at least as well as 
+CF on the training set
+• What about out-of-
+sample performance?
+61
+…
+
+PDF PAGE 59
+Updated Prediction Results
+Collaborative Filtering and Clustering
+• The ensemble model enhances predictive performance, as 
+compared to “just” the collaborative filtering model
+• Recall that Netflix’s Cinematch reported an RMSE of  0.952
+→ These results would have achieved a 5.46% RMSE improvement
+• Ensemble models are often winners in machine learning contests
+• For instance, the winners of  the Netflix Prize merged their teams and 
+used their different models to create an ensemble model
+Model OSR2 MAE RMSE
+Collaborative Filtering Model 0.335 0.708 0.916
+Ensemble Model 0.359 0.705 0.900
+62
+
+PDF PAGE 60
+An Important Practical Consideration – The Cold 
+Start Problem
+Collaborative Filtering and Clustering 63
+For a new user, what do we 
+recommend?
+If  you have user metadata (e.g., 
+demographics, device, location) data, you can 
+make recommendations that are popular for 
+the average user in that ‘metadata bucket’
+You can recommend items popular across the 
+entire user base and rapidly adapt based on 
+how the user reacts to those 
+recommendations
+For a new item, how to 
+proceed?
+If  you have item metadata (e.g, genre, 
+director, lead actors for movies), you can 
+assign the average rating of  the ‘metadata 
+bucket’ 
+Identify ‘sibling items’ and ‘borrow’ the 
+sibling’s ratings as a starting point
+
+PDF PAGE 61
+Recommender Systems
+Collaborative Filtering and Clustering
+• Recommender systems are critical to many businesses: e-retail, 
+brick-and-mortar retail, music listening services, mobile apps, etc.
+• The challenge of  building recommender systems is to predict 
+user preferences based on very “sparse” data
+• Recommender systems have enabled businesses to achieve 
+critical progress in customer engagement and customer retention
+64
+
+PDF PAGE 62
+Today’s Modeling Techniques
+Collaborative Filtering and Clustering
+• Model-Based Collaborative Filtering: reconstruction of  
+unobserved user-item ratings from observed ratings, based on 
+inter-user similarity
+• Concept of  a small number of  archetype users
+• Concept of  each user as a linear combination of  archetype users
+• Prediction of  user ratings: weighted average of  archetype users’ ratings
+• Ensemble Learning: combination of  several prediction models 
+• Previously: Random Forest is an ensemble of  CART models
+• In this lecture: use of  collaborative filtering (CF) predictions as an 
+independent variable in a larger linear regression model
+• Of  course, other predictive approaches can be combined into other 
+types of  ensemble models
+65
+
+PDF PAGE 63
+CLUSTERING
+COLLABORATIVE FILTERING
+Customer Segmentation; Recommendation Engine
+
+
+PDF PAGE 64
+Humans are Good at Grouping 
+Collaborative Filtering and Clustering 67
+• Grouping similar “things” into buckets allows us derive 
+insights about sets of  diverse items. 
+• Fuqua Courses → Area Subject 
+• Movies/Music/Books → Genres 
+• Food → Type of  cuisine, meal (breakfast), or course (appetizer)
+• Living Things → Kingdom, Phylum…, Species 
+• History → Eras (Renaissance, Industrial Revolution)
+• But what if  we don’t know what the “types” should be? 
+• How can analytics help us define these groups?
+
+PDF PAGE 65
+Agenda
+Collaborative Filtering and Clustering 68
+• Customer Segmentation in the Airline Industry
+• Introduction to Clustering Methods 
+• K-Means 
+• Hierarchical clustering
+• Optional: Gaussian Mixture Models
+• Unsupervised learning/descriptive analytics
+
+PDF PAGE 66
+Question
+Collaborative Filtering and Clustering 69
+• Who knows what
+ “scree” is?
+
+
+PDF PAGE 67
+Customer Segmentation
+Collaborative Filtering and Clustering 70
+
+PDF PAGE 68
+Customer Segmentation: Airline Industry
+Collaborative Filtering and Clustering 71
+• Suppose you are an airline, and you want to 
+better understand your passengers. 
+• You can leverage the (massive) data from 
+your frequent flyer program. 
+• What are the different “types” of  
+customers?
+• Why might it be useful for an airline to know the types of  customers?
+• Targeted promotions and marketing 
+• Pricing 
+• Customer experience and retention
+
+PDF PAGE 69
+Why Segmentation Matters?
+Collaborative Filtering and Clustering 72
+• Customer/User Segmentation: subdivision of  customers 
+into a relatively small number of  groups that share similar 
+characteristics.
+• Moving away from “one size fits all” offerings for competitive 
+edge.
+• Divide the market into meaningful and measurable segments 
+according to customers’ needs, past behaviors, and 
+demographic profiles 
+• Targeted Marketing: design of  tailored 
+products/promotions/services to meet customer needs 
+within each segment
+• Moving from “one size fits all” to personalized marketing
+
+PDF PAGE 70
+Clustering
+Collaborative Filtering and Clustering 73
+• Divide a dataset into 
+groups (clusters) based on 
+shared similarities.
+• Part of  exploratory data 
+analysis (descriptive 
+analytics).
+• Derive insights that can 
+lead to better business 
+decisions. 
+
+
+PDF PAGE 71
+Airline Customer Data
+Collaborative Filtering and Clustering 74
+• Data on 3,999 customers obtained from the loyalty program 
+of  a former airline
+• Six numerical values describing customers:
+• Number of  miles eligible for award travel from historical activity
+• Number of  miles earned from non-flight bonus transactions in the 
+past 12 months
+• Number of  non-flight bonus transactions in the past 12 months
+• Number of  flight miles in the past 12 months
+• Number of  flight transactions in the past 12 months
+• Tenure in the loyalty program (days)
+
+PDF PAGE 72
+Airline Customer Data
+Collaborative Filtering and Clustering 75
+𝒏: # of observations (𝒏 = 𝟑, 𝟗𝟗𝟗)
+𝒏 = 𝟑, 𝟗𝟗𝟗
+
+
+PDF PAGE 73
+Clustering Method (Algorithm)
+Collaborative Filtering and Clustering 76
+• Clustering methods typically takes as input the number of  clusters 
+(often called k) and assigns each data point a number between 1 and k. 
+• Goal: High similarity (low dissimilarity) within each cluster
+Balance Flight 
+Miles … Days Since
+Enrollment
+48,296 19,382 … 3061
+12,110 5,030 … 3398
+… … … …
+201,498 10,231 … 1291
+201,498 10,231 … 1291
+Cluster 
+Number
+1
+1
+…
+2
+3
+Clustering 
+Method
+Input Data Output
+
+PDF PAGE 74
+Unsupervised Learning
+Collaborative Filtering and Clustering 77
+• Previously, we have seen datasets with a dependent variable that we are 
+trying to predict as a function of  some independent variables
+• These are called supervised learning problems
+• In clustering, there is no dependent variable to predict; instead, we 
+aim to create groups of  “similar” samples/observations
+• These are called unsupervised learning problems
+• No training/testing split for unsupervised learning
+• Without a dependent variable, out-of-sample performance is irrelevant
+• Unsupervised learning is used for summary / exploratory analysis
+• Unsupervised models are more subjective to interpret
+• Unsupervised models are also more difficult to validate
+
+PDF PAGE 75
+What does “similar” mean?
+Distances and Standardization
+Collaborative Filtering and Clustering 78
+
+PDF PAGE 76
+Mini-dataset for Airline Loyalty Program Customers
+Collaborative Filtering and Clustering 79
+Member
+Number
+Time Since 
+Enrolled
+(Months)
+Current
+Mileage Balance 
+(1,000 miles)
+1 60 41
+2 61 46
+3 62 49
+4 63 39
+5 62 45
+6 61 50
+7 60 46
+8 50 76
+9 57 82
+10 60 88
+11 55 80
+12 54 81
+13 57 84
+14 61 81
+15 32 90
+16 36 86
+17 39 90
+18 31 91
+19 37 85
+20 39 88
+
+PDF PAGE 77
+Mini-dataset
+Collaborative Filtering and Clustering 80
+• For visualization purposes, let us consider a simple dataset 
+with 20 customers and 2 characteristics
+
+
+PDF PAGE 78
+Measuring the distance between 2 observations
+Collaborative Filtering and Clustering 81
+𝑎2 –  𝑏2
+𝑎1 –  𝑏1
+x
+y
+• Clustering relies on the distance between pairs of  observations
+• Typically, Euclidean distance (recall the Pythagorean theorem!)
+• Can be directly generalized to instances with more variables
+
+
+PDF PAGE 79
+Mini-dataset
+Collaborative Filtering and Clustering 82
+• How many clusters would you say there are?
+
+
+PDF PAGE 80
+Plot with Changed Units from Months to Years
+Collaborative Filtering and Clustering 83
+
+
+PDF PAGE 81
+Plot with Changed Units from 1,000 to 10,000 Miles
+Collaborative Filtering and Clustering 84
+
+
+PDF PAGE 82
+Scaling Issue
+Collaborative Filtering and Clustering 85
+• Hard to compare different units (e.g., days vs. miles)
+• Distance is primarily driven by the variables of  larger scale
+• The distance metric is sensitive to the choice of  units
+Variable Balance BonusMiles BonusTrans FlightMiles FlightTrans Tenure
+Mean 73,601 17,145 12 460 1 4,118
+Std. dev. 100,776 24,151 10 1,400 4 2,065
+
+
+PDF PAGE 83
+Standardizing the Data
+Collaborative Filtering and Clustering 86
+Standardized variables are expressed in terms of  “number of  standard 
+deviations from the  mean”
+Original Data
+[For example, 0.71 = ( 60 – 51.85 )/11.43 ]
+Member
+Number
+Tenure
+(Months)
+Balance 
+(1,000 miles)
+1 60 41
+2 61 46
+3 62 49
+4 63 39
+5 62 45
+… … …
+19 37 85
+20 39 88
+Sample mean 51.85 70.90
+Sample S.D. 11.43 19.86
+Standardized Data
+Member
+Number
+Tenure
+(standardized)
+Balance 
+(standardized)
+1 0.71 -1.51
+2 0.80 -1.26
+3 0.89 -1.10
+4 0.98 -1.61
+5 0.89 -1.30
+… … …
+19 -1.30 0.71
+20 -1.12 0.86
+
+
+PDF PAGE 84
+Diabetes Data from Last Class
+Collaborative Filtering and Clustering 87
+• The (regularization) methods we learned last time work 
+best when the regression coefficients are comparable in 
+terms of  scale.  This is accomplished by 
+“standardizing” the variables.
+
+PDF PAGE 85
+Standardized Expanded Diabetes Dataset
+Collaborative Filtering and Clustering 88
+𝒌: # of independent variables (𝒌 = 𝟔𝟒); 𝒏: # of observations (𝒏 = 𝟒𝟒𝟐)
+𝒏 = 𝟒𝟒𝟐
+y age glu age^2 glu^2 age:glu ltg:glu
+0 151 0.0381 … -0.0176 -0.0149 … -0.0275 … -0.0303 … -0.0278
+1 75 -0.0019 … -0.0922 -0.0413 … 0.0880 … -0.0114 … 0.1040
+2 141 0.0853 … -0.0259 0.0916 … -0.0224 … -0.0647 … -0.0223
+3 206 -0.0891 … -0.0094 0.1036 … -0.0307 … 0.0034 … -0.0250
+4 135 0.0054 … -0.0466 -0.0408 … -0.0012 … -0.0209 … 0.0087
+5 97 -0.0927 … -0.0963 0.1157 … 0.0990 … 0.1844 … 0.0578
+6 138 -0.0455 … -0.0384 -0.0036 … -0.0112 … 0.0237 … 0.0270
+7 63 0.0635 … 0.0031 0.0324 … -0.0318 … -0.0109 … -0.0230
+8 110 0.0417 … 0.0113 -0.0096 … -0.0301 … -0.0047 … -0.0242
+9 310 -0.0709 … -0.0135 0.0505 … -0.0293 … 0.0061 … -0.0390
+10 101 -0.0963 … -0.0342 0.1283 … -0.0154 … 0.0584 … 0.0218
+11 69 0.0272 … -0.0591 -0.0279 … 0.0173 … -0.0511 … 0.0920
+12 179 0.0163 … -0.0425 -0.0365 … -0.0064 … -0.0307 … 0.0051
+13 185 0.0054 … -0.0135 -0.0408 … -0.0293 … -0.0169 … -0.0311
+14 118 0.0453 … -0.0756 -0.0038 … 0.0488 … -0.0919 … 0.0271
+… … … … … … … … … … … …
+437 178 0.0417 … 0.0072 -0.0096 … -0.0312 … -0.0085 … -0.0164
+438 104 -0.0055 … 0.0445 -0.0408 … -0.0040 … -0.0207 … -0.0368
+439 132 0.0417 … 0.0155 -0.0096 … -0.0285 … -0.0008 … -0.0352
+440 220 -0.0455 … -0.0259 -0.0036 … -0.0224 … 0.0111 … -0.0437
+441 57 -0.0455 … 0.0031 -0.0036 … -0.0318 … -0.0184 … -0.0211
+
+PDF PAGE 86
+Plot of  Standardized Mini-dataset
+Collaborative Filtering and Clustering 89
+
+
+PDF PAGE 87
+Standardized Airline Customer Data
+Collaborative Filtering and Clustering 90
+𝒏: # of observations (𝒏 = 𝟑, 𝟗𝟗𝟗)
+𝒏 = 𝟑, 𝟗𝟗𝟗
+
+
+PDF PAGE 88
+Clustering Methods 
+Collaborative Filtering and Clustering 91
+1.  k-Means Clustering
+2. (Agglomerative) Hierarchical Clustering
+3. Optional: Gaussian Mixture Models GMMs
+
+PDF PAGE 89
+Method 1: k-Means Clustering
+Collaborative Filtering and Clustering 92
+
+PDF PAGE 90
+Centroid/Center of  Some Points
+Collaborative Filtering and Clustering 93
+
+
+PDF PAGE 91
+k-Means Clustering
+Collaborative Filtering and Clustering 94
+Set number 
+of  clusters
+Initialize
+Iterate
+• Select the number of  clusters, denoted by k
+• Randomly select/create k centroid locations
+• A “centroid” can be thought of  as a point that is 
+“representative” of  each cluster
+• A centroid need not correspond to a particular sample 
+observation
+• Repeat the following two steps until convergence:
+• Assign each observation to the nearest centroid
+• Recalculate the k centroids as the average of  their assigned 
+observations
+Terminate • Terminate when centroids no longer move
+
+PDF PAGE 92
+1. Select k Random Centroid Locations
+Collaborative Filtering and Clustering 95
+
+
+PDF PAGE 93
+2a. Assign every observation 
+      to its nearest centroid
+Collaborative Filtering and Clustering 96
+
+
+PDF PAGE 94
+2b. Re-calculate the centroids
+Collaborative Filtering and Clustering 97
+
+
+PDF PAGE 95
+2a. Assign every observation 
+      to its nearest centroid
+Collaborative Filtering and Clustering 98
+
+
+PDF PAGE 96
+2b. Re-calculate the centroids
+Collaborative Filtering and Clustering 99
+
+
+PDF PAGE 97
+2a. Assign every observation 
+      to its nearest centroid
+Collaborative Filtering and Clustering 100
+
+
+PDF PAGE 98
+Another example: k-means 
+Collaborative Filtering and Clustering 101
+
+
+PDF PAGE 99
+k-Means Clustering 
+ applied to the Airline Customers Data
+Collaborative Filtering and Clustering 102
+
+PDF PAGE 100
+Standardized Cluster Centroids
+Collaborative Filtering and Clustering 103
+• How would you describe these groups of  customers?
+• How might we market to these clusters?
+Standardized 
+Variable
+Cluster
+1 2 3 4 5 6 7 8
+Balance -0.16 -0.35 0.76 0.41 0.77 -0.42 5.99 0.30
+BonusMiles 0.09 -0.58 2.26 0.16 0.86 -0.61 2.09 0.21
+BonusTrans 0.55 -0.75 1.13 0.83 2.49 -0.86 1.11 0.46
+FlightMiles -0.24 -0.22 -0.08 1.88 5.84 -0.24 0.80 -0.18
+FlightTrans -0.26 -0.23 -0.05 1.92 6.07 -0.24 1.11 -0.19
+DaysSinceEnroll -0.65 0.70 0.50 0.03 0.15 -1.02 1.17 1.02
+Cluster Size 845 888 313 220 54 963 46 670 
+
+PDF PAGE 101
+Clusters 1, 3 and 8
+Collaborative Filtering and Clustering 104
+• The point addicts: focus on bonus transactions
+→ Target bonuses for flying? Special offers for bonus transactions?
+Standardized 
+Variable
+Cluster
+1 3 8
+Balance -0.16 0.76 0.30
+BonusMiles 0.09 2.26 0.21
+BonusTrans 0.55 1.13 0.46
+FlightMiles -0.24 -0.08 -0.18
+FlightTrans -0.26 -0.05 -0.19
+DaysSinceEnroll -0.65 0.50 1.02
+Cluster Size 845 313 670 
+Original
+Variable
+Cluster
+1 3 8
+Balance 57,477 150,191 103,834
+BonusMiles 19,318 71,726 22,217
+BonusTrans 17 22 16
+FlightMiles 124 348 208
+FlightTrans 0 1 1
+DaysSinceEnroll 2,227 5,151 6,225
+Cluster Size 845 313 670 
+
+PDF PAGE 102
+Clusters 2 and 6
+Collaborative Filtering and Clustering 105
+• Low-activity customers, but for different reasons?
+→ Promotional one-time events to incentivize new purchases?
+Standardized 
+Variable
+Cluster
+2 6
+Balance -0.35 -0.42
+BonusMiles -0.58 -0.61
+BonusTrans -0.75 -0.86
+FlightMiles -0.22 -0.24
+FlightTrans -0.23 -0.24
+DaysSinceEnroll 0.70 -1.02
+Cluster Size 888 963
+Original
+Variable
+Cluster
+2 6
+Balance 38,330 31,276
+BonusMiles 3,137 2,413
+BonusTrans 4 3
+FlightMiles 152 124
+FlightTrans 1 0
+DaysSinceEnroll 5,564 2,012
+Cluster Size 888 963
+
+PDF PAGE 103
+Clusters 4 and 5
+Collaborative Filtering and Clustering 106
+• Frequent Travelers: high flight miles and transactions
+→ Thank for loyalty? Special offers? Refer a friend? Tier upgrades?
+Standardized 
+Variable
+Cluster
+4 5
+Balance 0.41 0.77
+BonusMiles 0.16 0.86
+BonusTrans 0.83 2.49
+FlightMiles 1.88 5.84
+FlightTrans 1.92 6.07
+DaysSinceEnroll 0.03 0.15
+Cluster Size 220 54
+Original
+Variable
+Cluster
+4 5
+Balance 114,919 151,199
+BonusMiles 21,010 37,915
+BonusTrans 20 36
+FlightMiles 3,092 8,637
+FlightTrans 9 24
+DaysSinceEnroll 4,181 4,428
+Cluster Size 220 54
+
+PDF PAGE 104
+Clusters 7
+Collaborative Filtering and Clustering 107
+• Loyal Elites: long-tenured, high-value members with exceptional balances
+→ Personalize experiences, offer exclusivity and premium recognition
+Standardized Variable Cluster
+7
+Balance 5.99
+BonusMiles 2.09
+BonusTrans 1.11
+FlightMiles 0.80
+FlightTrans 1.11
+DaysSinceEnroll 1.17
+Cluster Size 46
+Original
+Variable
+Cluster
+7
+Balance 677,248
+BonusMiles 67,620
+BonusTrans 22
+FlightMiles 1,580
+FlightTrans 6
+DaysSinceEnroll 6,535
+Cluster Size 46
+
+PDF PAGE 105
+Selecting the number of  clusters k
+Collaborative Filtering and Clustering 108
+
+PDF PAGE 106
+Trade-Off
+Collaborative Filtering and Clustering 109
+• Trade-off  in selecting the number of  clusters k
+• Low k : dissimilar customers will be combined into the same cluster, 
+leading to heterogeneous clusters
+• High k : clusters will be too specific, leading to unactionable clusters
+     — and likely inefficiencies in targeting each cluster differently
+High kLow k
+Heterogeneous Clusters
+(High Dissimilarity)
+Good Interpretability
+Homogeneous Clusters
+(Low Dissimilarity)
+Poor Interpretability
+
+PDF PAGE 107
+Quantifying this Trade-Off
+Collaborative Filtering and Clustering 110
+• For each value of  k from 2 to 100, run a K-Means clustering algorithm.
+• For each value of  k, use the clusters to compute the cluster dissimilarity.
+• Cluster Dissimilarity: Measures the total amount of  heterogeneity in 
+the clusters, commonly the sum of  squared distances from each 
+observation to the centroid of  the cluster it is assigned to.
+• A scree plot displays the tradeoff  between number of  clusters k and the 
+cluster dissimilarity — to find a “sweet spot”.
+Centroid
+Observation
+
+
+PDF PAGE 108
+3 Clusters
+Collaborative Filtering and Clustering 111
+
+
+PDF PAGE 109
+Scree Plot for Airline Clusters
+Collaborative Filtering and Clustering 112
+Very dissimilar customers 
+combined into same clusters
+Similar customers split 
+into different clusters
+“knee in the curve”
+
+
+PDF PAGE 110
+Method 2. Hierarchical Clustering
+Collaborative Filtering and Clustering 113
+
+PDF PAGE 111
+Hierarchical Clustering
+Collaborative Filtering and Clustering 114
+• Start with each observation in its own cluster
+→ Initially, as many clusters as data points (3,999 here)
+• Iteratively combine the pair of  clusters that are have 
+the smallest cluster dissimilarity
+• Prefer combining clusters that are “close” to each other
+• Prefer combining small clusters instead of  large clusters
+→ Number of  clusters goes down by 1 at each iteration
+Initialize
+Iterate
+Terminate
+• Ultimately, there is just 1 cluster with all data points
+→ Enables you to select the appropriate number of  clusters
+
+PDF PAGE 112
+Our Standardized Mini-dataset
+Collaborative Filtering and Clustering 115
+
+
+PDF PAGE 113
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 116
+Dissimilarity 0.087
+
+PDF PAGE 114
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 117
+Dissimilarity 0.101
+
+PDF PAGE 115
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 118
+Dissimilarity 0.101
+
+PDF PAGE 116
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 119
+Dissimilarity 0.101
+
+PDF PAGE 117
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 120
+Dissimilarity 0.101
+
+PDF PAGE 118
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 121
+Dissimilarity 0.101
+
+PDF PAGE 119
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 122
+Dissimilarity 0.101
+
+PDF PAGE 120
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 123
+Dissimilarity 0.162
+
+PDF PAGE 121
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 124
+Dissimilarity 0.281
+
+PDF PAGE 122
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 125
+Dissimilarity 0.307
+
+PDF PAGE 123
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 126
+Dissimilarity 0.357
+
+PDF PAGE 124
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 127
+Dissimilarity 0.363
+
+PDF PAGE 125
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 128
+Dissimilarity 0.397
+
+PDF PAGE 126
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 129
+Dissimilarity 0.614
+
+PDF PAGE 127
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 130
+Dissimilarity 0.715
+
+PDF PAGE 128
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 131
+Dissimilarity 0.932
+
+PDF PAGE 129
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 132
+Dissimilarity 0.948
+
+PDF PAGE 130
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 133
+Dissimilarity 4.663
+
+PDF PAGE 131
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 134
+Dissimilarity 7.136
+
+PDF PAGE 132
+Hierarchical Clustering on Mini-dataset
+Collaborative Filtering and Clustering 135
+
+
+PDF PAGE 133
+Use of  Dendrogram
+Collaborative Filtering and Clustering 136
+• Full hierarchy of  clusters, all 
+the way to single observations
+• Height indicates dissimilarity
+• E.g., 3 and 6 are close to each 
+other, as are 2 and 7
+• One can “reconstruct” a cluster 
+set for each value of  k
+• Common mistake: the x-axis 
+does not indicate similarity
+• Observation 4 is far from 3
+2 clusters
+3 clusters
+more clusters
+
+PDF PAGE 134
+Popular Hierarchical Clustering Dissimilarity 
+Measures Between Clusters A and B, cont.
+Collaborative Filtering and Clustering 137
+• scipy.cluster.hierarchy.linkage
+• method = single
+• method = complete
+
+
+PDF PAGE 135
+Popular Hierarchical Clustering Dissimilarity 
+Measures Between Clusters A and B
+Collaborative Filtering and Clustering 138
+• method = ward
+• method = average
+
+
+PDF PAGE 136
+Hierarchical Clustering
+Applied to the Airline Customers Data
+Collaborative Filtering and Clustering 139
+
+PDF PAGE 137
+Hierarchical Clusters for Airline Data
+Collaborative Filtering and Clustering 140
+• Output of  the hierarchical clustering approach applied to the 
+airline customer dataset:
+
+
+PDF PAGE 138
+Scree Plot for Airline Clusters
+Collaborative Filtering and Clustering 141
+• We will agglomerate any clusters that have dissimilarity 32 or 
+smaller, yielding 7 final clusters
+Good number—
+“scree stays here”
+
+PDF PAGE 139
+Dendrogram for Airline Clusters
+Collaborative Filtering and Clustering 142
+Cluster 1
+(n = 833)
+Cluster 2
+(n = 746)
+Cluster 3
+(n = 1,242)
+Cluster 7 (n = 723)
+Cluster 6 (n = 271)
+Cluster 5 (n = 121)
+Cluster 4 (n = 63)
+
+PDF PAGE 140
+Method 3. Gaussian Mixture Models
+(Optional)
+Collaborative Filtering and Clustering 143
+
+PDF PAGE 141
+Issue with k-means and/or AHC: 
+different types of  “correlation” inside of  clusters
+Collaborative Filtering and Clustering 144
+• Here is a scatterplot that is particularly well-suited to k-means and/or 
+AHC clustering:
+Before After: 2 clusters 
+
+
+PDF PAGE 142
+k-means/AHC and “correlation”
+Collaborative Filtering and Clustering 145
+• How many clusters do you think there are?
+• What shapes are the clusters?
+• Is there strong or weak correlation between the variables 
+within each cluster?
+
+
+PDF PAGE 143
+k-means/AHC and correlation, cont.
+Collaborative Filtering and Clustering 146
+• Here are the results from clustering with k = 3
+Before After
+
+
+PDF PAGE 144
+Another Example
+Collaborative Filtering and Clustering 147
+• How many clusters do 
+you think there are?
+• What shapes are the 
+clusters?
+• How do the distributions 
+within each cluster differ?
+
+
+PDF PAGE 145
+k-means/AHC and unequal variances
+Collaborative Filtering and Clustering 148
+• Here are the results from k-means/AHC clustering 
+• OK for the most part, but we can see a few problems here…
+Before After 
+
+
+PDF PAGE 146
+Problems with k-means/AHC
+Collaborative Filtering and Clustering 149
+• k-means/AHC do best when the clusters exhibit:
+1. Circular/spherical shaped (uncorrelated variables); and
+2. Similar variances (“dispersion patterns”) across clusters
+• Unfortunately, oftentimes clusters are:
+1. Best described by elliptical shapes (correlated variables); and/or
+2. Have different types of  variances (different types of  ellipses)
+    In these situations, k-means/AHC will often not perform well
+
+PDF PAGE 147
+Gaussian Mixture Models
+Collaborative Filtering and Clustering 150
+• Gaussian Mixture Models (GMMs) provide an improved method for 
+clustering when clusters are elliptical and/or may have different variances 
+among the clusters
+• Clustering is based upon the multivariate analogue of  the Normal 
+(Gaussian) distribution
+• Here the “bell” of  the bell-shaped curve is shaped like a real bell
+
+
+PDF PAGE 148
+Gaussian Mixture Models
+Collaborative Filtering and Clustering 151
+• We imagine that there are k distinct “multivariate” Normal distributions 
+which give rise to the data (with unknown means, standard deviations, and 
+“correlation” structures)
+• But we do not know which individuals came from which distribution 
+• Nonetheless, we can compute estimates of  the values for the means, 
+standard deviations, and correlation structures that would fit the data best, 
+using what is known as the Expectation-Maximization (EM) algorithm
+• Once we have these estimates, we can actually calculate the probability 
+that an individual observation is from a given cluster
+• We then assign each individual to the cluster with the highest probability
+
+PDF PAGE 149
+Gaussian Mixture Model
+Collaborative Filtering and Clustering 152
+
+
+PDF PAGE 150
+Comparing GMMs and k-means
+Collaborative Filtering and Clustering 153
+k-Means GMM
+
+
+PDF PAGE 151
+Comparing GMMs and k-means
+Collaborative Filtering and Clustering 154
+k-Means GMM
+
+
+PDF PAGE 152
+Summary of  Clustering
+Collaborative Filtering and Clustering 155
+
+PDF PAGE 153
+Clustering and Customer Segmentation
+Collaborative Filtering and Clustering 156
+• Clustering for customer segmentation is now pervasive
+• Better understanding of  key customer types and their prevalence
+• Design of  appropriate engagement strategies, tailored to each segment
+• Key steps in clustering analytics:
+• Aim for data to be compatible in scale through standardization
+• Identify relevant clusters with k-means, or hierarchical clustering, GMMs, or 
+PAM
+• Analyze cluster centroids (or medoids) to interpret the type of  customers in 
+each cluster and determine appropriate implications for management
+• Clustering cannot be validated with out-of-sample predictions
+→ very important to engage decision-makers throughout model building
+
+PDF PAGE 154
+Comparison of  Clustering Methods
+Collaborative Filtering and Clustering 157
+• k-means, hierarchical clustering, and GMMs often yield consistent insights
+• Still, the methods have different strengths/weaknesses
+• k-means clustering
+• Is more computationally efficient — hence scalable to ever-larger datasets
+• Hierarchical clustering
+• Flexibility through various distance and cluster dissimilarity metrics
+• Amenable to iterative decision making — at various levels of  granularity
+• GMMs
+• Best when clusters are thought to be “elliptical” with potentially different 
+correlations and variances
+• Many modeling issues can have significant impacts on results
+• whether to standardize data, how to quantify “distance”, how many clusters to use, 
+etc.
+
+PDF PAGE 155
+Clustering can become very mathematically deep 
+when the data itself  is inherently complex
+Collaborative Filtering and Clustering 158
+https://www.cs.bu.edu/fac/snyder/cs4100/Medium.Clustering.Survey.pdf

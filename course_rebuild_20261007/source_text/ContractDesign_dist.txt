@@ -1,0 +1,256 @@
+CELL 0 markdown
+## Optimization for Contract Design
+
+
+CELL 1 markdown
+Install gurobipy
+
+CELL 2 code
+!pip install gurobipy
+
+CELL 3 markdown
+## Define distribution of Gates Foundation's belief on the drug's success rate
+
+Here we use a beta distribution.  You can change the values of $a$ and $b$ and try different shapes of the beta distribution.
+
+
+CELL 4 code
+import numpy as np
+from scipy.stats import beta
+import matplotlib.pyplot as plt
+
+# Define the parameters of the beta distribution
+a = 5
+b = 2
+
+# Create a beta distribution object
+beta_dist = beta(a, b)
+
+# Generate 100 evenly spaced values between 0 and 1
+x = np.linspace(0, 1, 100)
+
+# Calculate the probability density function (PDF) at these values
+pdf_values = beta_dist.pdf(x)
+
+# Display the first few values of x and the corresponding PDF values
+print("Discretized values (x):")
+print(x[:20])
+print("\nPDF values:")
+print(pdf_values[:10])
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.bar(x, pdf_values, label=f'Beta Distribution (a={a}, b={b})', color='skyblue', width=0.5/len(x))
+
+# Add titles and labels
+plt.title('Discretized Beta Distribution (Bar Chart)')
+plt.xlabel(r'$\theta$', fontsize=14)
+plt.ylabel(r'$P(\theta)$', fontsize=14)
+plt.legend()
+plt.grid(True)
+
+# Show the plot
+plt.show()
+
+CELL 5 markdown
+## Setting model parameters
+
+CELL 6 code
+# Set model parameters
+alpha = 0.5
+delta = 0.6
+pi = 300
+omega = 400
+c = 100
+
+# Create a sequence of 100 values for tau between 0 and 1
+tau_values = np.linspace(0, 1, 100)
+display(tau_values)
+
+CELL 7 markdown
+## Solving a sequence of linear optimization
+
+For each threshold $\tau$ value, we define an optimization problem.
+
+CELL 8 code
+from gurobipy import Model, GRB, quicksum
+import numpy as np
+
+results = []
+
+for tau in tau_values:
+    # Create a new model for each tau value
+    model = Model("optimization_model")
+
+    # Define decision variables
+    m0 = model.addVar(vtype=GRB.CONTINUOUS, name="m0", lb=0.0)
+    mS = model.addVar(vtype=GRB.CONTINUOUS, name="mS", lb=0.0)
+    mF = model.addVar(vtype=GRB.CONTINUOUS, name="mF", lb=0.0)
+
+    # Update the model to include the variables
+    model.update()
+
+    # Add constraints
+   # Constraint 1: m0 + delta * (tau * mS + (1 - tau) * mF) == c - delta * pi * tau
+    model.addConstr(m0 + delta * (tau * (mS+pi) + (1 - tau) * mF) <= c, "constraint1_low")
+    tau_next = tau+1/(len(tau_values)-1)
+    print(tau, tau_next)
+    model.addConstr(m0 + delta * (tau_next * (mS+pi) + (1 - tau_next) * mF) >= c, "constraint1_high")
+
+    # Constraint 2: m0 + delta * mF <= alpha * c
+    model.addConstr(m0 + delta * mF <= alpha * c, "constraint2")
+
+    # Set objective function using quicksum
+    objective = quicksum((x[i] * omega - m0 - x[i] * mS - (1 - x[i]) * mF) * pdf_values[i] for i in range(len(x)) if x[i]>=tau)
+
+    model.setObjective(objective, GRB.MAXIMIZE) # Assuming maximization based on the expression
+
+    # Optimize the model
+    model.optimize()
+
+    # Store results if the model is solvable
+    if model.status == GRB.OPTIMAL:
+        results.append({
+            'tau': tau,
+            'm0': m0.X,
+            'mS': mS.X,
+            'mF': mF.X,
+            'objective_value': model.ObjVal
+        })
+    else:
+        results.append({
+            'tau': tau,
+            'status': model.status
+        })
+
+    print("see me!", model.status)
+
+# You can then process or display the results
+# import pandas as pd
+# results_df = pd.DataFrame(results)
+# display(results_df)
+
+# Print a message indicating the loop has finished
+print("Optimization loop finished. Objective function added using quicksum. Results are stored in the 'results' list (if optimization and result storage code is uncommented).")
+
+CELL 9 markdown
+## Plot the sequence of optimal objective values
+
+The best of the optimal objective values yield the optimal threshold $\tau$ as well as the contract terms.
+
+CELL 10 code
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def plot_optimization_results(results):
+    """
+    Plots the optimal objective value vs. tau and highlights the maximum.
+
+    Args:
+        results (list): A list of dictionaries containing optimization results.
+    """
+    # Convert results to a pandas DataFrame for easier plotting
+    results_df = pd.DataFrame(results)
+
+    # Filter for optimal solutions
+    optimal_results = results_df[results_df['objective_value'] > 0]
+
+    # Create the plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(optimal_results['tau'], optimal_results['objective_value'])
+
+    # Find the row with the maximum objective value
+    if not optimal_results.empty:
+        max_objective_row = optimal_results.loc[optimal_results['objective_value'].idxmax()]
+        plt.scatter(max_objective_row['tau'], max_objective_row['objective_value'], color='red', marker='*', s=200, label='Maximum Objective')
+        plt.axvline(max_objective_row['tau'], linestyle='--', label=f'Optimal \u03C4 = {max_objective_row["tau"]:.4f}')
+        plt.text(max_objective_row['tau'], plt.ylim()[0], r'$\tau^*$ = {:.3f}'.format(max_objective_row['tau']), ha='center', va='top')
+        # Add titles and labels
+        plt.xlabel(r'$\tau$', fontsize=14)
+        plt.ylabel('Optimal Objective Value', fontsize=14)
+        plt.grid(True)
+        plt.show()
+
+        max_objective_value = max_objective_row['objective_value']
+        optimal_m0 = max_objective_row['m0']
+        optimal_mS = max_objective_row['mS']
+        optimal_mF = max_objective_row['mF']
+        optimal_tau = max_objective_row['tau']
+        print(f"Maximum Optimal Objective Value: {max_objective_value}")
+        print(f"Corresponding m0: {optimal_m0}")
+        print(f"Corresponding mS: {optimal_mS}")
+        print(f"Corresponding mF: {optimal_mF}")
+        print(f"Corresponding tau: {optimal_tau}")
+
+# To use the function, call it with your results list:
+plot_optimization_results(results)
+
+CELL 11 markdown
+## What if we do not fund failure (forcing $m_F=0$)?
+
+CELL 12 code
+from gurobipy import Model, GRB, quicksum
+import numpy as np
+
+results = []
+
+for tau in tau_values:
+    # Create a new model for each tau value
+    model = Model("optimization_model")
+
+    # Define decision variables
+    m0 = model.addVar(vtype=GRB.CONTINUOUS, name="m0", lb=0.0)
+    mS = model.addVar(vtype=GRB.CONTINUOUS, name="mS", lb=0.0)
+    mF = model.addVar(vtype=GRB.CONTINUOUS, name="mF", lb=0.0)
+
+    # Update the model to include the variables
+    model.update()
+
+    # Add constraints
+    # Constraint 1: m0 + delta * (tau * mS + (1 - tau) * mF) == c - delta * pi * tau
+    model.addConstr(m0 + delta * (tau * (mS+pi) + (1 - tau) * mF) <= c, "constraint1_low")
+    tau_next = tau+1/(len(tau_values)-1)
+    print(tau, tau_next)
+    model.addConstr(m0 + delta * (tau_next * (mS+pi) + (1 - tau_next) * mF) >= c, "constraint1_high")
+
+    # Constraint 2: m0 + delta * mF <= alpha * c
+    model.addConstr(m0 + delta * mF <= alpha * c, "constraint2")
+
+    # ADD CONSTRAINT: No fund for failure
+    model.addConstr(mF == 0, "No Fund for Failure")
+
+    # Set objective function using quicksum
+    objective = quicksum((x[i] * omega - m0 - x[i] * mS - (1 - x[i]) * mF) * pdf_values[i] for i in range(len(x)) if x[i]>=tau)
+
+    model.setObjective(objective, GRB.MAXIMIZE) # Assuming maximization based on the expression
+
+    # Optimize the model
+    model.optimize()
+
+    # Store results if the model is solvable
+    if model.status == GRB.OPTIMAL:
+        results.append({
+            'tau': tau,
+            'm0': m0.X,
+            'mS': mS.X,
+            'mF': mF.X,
+            'objective_value': model.ObjVal
+        })
+    else:
+        results.append({
+            'tau': tau,
+            'status': model.status
+        })
+
+    print("see me!", model.status)
+
+# You can then process or display the results
+# import pandas as pd
+# results_df = pd.DataFrame(results)
+# display(results_df)
+
+# Print a message indicating the loop has finished
+print("Optimization loop finished. Objective function added using quicksum. Results are stored in the 'results' list (if optimization and result storage code is uncommented).")
+
+CELL 13 code
+plot_optimization_results(results)

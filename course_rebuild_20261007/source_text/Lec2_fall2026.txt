@@ -1,0 +1,613 @@
+PDF PAGE 1
+LINEARREGRESSIONPREDICTING BLUEBIKES RENTAL AND SOLAR RADIATIONTrain/Test Split
+
+
+PDF PAGE 2
+Reminders
+Decision 618–Lecture 2: Linear Regression
+•Fuqua Check-in•Form your team of  3
+
+PDF PAGE 3
+Predictive Model
+•We want to predict the value of  one* variable called the dependent variable (synonyms: the target variable, labels)…•using values of  the other variables, called the independent variables (synonyms: explanatory variable, predictor, feature)*: You can have multiple dependent variables. We will focus on a single dependent variable in this course.
+x₁x₂⋮xₖ
+ modely
+Independent VariablesDependent Variable
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 4
+Predicting Rentals•According to Wikipedia:“Bluebikes… is a bicycle sharing system in the Boston metropolitan area. As of 2024, the system had deployed 520 stations with a fleet of over 5,500 bikes in the 10 municipalities it served.”•Bluebikes’ System Data:•Bluebikes makes available anonymized data for every trip taken.https://bluebikes.com/system-data;  https://s3.amazonaws.com/hubway-data/202401-bluebikes-tripdata.zip
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 5
+What to predict?
+Decision 618–Lecture 2: Linear Regression
+•What do you want to do with this data?•What business decisions can this data help with?•How to do it?
+
+PDF PAGE 6
+Predict Total*Hourly BlueBikesRentalsFor example: “What is the number of  BlueBike rentals tomorrow between 5-6 p.m.?”•What can we do with a model that predicts total hourly rentals?•Always ask: Why would we want to predict that? What’s the model’s decision-relevance?•Say we need to staff  the customer service center differently when demand is high (say 500-1000 rentals per hour). What would you need to know to make the right staffing decision?•You may also want the distribution of  rentals for tomorrow between 5-6pm, to calculate the probabilities of  rentals in certain ranges.*  We could predict rentals at each station instead, which would be useful for knowing how to rebalance bikes.
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 7
+First Predictor•Aggregate to obtain number of  rentals per hour.  How do you predict the rental need for the next hour?
+•Take Average! ‾𝑦=540.96  →  baseline model•Is this a good prediction?  Why?•How to measure/quantify the baseline model’s performance?  •Sum of  Squared Total (SST):𝑆𝑆𝑇=,!(𝑦!−‾𝑦)"=(𝑦#−‾𝑦)"+(𝑦"−‾𝑦)"+⋯(𝑦$−‾𝑦)"=2,214million
+185. 208.  92.  32.   6.  14.  25.  30.  49. 105.  94. 139. 183. 187.251. 285. 214. 175. 126.  86.  76.  67.  28.  20.  17.  12.   7.   4.5.  38. 104. 252. 462. 262. 163. 184. 214. 226. 249. 339. 493. 583.420. 236. 152.  95.  40.  40.  14.   9.   7.   3.   8.  53. 128. 352.645. 368. 222. 214. 254. 235. 272. 373. 616. 764. 477. 279. 185. 108.70.  34.  18.  10.   7.   6.  10.  49. 138. 358. 678. 387. 225. 260.304. 277. 324. 374. 557. 708. 470. 292. 172. 110.  61.  37.  15.   8.6....
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 8
+Better Prediction than Simple Average?
+Aggregate by Day / Month / Hour
+Decision 618–Lecture 2: Linear Regression
+What other independent variables might we want to bring in to predict “rentals”?What variables do you think affect rental volume?
+
+PDF PAGE 9
+Weather Data
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 10
+Scatter Plot:Rentals vsTemperature
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 11
+Reminder: Covariance and CorrelationFor pairs of  numbers (𝑥!,𝑦!),(𝑥",𝑦"),…(𝑥#,𝑦#), the Covariance (Cov) is:
+‾𝑥and ‾𝑦 are averages of  𝑥!,…,𝑥# and 𝑦!,…,𝑦#, respectively.•Covariance measures the average of  the product between how far 𝑥 is from its mean and how far 𝑦 is from its mean; Covariance can be positive, negative, or 0.•Cov(rentals, temp) = 3630.28hard to interpret…
+Decision 618–Lecture 2: Linear Regression
+Cov(𝑥,𝑦)=(𝑥!−‾𝑥)(𝑦!−‾𝑦)+(𝑥"−‾𝑥)(𝑦"−‾𝑦)+⋯+(𝑥#−‾𝑥)(𝑦#−‾𝑦)𝑛
+
+PDF PAGE 12
+Correlation Is More “User-Friendly”Correlation is defined as:Correlation is guaranteed to lie between +1 (perfect positive correlation) and -1 (perfect negative correlation).
+  𝑠(𝑥) and 𝑠(𝑦)	: standard deviation•Covariance is sensitive to the scale of  data, whereas correlation is unit-less – a form of  normalization•Cor(rental, temp) = 0.4354
+Cov(𝑥,𝑦)=(𝑥!−‾𝑥)(𝑦!−‾𝑦)+(𝑥"−‾𝑥)(𝑦"−‾𝑦)+⋯+(𝑥#−‾𝑥)(𝑦#−‾𝑦)𝑛
+Cor(𝑥,𝑦)=Cov(𝑥,𝑦)𝑠(𝑥)⋅𝑠(𝑦)
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 13
+Correlation IntuitionCor(rentals,temp)=0.43
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 14
+Correlation Intuition (cont.)
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 15
+Dealing with Real Datadf.describe()
+There were 8,784 hours in 2024 but we only have 8,780 rows (observations).Why?How to fix it?
+Decision 618–Lecture 2: Linear Regression
+Four missing hours:  2024-01-07 04:00  2024-01-10 03:00  2024-01-18 03:00  2024-03-10 02:00
+
+PDF PAGE 16
+Back from the Detour: Predicting Rentals from Time + WeatherMerge data from National Ocean and Atmospheric Administration (NOAA, Logan Airport Station) with the BlueBikes data.
+Revised questions:•“What is the number of BlueBike rentals tomorrow between 5-6 p.m. with weather predicted to be 60 degrees F, 50% humidity, and 10mph windspeed?”•“How likely is it to be between 500-1000 rentals? Over 1000 rentals?”
+rentalmonthdayweekdayhourtemprel_humiditywb_tempprecip_inwind_speed185.0111034.062.523.00.09.0208.0111133.063.622.00.07.092.0111233.066.323.00.07.032.0111333.066.323.00.05.06.0111433.066.323.00.03.0…………………………237.0123121949.058.335.00.05.0207.0123122044.067.734.00.09.0175.0123122142.079.136.00.04.0160.0123122241.082.236.00.04.0121.0123122343.073.235.00.03.0
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 17
+Predicting Rental with TemperatureAssume (for starters) that we can use one of  the continuous independent variables, say “temp,” to predict hourly rentals.
+“What is the number of  BlueBike rentals tomorrow if  temperature is 60 degrees F?”
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 18
+Simple Linear RegressionPredict hourly rental using temperature:5𝑦=𝑏%+𝑏#𝑥•5𝑦:dependent variable (rental)•𝑥: independent variable (temperature)•𝑏%:intercept•𝑏#:coefficient/slopeDifferent 𝑏%and 𝑏#give us different lines.
+How to get one line that “best fits” the data?
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 19
+Simple Linear RegressionEstimation: predict rental at temperature 𝑥!5𝑦!=𝑏%+𝑏#𝑥!“Error” (or “Residual”) of  the prediction for a point 𝑥!:𝑒!=𝑦!−5𝑦!Look for the 𝑏%and 𝑏#values that minimize the “Sum of  Squared Error” (SSE)𝑆𝑆𝐸=,!𝑒!"=∑(𝑦!−5𝑦!)"
+Find 𝑏%and 𝑏#that minimize SSE
+Red line on figure minimizes SSE among all possible lines
+Decision618–Lecture2: LinearRegression
+
+PDF PAGE 20
+Regression Resultimport statsmodels.formula.api as smfmodel = smf.ols('rental ~ temp', data=df).fit()print(model.summary())
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 21
+Regression Resultimport statsmodels.formula.api as smfmodel = smf.ols('rental ~ temp', data=df).fit()print(model.summary())
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 22
+Regression ResultValues of  𝑏$ and 𝑏! that yield the “best fit” line: 𝑏$=−115.11 and 𝑏!=6.02
+5𝑦=−162.90+13.17𝑥Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 23
+Prediction
+𝑏%=−162.90,𝑏#=13.17,and5𝑦=−162.90+13.17𝑥Question: What’s the estimated rentals per hour if  the temperature is 75 F°?Answer: 5𝑦=−162.90+13.17×75=825rentalsperhour
+predicted_rental = model.predict(pd.DataFrame({'temp': [75]}))Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 24
+R²•Is this prediction better than the baseline model by always predicting ‾𝑦=540.96?•𝑆𝑆𝐸=1,794 million<𝑆𝑆𝑇=2,214 million•𝑆𝑆𝐸 and 𝑆𝑆𝑇 are both absolute measures of  quality of  fit, whose unit does not convey much information. Let us use a relative measure for better comparison.𝑅"=1−𝑆𝑆𝐸𝑆𝑆𝑇=1−1,794million2,214million=0.190
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 25
+From Simple to Multiple RegressionLet us add another independent variable: relative humidity (rel_humidity)rentalmonthdayweekdayhourtemprel_humiditywb_tempprecip_inwind_speed185.0111034.062.523.00.09.0208.0111133.063.622.00.07.092.0111233.066.323.00.07.032.0111333.066.323.00.05.06.0111433.066.323.00.03.0…………………………237.0123121949.058.335.00.05.0207.0123122044.067.734.00.09.0175.0123122142.079.136.00.04.0160.0123122241.082.236.00.04.0121.0123122343.073.235.00.03.0
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 26
+From Simple to Multiple Regression
+rental=148+13.12×temp−4.52×rel_humidityIf  tomorrow’s weather forecast is Temperature = 75F° and Humidity = 80%, how many rentals does the model predict?5𝑦=148+13.12×75−4.52×80=770bikesperhour
+model1 = smf.ols('rental ~ temp + rel_humidity', data=df).fit()print(model1.summary())
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 27
+What about R²?
+•𝑅"increased from 0.19 in simple regression to 0.22 in multiple regression•Adding an independent variable always increases 𝑅":𝑅"=1−𝑆𝑆𝐸𝑆𝑆𝑇Adding a new independent variable does not change SST but decreases SSE. This is because setting the coefficient of  the new independent variable to zero keeps SSE unchanged, while regression tries to minimize SSE.
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 28
+What about R²?•𝑅"increased from 0.19 in simple regression to 0.22 in multiple regression•Adding an independent variable always increases 𝑅":𝑅"=1−%%&%%'•Adding a new independent variable does not change SST but decreases SSE.•A “higher” 𝑅"indicates that•Independent variables predict the dependent variable better•However,•A “high” 𝑅"does not guarantee error rate from the model is low enough for practical use.•Conversely, a model with a “low” 𝑅"may still be practically useful•What constitutes a “high” or “low” 𝑅"is domain-dependent.
+Decision618–Lecture2: LinearRegression
+
+PDF PAGE 29
+Confidence Intervals
+•Generally speaking, if  a confidence interval does not contain 0, this independent variable is significant. Otherwise it is insignificant.•Example: variable temp is significant.•Confidence interval for rel_humidity contains 0, really due to multicollinearity.•What if  we want significance to be based on criteria other than 95% C.I.?
+model2 = smf.ols('rental ~ temp + wb_temp + rel_humidity', data=df).fit()Dep. Variable:rentalR-squared:0.221coefstd errtP>|t|[0.0250.975]Intercept-179.6712110.221-1.6300.103-395.73036.388temp21.46812.7577.7880.00016.06526.872wb_temp-8.82862.898-3.0460.002-14.510-3.147rel_humidity-0.79941.245-0.6420.521-3.2391.641
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 30
+Multicollinearity
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.[2] The condition number is large, 2.32e+03. This might indicate that there are strong multicollinearity or other numerical problems.•Temperature and humidity determines wet bulb temperature!•When this happens, coefficients are not uniquely determined.•Rule of  thumb: Do not include both variables when their correlation> 0.75.
+model2 = smf.ols('rental ~ temp + wb_temp + rel_humidity', data=df).fit()Dep. Variable:rentalR-squared:0.221coefstd errtP>|t|[0.0250.975]Intercept-179.6712110.221-1.6300.103-395.73036.388temp21.46812.7577.7880.00016.06526.872wb_temp-8.82862.898-3.0460.002-14.510-3.147rel_humidity-0.79941.245-0.6420.521-3.2391.641
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 31
+Correlation Matrix
+Decision 618–Lecture 2: Linear Regression
+
+
+PDF PAGE 32
+P Values
+•P value: If  the coefficient is truly 0, how likely the coefficient is as different from 0 as we see purely by chance.•The smaller the P value, the more confident we are that the independent variable is statistically significant.•Using P value less than 0.05 to determine significance is equivalent to the confidence interval.•Statistically significant variable may or may not be practically important.
+model2 = smf.ols('rental ~ temp + wb_temp + rel_humidity', data=df).fit()Dep. Variable:rentalR-squared:0.221coefstd errtP>|t|[0.0250.975]Intercept-179.6712110.221-1.6300.103-395.73036.388temp21.46812.7577.7880.00016.06526.872wb_temp-8.82862.898-3.0460.002-14.510-3.147rel_humidity-0.79941.245-0.6420.521-3.2391.641
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 33
+Table with starts
+Decision 618–Lecture 2: Linear Regression
+==============================================================================                  Coef.  Std.Err.        t   P>|t|     [0.025    0.975] Signif------------------------------------------------------------------------------Intercept       90.9664   27.7799   3.2745  0.0011    36.5114  145.4214     **temp            13.1402    0.2854  46.0376  0.0000    12.5807   13.6997    ***rel_humidity    -4.0696    0.2554 -15.9368  0.0000    -4.5702   -3.5691    ***precip_in    -1125.3808  212.1237  -5.3053  0.0000 -1541.1929 -709.5687    ***wind_speed       3.2663    1.1047   2.9569  0.0031     1.1009    5.4317     **==============================================================================R-squared: 0.2233  ***:p<0.001  **:p<0.01  *:p<0.05  .:p<0.1
+
+PDF PAGE 34
+Other Independent Variables?
+Recall the original question we asked ourselves:“What is the number of  BlueBike rentals tomorrow between 5-6 p.m.?”Let us include hour information
+rentalmonthdayweekdayhourtemprel_humiditywb_tempprecip_inwind_speed185.0111034.062.523.00.09.0208.0111133.063.622.00.07.092.0111233.066.323.00.07.032.0111333.066.323.00.05.06.0111433.066.323.00.03.0…………………………237.0123121949.058.335.00.05.0207.0123122044.067.734.00.09.0175.0123122142.079.136.00.04.0160.0123122241.082.236.00.04.0121.0123122343.073.235.00.03.0
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 35
+Including Hour
+rental=−187.04+11.78×temp−2.6261×rel_humidity+24.14×hourQuestion: Compare the hour between 11am and 12pm, with the hour between 8am and 9am. What is the model’s prediction on their difference?Answer: According to the model, 3 hours later the hourly rental increases by 24.14×3=72.42.Does it make intuitive sense?
+smf.ols('rental ~ temp + rel_humidity + hour', data=df).fit()
+coefstd errtP>|t|[0.0250.975]Intercept-187.044623.386-7.9980.000-232.887-141.202temp11.78270.26843.9910.00011.25812.308rel_humidity-2.62610.232-11.3390.000-3.080-2.172hour24.13700.65936.6290.00022.84525.429
+Dep. Variable:rentalR-squared:0.221
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 36
+Let Us Look at Data
+Daily cycleNot linear
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 37
+Categorical vs. Numerical Variablesrentalmonthdayweekdayhourtemprel_humiditywb_tempprecip_inwind_speed185.0111034.062.523.00.09.0208.0111133.063.622.00.07.092.0111233.066.323.00.07.032.0111333.066.323.00.05.06.0111433.066.323.00.03.0…………………………237.0123121949.058.335.00.05.0207.0123122044.067.734.00.09.0175.0123122142.079.136.00.04.0160.0123122241.082.236.00.04.0121.0123122343.073.235.00.03.0Categorical Variables Numerical Variables 
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 38
+Categorical vs. Numerical Variables
+Note: Sometimes, a categorical variable may be encoded numerically. For example:•1 = Monday, 2 = Tuesday, …, 7 = Sunday•1 = January, 2 = February, …, 12 = DecemberHowever, since 7 > 1 but Sunday comes before Monday (or 12 > 1 but December comes before January), we often treat these variables as purely categorical and ignore the numerical implications.
+Numerical variables•Value is a number and quantity meaningful for comparisons.•Examples:CostTemperatureNumber of  customersAge
+Categorical variables•Value is a label that does not carry quantitative meaning.•Examples:GenderArea/Zip codeMarital statusCollege graduate
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 39
+Treating Hour as Categoricalsmf.ols('rental ~ temp    + rel_humidity    + C(hour)',    data=df).fit()24 hours in a day, but only 23 variables for hour
+coefstd errtP>|t|[0.0250.975]Intercept-316.576219.831-15.9630.000-355.450-277.702C(hour)[T.1]-23.363120.045-1.1660.244-62.65515.929C(hour)[T.2]-57.633120.050-2.8740.004-96.937-18.330C(hour)[T.3]-82.980820.058-4.1370.000-122.300-43.662C(hour)[T.4]-71.948320.068-3.5850.000-111.286-32.611C(hour)[T.5]-9.878020.078-0.4920.623-49.23629.480C(hour)[T.6]139.214620.0896.9300.00099.836178.593C(hour)[T.7]451.021720.09622.4430.000411.628490.415C(hour)[T.8]860.410520.10842.7890.000820.994899.827C(hour)[T.9]608.366820.11030.2510.000568.946647.788C(hour)[T.10]478.704920.09523.8220.000439.314518.096C(hour)[T.11]516.427920.07025.7310.000477.086555.770C(hour)[T.12]575.305220.04728.6980.000536.008614.602C(hour)[T.13]566.826720.04228.2810.000527.539606.114C(hour)[T.14]593.958620.05129.6220.000554.653633.264C(hour)[T.15]693.482920.06834.5560.000654.144732.821C(hour)[T.16]912.382320.08845.4190.000873.005951.760C(hour)[T.17]1161.834620.10157.7980.0001122.4311201.238C(hour)[T.18]903.564320.10544.9430.000864.155942.974C(hour)[T.19]595.089820.10629.5980.000555.677634.502C(hour)[T.20]375.132520.09018.6720.000335.751414.514C(hour)[T.21]254.253120.07012.6680.000214.911293.595C(hour)[T.22]168.743320.0558.4140.000129.431208.056C(hour)[T.23]79.797920.0453.9810.00040.505119.091temp11.59000.17865.2010.00011.24211.938rel_humidity-2.42550.156-15.5220.000-2.732-2.119Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 40
+Treat Hour as a Numerical Variablerentaltemprel_humidityhour1853462.47502083363.591923366.322323366.32363366.324…………2374958.3192074467.66201754279.11211604182.22221214373.1623
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 41
+Change It to 0/1 “Dummy” Variablesrentaltemprel_humidityhourHour0Hour1Hour2…Hour22Hour231853462.4750100…002083363.591010…00923366.322001…00323366.323000…0063366.324000…00…………………………2374958.319000…002074467.6620000…001754279.1121000…001604182.2222000…101214373.1623000…01
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 42
+Remove One of  the 0/1 “Dummy” Variables
+Why do we need to remove one column?Otherwise we run into multicollinearity!
+rentaltemprel_humidityhourHour0Hour1Hour2…Hour22Hour231853462.4750100…002083363.591010…00923366.322001…00323366.323000…0063366.324000…00…………………………2374958.319000…002074467.6620000…001754279.1121000…001604182.2222000…101214373.1623000…01
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 43
+Final Data Set to Run Regressionrentaltemprel_humidityHour1Hour2…Hour22Hour231853462.47500…002083363.5910…00923366.3201…00323366.3200…0063366.3200…00……………………2374958.300…002074467.6600…001754279.1100…001604182.2200…101214373.1600…01
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 44
+How to Interpret the Coefficients?rentals=−316.6+11.6	×	temp	−2.4	×	rel_humidity−23.4	×	hour1−57.6	×	hour2…	+79.8	×	Hour23Question: If  tomorrow 3am (Hour 3)’s temperature is 75F° and relative humidity 68%, what is the predicted rental for the hour?Answer: −316.6+11.6×75−2.4×68−82.98×1=307.2Question: What if  tomorrow midnight (Hour 0)’s temperature is 75F° and relative humidity 68%?Answer: −316.6+11.6×75−2.4×68=390.2
+coefstd errtP>|t|[0.0250.975]Intercept-316.576219.831-15.9630.000-355.450-277.702C(hour)[T.1]-23.363120.045-1.1660.244-62.65515.929C(hour)[T.2]-57.633120.050-2.8740.004-96.937-18.330C(hour)[T.3]-82.980820.058-4.1370.000-122.300-43.662C(hour)[T.4]-71.948320.068-3.5850.000-111.286-32.611C(hour)[T.5]-9.878020.078-0.4920.623-49.23629.480C(hour)[T.6]139.214620.0896.9300.00099.836178.593C(hour)[T.7]451.021720.09622.4430.000411.628490.415C(hour)[T.8]860.410520.10842.7890.000820.994899.827C(hour)[T.9]608.366820.11030.2510.000568.946647.788C(hour)[T.10]478.704920.09523.8220.000439.314518.096C(hour)[T.11]516.427920.07025.7310.000477.086555.770C(hour)[T.12]575.305220.04728.6980.000536.008614.602C(hour)[T.13]566.826720.04228.2810.000527.539606.114C(hour)[T.14]593.958620.05129.6220.000554.653633.264C(hour)[T.15]693.482920.06834.5560.000654.144732.821C(hour)[T.16]912.382320.08845.4190.000873.005951.760C(hour)[T.17]1161.834620.10157.7980.0001122.4311201.238C(hour)[T.18]903.564320.10544.9430.000864.155942.974C(hour)[T.19]595.089820.10629.5980.000555.677634.502C(hour)[T.20]375.132520.09018.6720.000335.751414.514C(hour)[T.21]254.253120.07012.6680.000214.911293.595C(hour)[T.22]168.743320.0558.4140.000129.431208.056C(hour)[T.23]79.797920.0453.9810.00040.505119.091temp11.59000.17865.2010.00011.24211.938rel_humidity-2.42550.156-15.5220.000-2.732-2.119Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 45
+How to Interpret the Coefficients?•Each coefficient represents the difference between that hour and Hour0’s rental.•For example, the average hourly rental at 3am is lower than midnight by 82.98.•Which hour has the highest rental in the day? Does it make sense?
+coefstd errtP>|t|[0.0250.975]Intercept-316.576219.831-15.9630.000-355.450-277.702C(hour)[T.1]-23.363120.045-1.1660.244-62.65515.929C(hour)[T.2]-57.633120.050-2.8740.004-96.937-18.330C(hour)[T.3]-82.980820.058-4.1370.000-122.300-43.662C(hour)[T.4]-71.948320.068-3.5850.000-111.286-32.611C(hour)[T.5]-9.878020.078-0.4920.623-49.23629.480C(hour)[T.6]139.214620.0896.9300.00099.836178.593C(hour)[T.7]451.021720.09622.4430.000411.628490.415C(hour)[T.8]860.410520.10842.7890.000820.994899.827C(hour)[T.9]608.366820.11030.2510.000568.946647.788C(hour)[T.10]478.704920.09523.8220.000439.314518.096C(hour)[T.11]516.427920.07025.7310.000477.086555.770C(hour)[T.12]575.305220.04728.6980.000536.008614.602C(hour)[T.13]566.826720.04228.2810.000527.539606.114C(hour)[T.14]593.958620.05129.6220.000554.653633.264C(hour)[T.15]693.482920.06834.5560.000654.144732.821C(hour)[T.16]912.382320.08845.4190.000873.005951.760C(hour)[T.17]1161.834620.10157.7980.0001122.4311201.238C(hour)[T.18]903.564320.10544.9430.000864.155942.974C(hour)[T.19]595.089820.10629.5980.000555.677634.502C(hour)[T.20]375.132520.09018.6720.000335.751414.514C(hour)[T.21]254.253120.07012.6680.000214.911293.595C(hour)[T.22]168.743320.0558.4140.000129.431208.056C(hour)[T.23]79.797920.0453.9810.00040.505119.091temp11.59000.17865.2010.00011.24211.938rel_humidity-2.42550.156-15.5220.000-2.732-2.119Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 46
+Reminder: Let Us Look at Data
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 47
+Beyond Single Value: Prediction Intervalmodel6 = smf.ols('rental ~ temp + rel_humidity + precip_in + wind_speed + C(month) +    C(weekday) + C(hour)’, data=df).fit()new_data = pd.DataFrame({    'temp': [75], 'rel_humidity': [67], 'wind_speed': [7], 'precip_in': [0],    'weekday': [2], 'hour': [8], 'month': [3]})prediction = model6.get_prediction(new_data).summary_frame(alpha=0.05)print(prediction)
+meanmean_semean_ci_lowermean_ci_upperobs_ci_lowerobs_ci_upper01100.46675822.6221231056.1220701144.811445599.6719281601.261587
+Decision 618–Lecture 2: Linear Regression
+•95% interval – 𝛼=0.05•Mean Confidence Interval (1056.12,1144.81) for mean estimate’s accuracy•Observation Confidence Interval (or Prediction Interval) (599.67,1601.26) for predicted hourly rental value
+
+PDF PAGE 48
+Residuals•A better way: look at residual•Recall: 𝑒!=𝑦!−5𝑦!
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 49
+How to Select Independent Variables for a Good Model?•Useful model•Easy to interpret•Accurate prediction on new data•Potential issues to avoid:•Highly correlated independent variables (multicollinearity)•Irrelevant independent variables (high P values)•“Overfitting”
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 50
+PREDICTING SOLAR POWER AT THE FUKUSHIMA GENERATING STATION
+
+
+PDF PAGE 51
+March 11, 2011 in Fukushima, Japan
+Decision 618–Lecture 2: Linear Regression
+•Following a significant earthquake, a 15-meter (49 feet) tsunami disabled the cooling capability of  three Fukushima Daiichi nuclear reactors, resulting in a disastrous nuclear accident•Since then, Japan has experienced tremendous growth in renewable energy – solar, wind, geothermal, hydro, and biomass
+
+
+PDF PAGE 52
+Solar Capacity Growth in Japan
+Decision 618–Lecture 2: Linear Regression
+Capacity Growth and Policy Impacts•Japan's renewable capacity, especially in solar energy, surged from 2012 to 2020, significantly influenced by the Feed-in Tariff  (FIT) scheme introduced in 2012, which offered fixed purchase prices for renewable energy.•In 2022 FIT was replaced the Feed-in Premium (FIP) scheme, which combines market prices with a premium to incentivize power generators to match production with market demand and to manage supply more efficiently.•Under FIP there is much higher cost to suppliers for mis-matched supply and demand
+
+
+PDF PAGE 53
+Supply-Demand Matching System
+Decision 618–Lecture 2: Linear Regression
+Retail Energy Provider
+Coordinator
+SubmitSupply PlanSubmitDemand Plan1 day before
+Supply Plan for the day ahead
+4am-5am 0 kWh5am-6am 1000 kWh 6am-7am 3000 kWh7am-8am 6000 kWh…6pm-7pm 1000 kWhHour-by-Hour Production Plan (Contract)
+Solar Farm 
+
+PDF PAGE 54
+Supply-Demand Mismatch Penalties
+Decision 618–Lecture 2: Linear Regression
+Coordinator
+SubmitSupply PlanSubmitDemand Plan1 day before
+Supply Plan Quantity
+Actual supply Oversupply Penalty* Undersupply Penalty 
+* The oversupply penalty is more of  an opportunity cost penalty as they can supply    the additional energy, but at a lower price than the Supply Plan price.
+Actual supply 
+Actual supply Perfect! (no penalty)
+
+
+PDF PAGE 55
+Example of  Over/Under-Supply
+Decision 618–Lecture 2: Linear Regression
+•Fukushima Generating Station (FGS) provides 6,000 kWh at 9:00-10:00 AM at a price of  $.15/kWh•FGS internal variable production cost is $.08/kWh•Price for supplying more than contract demand is $.11/kWh•Under-supply penalty cost is $.05/kWh •Over-supply opportunity cost is $.04/kWh = 0.15 – 0.11•In this example, the costs of  under-estimation and over-estimation are different.  What are some other contexts where this can occur?
+Contract “Promise”6,000 kWh6,500 kWh5,500 kWhFGS Supply6,000 kWh6,000 kWh6,000 kWhDifferencefrom contract0 kWh-500 kWh500 kWhRevenue$ 900$ 900$ 880Production Cost$ 480$ 480$ 480Penalty0$ 25$ 0Profit$ 420$ 395$ 400
+https://www.rff.org/publications/explainers/us-electricity-markets-101/
+
+PDF PAGE 56
+Solar generation capacity is highly variable
+Decision 618–Lecture 2: Linear Regression
+•By its very nature, solar power generation capacity fluctuations are large, and are influenced by time of  day, day of  year, air quality, cloud cover, etc.Boxplot of  Actual Radiation By Hour
+Hour
+Actual Radiation (kW/m2)
+
+
+PDF PAGE 57
+Solar Power Data for Fukushima Generating Station (FGS)
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 58
+Solar Power and Meteorological Data
+Decision 618–Lecture 2: Linear Regression
+#datetimerad_actualrad_forecasttemphumiditywind_uwind_vcloud_covermonthhour12021/4/2 5:000.000.009.8174.80-0.92-4.1816.704522021/4/2 5:300.030.009.7875.90-1.03-4.1614.804532021/4/2 6:000.120.019.7577.00-1.15-4.1412.904642021/4/2 6:300.230.0310.1576.00-1.36-4.1928.304652021/4/2 7:000.290.0510.5575.00-1.56-4.2443.704762021/4/2 7:300.400.0810.8873.25-1.75-4.4271.854772021/4/2 8:000.430.1211.2171.50-1.94-4.60100.004882021/4/2 8:300.530.1611.5469.50-2.23-4.44100.004892021/4/2 9:000.790.1911.8767.50-2.51-4.27100.0049102021/4/2 9:300.840.4412.0466.30-2.68-3.99100.0049112021/4/2 10:000.920.6912.2065.10-2.85-3.71100.00410122021/4/2 10:300.950.7112.3364.40-2.99-3.39100.00410132021/4/2 11:000.990.7412.4663.70-3.14-3.07100.00411142021/4/2 11:300.990.7612.6063.50-3.07-2.83100.00411152021/4/2 12:000.970.7812.7563.30-2.99-2.59100.00412162021/4/2 12:300.930.7812.8263.15-2.99-2.35100.00412172021/4/2 13:000.880.7912.9063.00-3.00-2.11100.00413182021/4/2 13:300.800.7813.1561.85-3.17-1.6296.55413192021/4/2 14:000.730.7713.4060.70-3.35-1.1493.10414202021/4/2 14:300.530.7613.4160.25-3.45-0.6996.55414212021/4/2 15:000.490.7513.4359.80-3.55-0.23100.00415……………………………84612022/1/31 18:300.000.082.5455.155.50-3.4517.75118
+𝒌: # of independent variables (𝒌=𝟖); 𝒏: # of observations (𝒏=𝟖𝟒𝟔𝟏)𝒀𝒙𝟏𝒙𝟐𝒙𝟑𝒙𝟒𝒙𝟓𝒙𝟔𝒙𝟕𝒙𝟖𝒚𝟏𝒚𝟐 𝒙𝟏𝟏𝒙𝟏𝟐𝒙𝟐𝟏𝒙𝟐𝟐 𝒙𝟖𝟏𝒙𝟖𝟐
+𝒏=𝟖𝟒𝟔𝟏
+
+PDF PAGE 59
+Solar Power Dataset
+Decision 618–Lecture 2: Linear Regression
+•Let us use this data to build a model to predict the value of  the dependent variable/response variable …•Radiation Actual (KW/m2) (not Generation Actual (KW))•… as a function of  the independent variables/predictors/covariates/features:•Radiation Forecast (KW/m2)•Temperature (Celsius) •Humidity (%)•Wind U (east-west) Component (m/s)•Wind V (north-south) Component (m/s) •Cloud Cover (%)•Month (number 1-12)•Hour (whole number 5-18)
+Meteorological variables are forecasts generated one day in advance
+V
+U
+Wind V 2m/s
+Wind U 3m/s
+This is the wind speed and direction.
+
+PDF PAGE 60
+Solar Power Dataset
+Decision 618–Lecture 2: Linear Regression
+#datetimerad_actualrad_forecasttemphumiditywind_uwind_vcloud_covermonthhour12021/4/2 5:000.000.009.8174.80-0.92-4.1816.704522021/4/2 5:300.030.009.7875.90-1.03-4.1614.804532021/4/2 6:000.120.019.7577.00-1.15-4.1412.904642021/4/2 6:300.230.0310.1576.00-1.36-4.1928.304652021/4/2 7:000.290.0510.5575.00-1.56-4.2443.704762021/4/2 7:300.400.0810.8873.25-1.75-4.4271.854772021/4/2 8:000.430.1211.2171.50-1.94-4.60100.004882021/4/2 8:300.530.1611.5469.50-2.23-4.44100.004892021/4/2 9:000.790.1911.8767.50-2.51-4.27100.0049102021/4/2 9:300.840.4412.0466.30-2.68-3.99100.0049112021/4/2 10:000.920.6912.2065.10-2.85-3.71100.00410122021/4/2 10:300.950.7112.3364.40-2.99-3.39100.00410132021/4/2 11:000.990.7412.4663.70-3.14-3.07100.00411142021/4/2 11:300.990.7612.6063.50-3.07-2.83100.00411152021/4/2 12:000.970.7812.7563.30-2.99-2.59100.00412162021/4/2 12:300.930.7812.8263.15-2.99-2.35100.00412172021/4/2 13:000.880.7912.9063.00-3.00-2.11100.00413182021/4/2 13:300.800.7813.1561.85-3.17-1.6296.55413192021/4/2 14:000.730.7713.4060.70-3.35-1.1493.10414202021/4/2 14:300.530.7613.4160.25-3.45-0.6996.55414212021/4/2 15:000.490.7513.4359.80-3.55-0.23100.00415……………………………84612022/1/31 18:300.000.082.5455.155.50-3.4517.75118
+𝒌: # of independent variables (𝒌=𝟖); 𝒏: # of observations (𝒏=𝟖𝟒𝟔𝟏)𝒀𝒙𝟏𝒙𝟐𝒙𝟑𝒙𝟒𝒙𝟓𝒙𝟔𝒙𝟕𝒙𝟖𝒚𝟏𝒚𝟐 𝒙𝟏𝟏𝒙𝟏𝟐𝒙𝟐𝟏𝒙𝟐𝟐 𝒙𝟖𝟏𝒙𝟖𝟐
+𝒏=𝟖𝟒𝟔𝟏
+
+PDF PAGE 61
+How good is the FGS radiation forecast?
+Decision 618–Lecture 2: Linear Regression
+Radiation Actual (kW/m2)
+Radiation Forecast (kW/m2)
+Radiation Forecast vs. Radiation Actual
+•Let us see if  we can improve this forecast…
+
+
+PDF PAGE 62
+Linear Regression
+Decision 618–Lecture 2: Linear Regression
+•Predict the value of  the dependent variable:•Radiation Actual (kW/m2) at a given time (in a 30 minute increment)•… as a function of  the independent variables:•Radiation Forecast (kW/m2)•Temperature (Celsius)•Humidity (%)•Wind U (east-west) Component (meters/second)•Wind V (north-south) Component (meters/second) •Cloud Cover (%)•Month (number 1-12)•Hour (whole number 5-18)
+
+PDF PAGE 63
+Overfitting?
+Decision 618–Lecture 2: Linear Regression
+•Definition of  Overfitting:•Finding patterns in the training dataset that do not generalize to the test data.•Idiosyncratic Noise•Higher model complexity is both a blessing and a curse. •Blessing: Can find complex (real) patterns (e.g., non-linearities) •Curse: Prone to overfitting to noise •Ignorance is bliss? Simple models cannot “overthink” it. 
+https://en.wikipedia.org/wiki/Overfitting
+
+
+PDF PAGE 64
+Train/Test Split
+Decision 618–Lecture 2: Linear Regression
+20% Testing Set (n=1,693)
+80% Training Set (n=6,768)#datetimerad_actualrad_forecasttemp…hour12021/4/2 5:000.000.009.81…522021/4/2 5:300.030.009.78…532021/4/2 6:000.120.019.75…642021/4/2 6:300.230.0310.2…652021/4/2 7:000.290.0510.6…762021/4/2 7:300.400.0810.9…772021/4/2 8:000.430.1211.2…882021/4/2 8:300.530.1611.5…892021/4/2 9:000.790.1911.9…9102021/4/2 9:300.840.4412…9112021/4/2 10:000.920.6912.2…10122021/4/2 10:300.950.7112.3…10132021/4/2 11:000.990.7412.5…11142021/4/2 11:300.990.7612.6…11152021/4/2 12:000.970.7812.8…12162021/4/2 12:300.930.7812.8…12172021/4/2 13:000.880.7912.9…13182021/4/2 13:300.800.7813.2…13192021/4/2 14:000.730.7713.4…14202021/4/2 14:300.530.7613.4…14212021/4/2 15:000.490.7513.4…15222021/4/2 15:300.420.5813.3…15232021/4/2 16:000.210.4213.2…16242021/4/2 16:300.060.3713…16252021/4/2 17:000.030.3112.8…17………………84602022/1/31 18:000.000.092.78…1884612022/1/31 18:300.000.082.54…18
+Full Dataset (n=8,461)
+datetimerad_actualrad_forecasttemp…hour2021/4/2 5:000.000.009.81…52021/4/2 5:300.030.009.78…52021/4/2 6:000.120.019.75…62021/4/2 6:300.230.0310.2…62021/4/2 7:000.290.0510.6…72021/4/2 7:300.400.0810.9…72021/4/2 8:000.430.1211.2…82021/4/2 8:300.530.1611.5…82021/4/2 9:300.840.4412…92021/4/2 10:000.920.6912.2…102021/4/2 10:300.950.7112.3…102021/4/2 11:000.990.7412.5…112021/4/2 11:300.990.7612.6…112021/4/2 12:000.970.7812.8…122021/4/2 12:300.930.7812.8…122021/4/2 13:000.880.7912.9…13……………2022/1/31 18:300.000.082.54…18
+datetimerad_actualrad_forecasttemp…hour2021/4/2 9:000.790.1911.87…92021/4/2 13:300.80.7813.15…132021/4/2 14:300.530.7613.41…142021/4/2 16:300.060.3712.99…162021/4/2 18:0000.2212.29…182021/4/3 6:300.060.0311.08…6……………2022/1/31 18:000.000.092.78…18
+
+PDF PAGE 65
+Train/Test Split
+Decision 618–Lecture 2: Linear Regression
+•Set aside a “Test Set” of  20–50% of  the data•Typical practice: set aside the most recently observed data: markets most recently entered, most recent observed demand, etc. •If  there is no time-dependence, select a random Test Set•Stratified sampling is a modification that ensures similar distributions across train/test.•Keep the Test Set “hands-off ” until you validate your model•This procedure tests the “true” predictive power of  your model
+Training set
+Test set
+https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118445112.stat05999.pub2
+
+PDF PAGE 66
+Solar Power Training Data
+Decision 618–Lecture 2: Linear Regression
+𝒌: # of independent variables (𝒌=𝟖); 𝒏: # of observations (𝒏=𝟔𝟕𝟔𝟖)
+𝒏=𝟔𝟕𝟔𝟖
+datetimerad_actualrad_forecasttemphumiditywind_uwind_vcloud_covermonthhour2021/4/2 5:00009.8174.8-0.92-4.1816.7452021/4/2 5:300.0309.7875.9-1.03-4.1614.8452021/4/2 6:000.120.019.7577-1.15-4.1412.9462021/4/2 6:300.230.0310.1576-1.36-4.1928.3462021/4/2 7:000.290.0510.5575-1.56-4.2443.7472021/4/2 7:300.40.0810.8873.25-1.75-4.4271.85472021/4/2 8:000.430.1211.2171.5-1.94-4.6100482021/4/2 8:300.530.1611.5469.5-2.23-4.44100482021/4/2 9:300.840.4412.0466.3-2.68-3.99100492021/4/2 10:000.920.6912.265.1-2.85-3.711004102021/4/2 10:300.950.7112.3364.4-2.99-3.391004102021/4/2 11:000.990.7412.4663.7-3.14-3.071004112021/4/2 11:300.990.7612.663.5-3.07-2.831004112021/4/2 12:000.970.7812.7563.3-2.99-2.591004122021/4/2 12:300.930.7812.8263.15-2.99-2.351004122021/4/2 13:000.880.7912.963-3-2.111004132021/4/2 14:000.730.7713.460.7-3.35-1.1493.14142021/4/2 15:000.490.7513.4359.8-3.55-0.231004152021/4/2 15:300.420.5813.3360.5-3.660.041004152021/4/2 16:000.210.4213.2261.2-3.780.321004162021/4/2 17:000.030.3112.7562.8-3.640.491004172021/4/2 17:300.010.2712.5264.05-3.460.51004172021/4/2 18:3000.212.266.15-3.170.71004182021/4/3 5:000010.8970.91.770.962452021/4/3 5:300.01010.871.551.80.77145…………………………2022/1/31 18:300.000.082.5455.155.50-3.4517.75118
+
+PDF PAGE 67
+Model 1 with 6 Variables
+Decision 618–Lecture 2: Linear Regression
+•Predict the value of  the dependent variable:•Radiation Actual (kW/m2) at a given time (in a 30 minute increment)•… as a function of  the independent variables:•Radiation Forecast (kW/m2)•Temperature (Celsius)•Humidity (%)•Wind U (east-west) Component (meters/second)•Wind V (north-south) Component (meters/second) •Cloud Cover (%)•Month (number 1-12)•Hour (whole number 5-18)
+Model 1
+
+PDF PAGE 68
+Regression Output of  Model 1:includes all variables except month and hour
+Decision 618–Lecture 2: Linear Regressionhttps://en.wikipedia.org/wiki/Coefficient_of_determination
+1. Regression coefficient estimates
+model1 = smf.ols( ‘rad_actual ~ rad_forecast + temp + humidity + wind_u +   wind_v + cloud_cover’,  data = df_train)2. Indicators of  the significance of  the variables
+3. Indicator of  model’s quality of  fit
+
+PDF PAGE 69
+Solar Power and Meteorological Data
+Decision 618–Lecture 2: Linear Regression
+#datetimerad_actualrad_forecasttemphumiditywind_uwind_vcloud_covermonthhour12021/4/2 5:000.000.009.8174.80-0.92-4.1816.704522021/4/2 5:300.030.009.7875.90-1.03-4.1614.804532021/4/2 6:000.120.019.7577.00-1.15-4.1412.904642021/4/2 6:300.230.0310.1576.00-1.36-4.1928.304652021/4/2 7:000.290.0510.5575.00-1.56-4.2443.704762021/4/2 7:300.400.0810.8873.25-1.75-4.4271.854772021/4/2 8:000.430.1211.2171.50-1.94-4.60100.004882021/4/2 8:300.530.1611.5469.50-2.23-4.44100.004892021/4/2 9:000.790.1911.8767.50-2.51-4.27100.0049102021/4/2 9:300.840.4412.0466.30-2.68-3.99100.0049112021/4/2 10:000.920.6912.2065.10-2.85-3.71100.00410122021/4/2 10:300.950.7112.3364.40-2.99-3.39100.00410132021/4/2 11:000.990.7412.4663.70-3.14-3.07100.00411142021/4/2 11:300.990.7612.6063.50-3.07-2.83100.00411152021/4/2 12:000.970.7812.7563.30-2.99-2.59100.00412162021/4/2 12:300.930.7812.8263.15-2.99-2.35100.00412172021/4/2 13:000.880.7912.9063.00-3.00-2.11100.00413182021/4/2 13:300.800.7813.1561.85-3.17-1.6296.55413192021/4/2 14:000.730.7713.4060.70-3.35-1.1493.10414202021/4/2 14:300.530.7613.4160.25-3.45-0.6996.55414212021/4/2 15:000.490.7513.4359.80-3.55-0.23100.00415……………………………84612022/1/31 18:300.000.082.5455.155.50-3.4517.75118
+𝒌: # of independent variables (𝒌=𝟖); 𝒏: # of observations (𝒏=𝟖𝟒𝟔𝟏)𝒀𝒙𝟏𝒙𝟐𝒙𝟑𝒙𝟒𝒙𝟓𝒙𝟔𝒙𝟕𝒙𝟖𝒚𝟏𝒚𝟐 𝒙𝟏𝟏𝒙𝟏𝟐𝒙𝟐𝟏𝒙𝟐𝟐 𝒙𝟖𝟏𝒙𝟖𝟐
+𝒏=𝟖𝟒𝟔𝟏
+
+PDF PAGE 70
+Solar generation capacity is highly variable
+Decision 618–Lecture 2: Linear Regression
+•By its very nature, radiation fluctuations are inherently powerful and vary based on factors such as time of  day, date, air pollution levels, etc.Boxplot of  Actual Radiation By Hour
+Hour
+Actual Radiation (kW/m2)
+
+
+PDF PAGE 71
+Adding Hour using categorical variables
+Decision 618–Lecture 2: Linear Regression
+•Add categorical variables for hour as follows:RadiationActual = 𝛽) + 𝛽* × RadForecast + 𝛽+ × Temp +  𝛽,	× Humidity                               + 𝛽- × WindU + 𝛽.	× WindV + 𝛽/	× CloudCover                               +	𝜷𝑯𝟔	× Hour6  +	𝜷𝑯𝟕	× Hour7 + …                              +	𝜷𝑯𝟏𝟖	× Hour18 
+•The dataset has 𝑚=	14 different hours, namely hours 5, 6, 7, …, 12, …, 18•We need 𝑚−1 “dummy” variables to work with 𝑚 categories
+
+PDF PAGE 72
+Model results:adding Hour with categorical variables
+Decision 618–Lecture 2: Linear Regression
+Model 1:   𝑹𝟐=𝟎.𝟒𝟔𝟎𝟐Model withNumerical Hour: 𝑹𝟐=𝟎.𝟓𝟕𝟑𝟑Model withCategorical Hour:  𝑹𝟐=𝟎.𝟕𝟐𝟑𝟎
+
+PDF PAGE 73
+Changing  Hour to a Categorical Variable improves the model performance
+Decision 618–Lecture 2: Linear Regression
+•Changing Hour to a categorical variable addresses its nonlinear relationship with solar radiation •A linear regression model cannot otherwise capture this relationship adequately if  Hour is treated as a numerical value•Such feature engineering enables the model to consider the distinct impact of  each hour separately, thereby improving the model’s performance
+
+
+PDF PAGE 74
+Let’s try some different models with Hour and Month variables
+Decision 618–Lecture 2: Linear Regression
+Hour VariableExcludedNumeric VariableCategorical Variable
+Month Variable 
+ExcludedModel 1Numeric VariableCategorical Variable
+
+PDF PAGE 75
+Add Hour as numeric variable
+Decision 618–Lecture 2: Linear Regression
+Hour VariableExcludedNumeric VariableCategorical Variable
+Month Variable 
+ExcludedModel 1Numeric VariableCategorical Variable
+P
+
+PDF PAGE 76
+Add Month as numeric variable
+Decision 618–Lecture 2: Linear Regression
+Hour VariableExcludedNumeric VariableCategorical Variable
+Month Variable 
+ExcludedModel 1Numeric VariableCategorical VariableP
+
+PDF PAGE 77
+Add Month as categorical variable
+Decision 618–Lecture 2: Linear Regression
+Hour VariableExcludedNumeric VariableCategorical Variable
+Month Variable 
+ExcludedModel 1Numeric VariableCategorical VariableP
+
+PDF PAGE 78
+Add Month and Hour as categorical variables
+Decision 618–Lecture 2: Linear Regression
+Hour VariableExcludedNumeric VariableCategorical Variable
+Month Variable 
+ExcludedModel 1Numeric VariableCategorical VariableP
+
+PDF PAGE 79
+Add Month as numeric variable
+Model 2 (𝑹𝟐=𝟎.𝟒𝟔𝟏𝟔)Model 1 + Month: Adds 'month' as a continuous variable 
+P
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 80
+Add Month as categorical variable
+Decision 618–Lecture 2: Linear Regression
+P
+Model 3 (𝑹𝟐=𝟎.𝟒𝟔𝟗)Model 1 + Month: Adds 'month' as a categorical variable 
+
+
+PDF PAGE 81
+Add Hour as numeric variable
+Decision 618–Lecture 2: Linear Regression
+Model 4 (𝑹𝟐=𝟎.𝟓𝟕𝟑𝟑)Model 1 + Hour: Adds ‘hour' as a continuous variable 
+P
+
+PDF PAGE 82
+Add Hour as categorical variable
+Decision 618–Lecture 2: Linear Regression
+Model 5 (𝑹𝟐=𝟎.𝟕𝟐𝟑)Model 1 + Hour: Adds ‘hour' as a categorical variable 
+P
+
+PDF PAGE 83
+Add Month and Hour as categorical variables
+Decision 618–Lecture 2: Linear Regression
+Model 6 (𝑹𝟐=𝟎.𝟕𝟑𝟓)Model 1 + Month, Hour: Adds ‘month’ & ‘hour' as a categorical variable 
+P
+
+PDF PAGE 84
+R2 values of  the different models
+Decision 618–Lecture 2: Linear Regression
+•The inclusion of  additional variables increases the  R2  value•Including Hour as a categorical variable markedly enhances the overall  R2  value
+Hour VariableExcludedNumeric VariableCategorical Variable
+Month Variable 
+Excluded.4602.5733.7230Numeric Variable.4616.5736Categorical Variable.4690.7350
+
+PDF PAGE 85
+Out-of-Sample Testing
+Decision 618–Lecture 2: Linear Regression
+•Here is our model 1, based on the train data (n=6,768) :Radiation Actual = 0.2262 + 0.6757 × Rad Forecast + 0.006541 × Temp                                − 0.002779 × Humidity + 0.003281 × Wind U − 0.005324 × Wind V                                − 0.0001515 × Cloud Cover•Let us use the model to compute predictions and residuals for each observation in the Test Set (n=1,693)•For example, here is our prediction for May 11, 2021, at 10:30:Prediction= 0.2262 + 0.6757*(0.7286) + 0.006541*(17.80) ... = 0.6907Actual Radiation = 0.9274Residual (𝒆𝒊)        = 0.9274 –0.6907 = 0.2367•How good is this prediction?  Well, let’s look at all of  the Test Set data and compute prediction metrics
+
+PDF PAGE 86
+Recall R2
+Decision 618–Lecture 2: Linear Regression
+•By how much does the regression model improve the quality of  the (in-sample) prediction, as compared to the baseline model?•Percent reduction in SSE over SST.
+R2
+=1 −
+Sum of squared errors of regression model (SSE)
+Sum of squared errors of baseline model (SST)
+=1 −
+∑n
+i=1
+(yi− ˆyi)2
+∑n
+i=1
+(yi−y)2
+where y=
+1
+N
+·
+N
+∑
+i=1
+yi
+Actual RadiationModel PredictionBaseline (Average)𝑦!9𝑦!𝑦𝑦"9𝑦"𝑦……𝑦#9𝑦#𝑦
+
+PDF PAGE 87
+Out-of-Sample R2 (OSR2)
+Decision 618–Lecture 2: Linear Regression
+•Out-of-Sample R2 : by how much does the regression model improve the quality of  the (out-of-sample) predictions, as compared to the baseline model?
+•In general, it is better for the OSR2 to be close to the in-sample R2•Otherwise, it may be indicative of  intrinsic differences between the training set and the test set, or of  the model being “overfit” to the training data•We prefer higher OSR2
+N𝒚	= Average in the Training set
+
+PDF PAGE 88
+Time/Daterad_actual4/2/2021 5:000.00…4/2/2021 5:300.03…4/2/2021 6:000.12…4/2/2021 6:300.23…… ……1/31/2022 18:300.00…
+In-Sample R2 vs. Out-of-Sample R2
+Decision 618–Lecture 2: Linear Regression
+Predictions0.020.120.150.33
+0.07
+20% Testing Set (n=1,693)
+80% Training Set (n=6,768)Baseline0.3160.3160.3160.316…0.316
+Time/Daterad_actual11/28/2021 1pm0.65…11/27/2021 4pm0.01…… ……8/23/2022 9:300.36…
+Predictions0.510.09…0.40
+Baseline0.3160.316…0.316
+Both baselines use the average of  the training set	5𝒚	=	0.316	kW/𝑚2
+R2
+=1 −
+∑
+i∈Train Set (yi−ˆyi)2
+∑n
+i∈Train Set (yi−y)2
+OSR 2
+=1 −
+∑
+i∈Test Set (yi−ˆyi)2
+∑n
+i∈Test Set (yi−y)2
+
+PDF PAGE 89
+Computing OSR2 in Python
+Decision 618–Lecture 2: Linear Regression
+•You can read the In-Sample R2 right from the model summary, but OSR2 requires calculation.predictions = model.predict(df_test)ssr = np.sum((y_test_actual – predictions)**2)sst = np.sum((y_test_actual – np.mean(y_train_actual))**2) OSR2 = 1 - ssr / sst
+
+PDF PAGE 90
+Out-of-Sample Assessment of  all Models
+Decision 618–Lecture 2: Linear Regression
+•By and large, the OSR2 is very consistent with the in-sample R2•If  OSR2 is much smaller than the R2 , what does this usually mean?
+R2Hour Variable
+ExcludedNumeric VariableCategorical Variable
+Month Variable 
+Excluded.46.57.72Numeric Variable.46.57Categorical Variable.47.73
+OSR2Hour Variable
+ExcludedNumeric VariableCategorical Variable
+Month Variable 
+Excluded.45.56.72Numeric Variable.45.56Categorical Variable.45.73
+
+PDF PAGE 91
+Visualizing the Predictions of  the Models
+Decision 618–Lecture 2: Linear Regression
+•Scatter plots of  predicted versus actual values for different modelsModel 1Model 6FGS Forecast(Use only radiation forecast)
+Predicted Radiation by FGS Forecast (kW/m2)
+Actual Radiation (kW/m2)
+Predicted Radiation by Model 1 (kW/m2)
+Actual Radiation (kW/m2)
+Actual Radiation (kW/m2)
+Predicted Radiation by Model 6 (kW/m2)R2 = 0.44OSR2 = 0.43R2 = 0.46OSR2 = 0.45R2= 0.73OSR2 = 0.73
+
+PDF PAGE 92
+Value Impact of  the Models
+Decision 618–Lecture 2: Linear Regression
+
+PDF PAGE 93
+Estimating the value of  using predictions from Model 6
+Decision 618–Lecture 2: Linear Regression
+Forecasting ToolAnnual Values($1,000)Current PracticeModel 1Model 6Revenues$ 4,200$ 4,205$ 4,356Production Costs$ 2,429$ 2,429$ 2,429Penalties$ 463$ 454$ 285Profit$ 1,308$ 1,323$ 1,641
+•Assume FGS contracts for their forecast•Contract price is $.15/kWh•FGS internal variable production cost is $.08/kWh•Price for supplying more than contract demand is $.11/kWh•Under-supply penalty cost is $.05/kWh •Implement on the Test Set hours•Extrapolate to annual values •Using Model 6, profit increases 25%  (from $1,308,000 to $1,641,000)
+
+PDF PAGE 94
+Can we do even better?
+Decision 618–Lecture 2: Linear Regression
+•OSR2 = 0.73 is pretty good, but perhaps it can be further improved…•Can we improve the forecasting?•Can we improve the day-before contract decision-making?•Asymmetric cost structure of  over/under-supply penalties. •Consider solar radiation as a “newsvendor-type model”
+
+PDF PAGE 95
+Beyond Predicting the Mean
+Decision 618–Lecture 2: Linear Regression
+
+
+PDF PAGE 96
+Decision 618–Lecture 2: Linear Regression
+More advanced models you will learn
+We can run XGBoost(an ensemble model with boosting)
+•Over the next several weeks, we will see many different predication modeling tools, each with their own advantages and disadvantages
+R2OSR2
+Model 6.73.73XGBoost.86.79
+Scatterplot of  Predicated Radiation versus Actual Radiation
+Predicted Radiation by XGBoost(kW/m2)
+Actual Radiation (kW/m2)
